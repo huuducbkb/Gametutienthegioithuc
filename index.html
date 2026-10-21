@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!--
+HỒNG ĐỨC TU TIÊN LỘ V1 • bản khung V0.1
+Thiết kế được duyệt: giấy dó mực tàu; 3 bố cục di động.
+Hardcore: chết là mất save. Đồng nhân Phàm Nhân Tu Tiên.
+23 hệ thống sẽ bổ sung dần. Hiện chỉ là khung theo dõi tiến độ,
+không có logic trò chơi, AI, giao dịch hay save nhân vật thật.
+Một tệp UTF-8 độc lập; không CDN, không tài nguyên bên ngoài.
+-->
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#e8dcc0">
+<title>HỒNG ĐỨC TU TIÊN LỘ V1</title>
+<style>
+:root{--paper:#e8dcc0;--ink:#2b2118;--red:#a33327;--line:#807058;--top:174px;--bottom:76px;--journal:0px}
+*{box-sizing:border-box}html{background:var(--paper);color:var(--ink);font-family:Georgia,'Times New Roman',serif}body{margin:0;min-width:320px;background:radial-gradient(ellipse at 20% 15%,#fff8df66,transparent 60%),repeating-linear-gradient(6deg,#80612e08 0 1px,transparent 1px 7px),repeating-linear-gradient(97deg,#6b552008 0 1px,transparent 1px 13px),var(--paper);font-size:16px;line-height:1.55}button,select{font:inherit;color:inherit}button,select{background:#f6ecd4;border:1px solid var(--line);border-radius:3px 7px 3px 5px;padding:10px;min-height:44px}button{cursor:pointer}button:hover,button[aria-pressed="true"]{background:var(--red);color:#fff5df}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--red);outline-offset:3px}button:disabled{cursor:not-allowed;opacity:.55}h1,h2,h3,p{margin-top:0}h2{font-size:1.5rem;margin-bottom:4px}h3{font-size:1.12rem;margin-bottom:10px}small,.muted{color:#695b48;font-size:.83rem}.seal{color:var(--red);border:2px solid var(--red);padding:3px 6px;display:inline-block;transform:rotate(-3deg);font-weight:bold;line-height:1.25;font-size:.72rem;letter-spacing:1px}.eyebrow{letter-spacing:3px;font-size:.67rem;text-transform:uppercase;color:#695b48;margin-bottom:3px}.app-header{position:fixed;top:0;left:0;right:0;z-index:20;background:linear-gradient(120deg,#e8dcc0f5,#efe2c8fa);border-bottom:3px double var(--ink);padding:12px 16px 9px;padding-top:max(12px,env(safe-area-inset-top));box-shadow:0 4px 15px #48371918}.header-inner{max-width:860px;margin:auto}.title-row{display:flex;gap:10px;align-items:center}.title-row h1{font-size:1.32rem;letter-spacing:1.5px;line-height:1.2;flex:1;margin:2px 0 8px;font-weight:900;font-style:italic;text-shadow:1px 1px #80664435}.header-tools{display:flex;gap:6px;margin:5px 0}.header-tools button{padding:6px 10px;min-height:44px;font-size:.8rem}.header-tools button:first-child{flex:1;text-align:left}.status{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:3px 8px;border-top:1px solid #80705866;padding-top:7px;font-size:.69rem}.status b{font-size:.77rem}.status span{white-space:nowrap}.content{padding:calc(var(--top) + 20px) 16px calc(var(--bottom) + var(--journal) + 24px);max-width:860px;margin:0 auto;min-height:100vh}section[hidden]{display:none}.page-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:18px}.card{position:relative;border:1px solid #7a654e;border-radius:3px 9px 2px 8px;padding:18px;margin:0 0 16px;background:linear-gradient(110deg,#fff9e638,#d4ba8a12);box-shadow:2px 3px 0 #6c52321a}.card:before{content:'';position:absolute;inset:3px;border:1px solid #806b4b25;pointer-events:none;border-radius:7px 2px 6px 2px}.portrait{display:flex;gap:18px;align-items:center;padding-bottom:15px;border-bottom:1px solid #80705866;margin-bottom:16px}.ink-mountain{width:76px;height:88px;flex:none;border:1px solid var(--line);border-radius:45% 45% 3px 3px;background:linear-gradient(145deg,transparent 44%,#2b211866 45%,#2b211818 62%,transparent 63%),linear-gradient(35deg,transparent 35%,#2b211899 36%,#2b211822 58%,transparent 59%);display:grid;place-items:end center;padding:5px;font-size:.7rem}.pillars{display:grid;gap:12px}.stat{border-bottom:1px dashed #80705888;padding-bottom:12px}.stat:last-child{border:0;padding:0}.stat label,.stat strong{display:block;font-size:.76rem;color:var(--red);letter-spacing:1px;margin-bottom:4px}.stat select{width:100%;font-size:.92rem}.stat p{margin:0}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini-grid .stat{border:0;padding:8px;background:#80612e0b}.progress-row{display:flex;justify-content:space-between;font-size:.8rem;margin:14px 0 5px}.progress{height:9px;border:1px solid #69563e;padding:1px}.progress i{display:block;width:12%;height:100%;background:var(--red)}.notice{border-left:3px solid var(--red);padding:9px 12px;background:#a3332709;font-size:.85rem;margin:14px 0}.tag{display:inline-block;padding:4px 9px;border:1px solid #9d8561;border-radius:2px;font-size:.72rem;margin:3px 2px}.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:#e8dcc0fa;border-top:3px double var(--ink);padding:8px 5px max(8px,env(safe-area-inset-bottom));display:flex;justify-content:center;gap:3px}.bottom-nav button{flex:1;max-width:170px;border:0;background:transparent;padding:4px 1px;font-size:.7rem;min-height:50px}.bottom-nav button b{display:block;font-size:1.1rem;line-height:1.2}.bottom-nav button[aria-current="page"]{color:var(--red);background:#a333270e;border-bottom:2px solid var(--red)}footer{text-align:center;font-size:.7rem;color:#695b48;padding:14px 0}table{border-collapse:collapse;width:100%;font-size:.78rem}th,td{border-bottom:1px solid #806b4b44;padding:9px 5px;text-align:left}th{color:var(--red);font-weight:bold}caption{text-align:left;font-size:.75rem;padding-bottom:8px}.table-scroll{overflow-x:auto}.market{min-width:510px}.formula{overflow-wrap:anywhere;font-size:.95rem;line-height:1.9;padding:13px;background:#80612e0c;border:1px dashed var(--line)}ul,ol{padding-left:22px}li{margin-bottom:7px}.clock{width:240px;height:240px;border:3px double var(--ink);border-radius:50%;margin:20px auto;position:relative;background:radial-gradient(circle,#f8eccd 0 43%,transparent 44%)}.clock span{position:absolute;left:50%;top:50%;width:34px;text-align:center;margin:-13px -17px;font-size:.85rem;transform:rotate(var(--a)) translateY(-99px) rotate(calc(-1 * var(--a)))}.clock span.active{color:white;background:var(--red);border-radius:50%}.clock-center{position:absolute;inset:65px 34px;text-align:center;display:grid;place-content:center}.clock-center strong{font-size:1.3rem}.cumulative{display:block;background:var(--ink);color:#f4e7cb;padding:10px;text-align:center;font-size:.8rem;letter-spacing:1px}.chapters{list-style:none;padding:0}.chapters li{display:flex;gap:13px;padding:14px 0;border-bottom:1px dashed #80705877}.chapter-num{font-size:1.6rem;line-height:1.4;color:#79674d;min-width:34px}.chapters .open .chapter-num{color:var(--red)}.chapters h3{margin-bottom:4px}.chapters p{margin:0;font-size:.85rem}.chapters .lock{font-size:.7rem;color:#695b48}.layouts{display:grid;gap:12px}.layout-choice{width:100%;text-align:left;display:grid;grid-template-columns:68px 1fr;gap:14px;align-items:center;padding:13px}.layout-choice strong{display:block}.layout-choice small{display:block;color:inherit;font-size:.74rem}.preview{display:flex;flex-direction:column;height:78px;width:60px;border:1px solid currentColor;padding:5px;gap:4px;position:relative}.preview i{display:block;background:currentColor;opacity:.55;height:5px}.preview i:nth-child(2){flex:1;opacity:.15}.preview.book{box-shadow:3px 1px 0 currentColor}.preview.book:after{content:'';position:absolute;right:0;top:9px;bottom:0;width:22px;border-left:1px solid currentColor;background:#cab58f}.preview.journal i:nth-child(3){height:13px}.roadmap li{padding:7px;border-bottom:1px solid #80705844}.scrim{position:fixed;inset:0;background:#251a1155;z-index:39}.scrim[hidden]{display:none}.drawer{position:fixed;right:0;top:0;bottom:0;width:min(88vw,340px);background:linear-gradient(90deg,#bc9e6c,#e8dcc0 5%,#f1e3c2 95%,#c8af86);z-index:40;transform:translateX(105%);transition:transform .25s ease;border-left:3px double var(--ink);padding:24px 19px;box-shadow:-10px 0 30px #2b211833;overflow-y:auto}.drawer.is-open{transform:translateX(0)}.drawer-title{display:flex;justify-content:space-between;align-items:center}.drawer nav{display:grid;gap:9px;margin:22px 0}.drawer nav button{text-align:left}.drawer nav button small{float:right}.journal-strip{display:none;position:fixed;bottom:var(--bottom);left:0;right:0;z-index:25;background:#e1d0adfa;border-top:2px solid var(--line);padding:5px 14px}.journal-inner{max-width:828px;margin:auto}.journal-strip button{min-height:36px;border:0;background:transparent;padding:0;font-size:.73rem;display:flex;justify-content:space-between;width:100%}.log-lines{height:38px;overflow-y:auto;font-size:.7rem;line-height:1.6;scroll-snap-type:y proximity}.log-lines p{margin:0;scroll-snap-align:start}.journal-strip.expanded .log-lines{height:160px}body[data-layout="3"] .journal-strip{display:block}body[data-layout="2"]{background-color:#cfba94;background-image:linear-gradient(90deg,#2b21183a 0 5px,transparent 6px),repeating-linear-gradient(0deg,#80612e09 0 1px,transparent 1px 5px)}body[data-layout="2"] .content{border-left:7px double #806744;background:#e8dcc0b3;box-shadow:7px 0 20px #4b321a22}body[data-layout="2"] .app-header{border-bottom:5px double var(--ink)}body[data-layout="2"] .bottom-nav{display:none}body[data-layout="2"] .title-row h1{letter-spacing:2px}.toast{position:fixed;top:calc(var(--top) + 8px);left:16px;right:16px;z-index:50;background:var(--ink);color:var(--paper);padding:12px;text-align:center;font-size:.8rem}.toast:empty{display:none}.skip{position:fixed;top:-100px;z-index:60}.skip:focus{top:0;background:var(--paper);padding:12px}@media(min-width:650px){.pillars{grid-template-columns:1fr 1fr}.stat{border:0}.layouts{grid-template-columns:repeat(3,1fr)}.layout-choice{grid-template-columns:1fr}.app-header{padding-left:24px;padding-right:24px}.title-row h1{font-size:1.6rem}.status{grid-template-columns:repeat(6,1fr)}.content{padding-left:25px;padding-right:25px}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body data-layout="1">
+<a class="skip" href="#main">Đến nội dung</a>
+<header class="app-header" id="header"><div class="header-inner">
+<div class="title-row"><h1>HỒNG ĐỨC<br>TU TIÊN LỘ V1</h1><span class="seal">TU TIÊN<br>CHÍ LỘ</span></div>
+<div class="header-tools"><button id="quick-layout" type="button">Bố cục 1 · Đổi</button><button id="system-button" type="button">Hệ Thống</button><button id="menu-button" type="button" aria-controls="drawer" aria-expanded="false">☰ Mục lục</button></div>
+<div class="status"><span>Tên <b>Vô Danh</b></span><span><b>Luyện Khí tầng 1</b></span><span>Linh thạch <b>12</b></span><span>Thọ nguyên <b>16 / 100</b></span><span>Hồi hiện tại <b>01</b></span><span class="muted">Dữ liệu minh họa</span></div>
+</div></header>
+<main class="content" id="main" tabindex="-1">
+<section id="page-character" aria-labelledby="title-character"></section>
+<section id="page-training" aria-labelledby="title-training" hidden></section>
+<section id="page-time" aria-labelledby="title-time" hidden></section>
+<section id="page-economy" aria-labelledby="title-economy" hidden></section>
+<section id="page-story" aria-labelledby="title-story" hidden></section>
+<section id="page-system" aria-labelledby="title-system" hidden></section>
+<footer>Bản khung V0.1 - giao diện<br>Giấy dó · Mực tàu · Hành trình đang thành hình</footer>
+</main>
+<aside class="journal-strip" id="journal" aria-label="Bút ký hệ thống"><div class="journal-inner"><button type="button" id="journal-toggle" aria-expanded="false"><b>BÚT KÝ · khung</b><span>Mở rộng ▴</span></button><div class="log-lines" id="log-lines" tabindex="0"><p>卯 · Mở cuốn thư — bước đầu tiên trên tiên lộ.</p><p>卯 · Khung giao diện đã sẵn sàng, chưa chạy thời gian thật.</p><p>卯 · 23 hệ thống sẽ dần được ghi vào bản thảo.</p></div></div></aside>
+<nav class="bottom-nav" id="bottom-nav" aria-label="Năm trang chính"></nav>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" aria-label="Mục lục gấp" aria-hidden="true" inert><div class="drawer-title"><div><p class="eyebrow">Bìa sách · Mục lục</p><h2>Sổ tay tiên lộ</h2></div><button id="close-menu" type="button" aria-label="Đóng mục lục">✕</button></div><p class="muted">Sáu trang bản thảo · cùng một hành trình</p><nav id="drawer-nav" aria-label="Tất cả trang"></nav><span class="seal">KHUNG<br>V0.1</span><p class="notice">Chưa có logic chơi. Mọi số liệu đều là ví dụ để theo dõi tiến độ.</p></aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+// === REGISTRIES: dữ liệu duy nhất ở đầu script; hệ số mẫu, chưa cân bằng ===
+const MODIFIERS = {
+  linhCan: [
+    {id:'thien',name:'Thiên linh căn',days:1,multiplier:1},
+    {id:'song',name:'Song linh căn',days:5,multiplier:5},
+    {id:'tam',name:'Tam linh căn',days:12,multiplier:12},
+    {id:'tu',name:'Tứ linh căn',days:25,multiplier:25},
+    {id:'ngu',name:'Tạp ngũ linh căn',days:30,multiplier:30},
+    {id:'luc',name:'Tạp lục linh căn',days:36,multiplier:36}
+  ],
+  theChat: [
+    {name:'Kiếm Đạo Thể',multiplier:0.9},{name:'Thần Lôi Thể',multiplier:0.9},
+    {name:'Mị Cốt Thể',multiplier:0.95},{name:'Thái Âm Chi Thể',multiplier:0.85},
+    {name:'Thuần Dương Chi Thể',multiplier:0.85},{name:'Hỗn Nguyên Thể',multiplier:0.8},
+    {name:'Kim Cang Bất Hoại Thể',multiplier:0.9},{name:'Hấp Linh Thể',multiplier:0.75},
+    {name:'Băng Tâm Ngọc Thể',multiplier:0.9},{name:'Huyết Ma Thể',multiplier:0.85}
+  ],
+  moiTruong:[{name:'Phòng tạp dịch',multiplier:1},{name:'Tụ linh trận',multiplier:0.8}],
+  ngayDem:[{name:'Ngày',multiplier:1},{name:'Đêm',multiplier:1.05}],
+  congPhap:[{name:'Công pháp nhập môn',multiplier:1}],realm:{name:'Luyện Khí',multiplier:1}
+};
+const ITEMS = [
+  {name:'Linh thảo',grade:'Phàm',base:2,price:3,stock:46},
+  {name:'Hoàng tinh chi',grade:'Nhất phẩm',base:8,price:10,stock:15},
+  {name:'Thanh linh thảo',grade:'Nhất phẩm',base:12,price:11,stock:22},
+  {name:'Tụ Khí Đan',grade:'Nhất phẩm',base:25,price:30,stock:8},
+  {name:'Hồi Xuân Đan',grade:'Nhất phẩm',base:18,price:21,stock:12},
+  {name:'Trúc Cơ Đan',grade:'Nhị phẩm',base:500,price:650,stock:1},
+  {name:'Huyền thiết',grade:'Nhất phẩm',base:15,price:17,stock:30},
+  {name:'Yêu thú cốt',grade:'Nhị phẩm',base:40,price:48,stock:6}
+];
+const HOI = [
+  {title:'Tạp dịch ngoại môn',goal:'Sinh tồn, học nhập môn và đặt nền móng tu luyện.',open:true},
+  {title:'Huyết Sắc Cấm Địa',goal:'Vượt hiểm địa, tìm linh dược cho con đường Trúc Cơ.'},
+  {title:'Loạn Ma Đạo',goal:'Giữ mình giữa đại loạn và thế lực ma đạo.'},
+  {title:'Lưu vong',goal:'Tìm chốn dung thân, tích lũy tài nguyên nơi xa.'},
+  {title:'Ngưng Kim Đan',goal:'Chuẩn bị căn cơ và thử thách kết đan.'},
+  {title:'Hư Thiên Điện',goal:'Khám phá cổ điện và tranh đoạt cơ duyên.'},
+  {title:'Trở về Thiên Nam',goal:'Trở lại cố địa, nối lại nhân duyên và thế lực.'},
+  {title:'Mộ Lan Tộc & Trụy Ma Cốc',goal:'Đương đầu chiến sự, tìm cơ duyên trong cốc.'},
+  {title:'Đệ nhất Thiên Nam',goal:'Xây dựng thực lực và xác lập vị thế Thiên Nam.'},
+  {title:'Đại Tấn & Côn Ngô Sơn',goal:'Đến Đại Tấn, mở bí cảnh Côn Ngô Sơn.'},
+  {title:'Đại Hàn Băng Nguyên',goal:'Vượt băng nguyên và khảo nghiệm cực hàn.'},
+  {title:'Không Gian Tiết Điểm',goal:'Tìm tiết điểm không gian, hướng tới giới vực mới.'}
+];
+const LAYOUTS = [
+  {id:1,name:'Cuốn thư dọc',preview:'scroll',desc:'Ấn đề cố định · cuộn giấy · 5 thẻ dưới'},
+  {id:2,name:'Bìa sách - Mục lục',preview:'book',desc:'Bìa sách cổ · mục lục gấp trượt từ phải'},
+  {id:3,name:'Trang giấy + Bút ký',preview:'journal',desc:'Cuốn thư · nhật ký nổi · mở rộng bút ký'}
+];
+const TABS = [
+  {id:'character',name:'Nhân vật',glyph:'人'}, {id:'training',name:'Tu luyện',glyph:'修'},
+  {id:'time',name:'Thời gian',glyph:'時'}, {id:'economy',name:'Kinh tế',glyph:'市'},
+  {id:'story',name:'Cốt truyện',glyph:'卷'}, {id:'system',name:'Hệ Thống',glyph:'印'}
+];
+const CANH = ['tý','sửu','dần','mão','thìn','tỵ','ngọ','mùi','thân','dậu','tuất','hợi'];
+// === STATE: thay bố cục không dựng lại tab, không xóa lựa chọn nhân vật ===
+const STORAGE_KEY='hongduc.ui.layout.v01';
+const state={layout:1,tab:'character',theChat:0,journalExpanded:false};
+try { const n=Number(localStorage.getItem(STORAGE_KEY)); if(LAYOUTS.some(x=>x.id===n))state.layout=n; } catch(error) { /* Trình duyệt riêng tư: dùng trạng thái trong phiên. */ }
+const $=id=>document.getElementById(id);
+const pageHead=(id,title,kicker)=>'<div class="page-head"><div><p class="eyebrow">'+kicker+'</p><h2 id="title-'+id+'">'+title+'</h2></div><span class="seal">KHUNG<br>ĐANG XÂY DỰNG</span></div>';
+// === RENDER: mỗi trang là một hàm riêng, dễ bổ sung về sau ===
+function renderCharacter(){
+  $('page-character').innerHTML=pageHead('character','NHÂN VẬT','01 / Bản mệnh')+'<article class="card"><div class="portrait"><div class="ink-mountain" aria-hidden="true">Tiên lộ</div><div><p class="eyebrow">Kẻ phàm cầu đạo</p><h3>Vô Danh</h3><span class="tag">Luyện Khí tầng 1</span><span class="tag">Hồi 1 · Ngoại môn</span></div></div><h3>Tứ trụ bẩm sinh</h3><div class="pillars"><div class="stat"><strong>01 · LINH CĂN</strong><p>Tạp lục linh căn - 36 ngày/chu thiên</p></div><div class="stat"><label for="constitution">02 · THỂ CHẤT</label><select id="constitution">'+MODIFIERS.theChat.map((x,i)=>'<option value="'+i+'">'+x.name+'</option>').join('')+'</select><small>10 thể chất · chọn xem khung, chưa áp dụng hệ số</small></div><div class="stat"><strong>03 · NGỘ TÍNH</strong><p>5 / 10 <small>— thang 1-10</small></p></div><div class="stat"><strong>04 · THẦN THỨC</strong><p>10 điểm <small>— minh họa</small></p></div></div><div class="progress-row"><b>EXP · Tiến độ cảnh giới</b><span>12 / 100</span></div><div class="progress" role="progressbar" aria-label="EXP mẫu" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12"><i></i></div><div class="mini-grid" style="margin-top:16px"><div class="stat"><strong>TUỔI</strong>16 năm</div><div class="stat"><strong>THỌ NGUYÊN</strong>100 năm</div></div></article><p class="notice">Khung - đang xây dựng. Đây là hồ sơ ví dụ, chưa tạo nhân vật thật.</p><article class="card"><p class="eyebrow">Luật nền đã duyệt</p><h3>Một đời · một tiên lộ</h3><p>Hardcore: chết là mất save. Đồng nhân Phàm Nhân Tu Tiên; 23 hệ thống sẽ bổ sung dần.</p><small>Luật mới được ghi chú, chưa có logic thực thi.</small></article>';
+  $('constitution').addEventListener('change',event=>{state.theChat=Number(event.target.value);});
+}
+function renderTraining(){
+  $('page-training').innerHTML=pageHead('training','TU LUYỆN','02 / Chu thiên')+'<article class="card"><h3>Công thức lõi</h3><p class="formula">T_chuthiên = C_realm x LR(linh căn) x TC(thể chất) x CP(công pháp) x MT(môi trường) x DL(ngày/đêm)</p><p class="muted">Tính theo ngày/chu thiên. Hệ số trong MODIFIERS chỉ là mẫu, chưa cân bằng.</p><table><caption>Số ngày cơ sở minh họa · C_realm = 1</caption><thead><tr><th>Linh căn</th><th>Ngày/chu thiên</th></tr></thead><tbody>'+MODIFIERS.linhCan.map(x=>'<tr><td>'+x.name+'</td><td>'+x.days+'</td></tr>').join('')+'</tbody></table></article><p class="notice">Hằng số sẽ được tinh chỉnh bằng mô phỏng. Mốc: tạp lục 25-40 năm tới LK13; thiên linh căn 5-8 năm.</p><article class="card"><h3>Tĩnh tọa · khung</h3><p>Phòng tạp dịch · Công pháp nhập môn · Ban ngày</p><button type="button" disabled>Vận công — chưa xây dựng</button></article>';
+}
+function renderTime(){
+  $('page-time').innerHTML=pageHead('time','THỜI GIAN','03 / Nhật nguyệt')+'<article class="card"><p class="eyebrow">Đồng hồ 12 canh · mô phỏng tĩnh</p><div class="clock" aria-label="12 canh, hiện tại canh mão">'+CANH.map((x,i)=>'<span class="'+(i===3?'active':'')+'" style="--a:'+i*30+'deg">'+x+'</span>').join('')+'<div class="clock-center"><small>☀ BAN NGÀY</small><strong>Canh mão</strong><small>Giờ mẫu · không chạy</small></div></div><p style="text-align:center"><b>Ngày 1 - canh mão - Tháng 1 - Năm 1</b></p><span class="cumulative">TỔNG THỜI GIAN · 0 năm · 0 tháng · 0 ngày</span></article><article class="card"><h3>Quy tắc tua thời gian</h3><ul><li>Chỉ lặp hành động đã làm tại đúng chỗ.</li><li>Thiếu nguyên liệu là dừng.</li><li>Khung - đang xây dựng; chưa có thời gian hay tua thật.</li></ul></article>';
+}
+function renderEconomy(){
+  $('page-economy').innerHTML=pageHead('economy','KINH TẾ','04 / Phường thị')+'<article class="card"><h3>Bảng giá phường thị</h3><p class="muted">8 vật phẩm mẫu · giá tính bằng linh thạch · vuốt ngang để xem đủ cột</p><div class="table-scroll" tabindex="0" role="region" aria-label="Bảng thị trường, cuộn ngang"><table class="market"><thead><tr><th>Vật phẩm</th><th>Phẩm cấp</th><th>Giá gốc</th><th>Giá hiện tại</th><th>Tồn kho</th></tr></thead><tbody>'+ITEMS.map(x=>'<tr><td>'+x.name+'</td><td>'+x.grade+'</td><td>'+x.base+'</td><td>'+x.price+'</td><td>'+x.stock+'</td></tr>').join('')+'</tbody></table></div><p class="notice">Toàn bộ thư viện ITEMS khoảng 350 vật phẩm sẽ nằm ở đây dưới dạng dữ liệu. Chưa mua bán thật.</p></article><article class="card"><h3>Cơ chế đã duyệt · chờ bổ sung</h3><ul><li>Giám định.</li><li>Hàng giả 4 dạng — chi tiết sẽ bổ sung.</li><li>Giết người mua hàng.</li><li>Đấu giá ngầm.</li><li>Lũng đoạn tông môn.</li><li>Thuế cấm địa 50-70%.</li><li>Cống phẩm.</li></ul></article>';
+}
+function renderStory(){
+  $('page-story').innerHTML=pageHead('story','CỐT TRUYỆN','05 / Mười hai hồi')+'<article class="card"><p class="muted">Khung - đang xây dựng. Hồi 1 mở; hồi 2-12 khóa. Mục tiêu là mô tả khung.</p><ol class="chapters">'+HOI.map((x,i)=>'<li class="'+(x.open?'open':'locked')+'"><span class="chapter-num">'+String(i+1).padStart(2,'0')+'</span><div><span class="lock">'+(x.open?'◉ ĐANG MỞ':'▣ ĐÃ KHÓA')+'</span><h3>'+x.title+'</h3><p>'+x.goal+'</p></div></li>').join('')+'</ol></article>';
+}
+function renderSystem(){
+  $('page-system').innerHTML=pageHead('system','HỆ THỐNG','06 / Ấn ký bản thảo')+'<h3>Chọn cách mở cuốn thư</h3><p class="muted">Đổi bố cục giữ nguyên trang và lựa chọn thể chất. Bố cục được nhớ trên trình duyệt này.</p><div class="layouts">'+LAYOUTS.map(x=>'<button type="button" class="layout-choice" data-layout-choice="'+x.id+'" aria-pressed="false"><span class="preview '+x.preview+'" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span><strong>'+x.id+' · '+x.name+'</strong><small>'+x.desc+'</small></span></button>').join('')+'</div><p class="notice">AI sẽ tích hợp ở mốc sau - hiện chưa có</p><article class="card"><h3>Lưu / tải · khung</h3><p>Chưa có save nhân vật; hiện chỉ lưu lựa chọn bố cục bằng localStorage.</p><button type="button" disabled>Lưu hành trình</button> <button type="button" disabled>Tải hành trình</button></article><article class="card"><h3>Lộ trình phát triển</h3><ol class="roadmap"><li><b>M1 · Lõi số liệu</b> — chờ mô phỏng & cân bằng.</li><li><b>M2 · Giao diện</b> — V0.1, ba bố cục bản khung.</li><li><b>M3 · Lớp AI + JSON hợp đồng</b> — chưa tích hợp.</li><li><b>M4 · Nội dung 12 hồi</b> — đang có sơ đồ.</li><li><b>Test iPhone</b> — khung ưu tiên 414 × 896.</li></ol><small>23 hệ thống sẽ bổ sung dần vào các mốc này.</small></article>';
+  document.querySelectorAll('[data-layout-choice]').forEach(button=>button.addEventListener('click',()=>setLayout(Number(button.dataset.layoutChoice))));
+}
+// === NAVIGATION & LAYOUT: không render lại nội dung khi đổi chế độ ===
+function renderNavigation(){
+  $('bottom-nav').innerHTML=TABS.slice(0,5).map(x=>'<button type="button" data-tab="'+x.id+'"><b aria-hidden="true">'+x.glyph+'</b>'+x.name+'</button>').join('');
+  $('drawer-nav').innerHTML=TABS.map((x,i)=>'<button type="button" data-tab="'+x.id+'">'+x.name+'<small>0'+(i+1)+'</small></button>').join('');
+  document.querySelectorAll('[data-tab]').forEach(button=>button.addEventListener('click',()=>showTab(button.dataset.tab)));
+}
+function showTab(id){
+  if(!TABS.some(x=>x.id===id))return;
+  state.tab=id;
+  TABS.forEach(tab=>{$('page-'+tab.id).hidden=tab.id!==id;});
+  document.querySelectorAll('[data-tab]').forEach(button=>{if(button.dataset.tab===id)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
+  setMenu(false);window.scrollTo(0,0);
+}
+function syncGeometry(){
+  const root=document.documentElement.style;
+  root.setProperty('--top',$('header').offsetHeight+'px');
+  root.setProperty('--bottom',(state.layout===2?0:$('bottom-nav').offsetHeight)+'px');
+  root.setProperty('--journal',(state.layout===3?$('journal').offsetHeight:0)+'px');
+}
+function setLayout(id){
+  if(!LAYOUTS.some(x=>x.id===id))return;
+  state.layout=id;document.body.dataset.layout=String(id);
+  $('quick-layout').textContent='Bố cục '+id+' · '+LAYOUTS[id-1].name+' ↻';
+  document.querySelectorAll('[data-layout-choice]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.layoutChoice)===id)));
+  try{localStorage.setItem(STORAGE_KEY,String(id));}catch(error){$('toast').textContent='Không thể nhớ bố cục trong chế độ riêng tư. Vẫn có thể đổi trong phiên này.';}
+  syncGeometry();
+}
+function setMenu(open){
+  $('drawer').classList.toggle('is-open',open);$('drawer').inert=!open;
+  $('drawer').setAttribute('aria-hidden',String(!open));$('scrim').hidden=!open;
+  $('menu-button').setAttribute('aria-expanded',String(open));
+  if(open)$('close-menu').focus();
+}
+function toggleJournal(){
+  state.journalExpanded=!state.journalExpanded;
+  $('journal').classList.toggle('expanded',state.journalExpanded);
+  $('journal-toggle').setAttribute('aria-expanded',String(state.journalExpanded));
+  $('journal-toggle').lastElementChild.textContent=state.journalExpanded?'Thu gọn ▾':'Mở rộng ▴';syncGeometry();
+}
+// === BOOT: độc lập, không mạng; tương lai thêm game engine sau registries ===
+renderCharacter();renderTraining();renderTime();renderEconomy();renderStory();renderSystem();renderNavigation();
+$('quick-layout').addEventListener('click',()=>setLayout(state.layout%3+1));
+$('system-button').addEventListener('click',()=>showTab('system'));
+$('menu-button').addEventListener('click',()=>setMenu(true));
+$('close-menu').addEventListener('click',()=>{setMenu(false);$('menu-button').focus();});
+$('scrim').addEventListener('click',()=>setMenu(false));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){setMenu(false);$('menu-button').focus();}});
+$('journal-toggle').addEventListener('click',toggleJournal);
+window.addEventListener('resize',syncGeometry);
+showTab(state.tab);setLayout(state.layout);
+</script>
+</body>
+</html>
