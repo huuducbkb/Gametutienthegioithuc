@@ -142,3 +142,43 @@ Mỗi bậc chức vị được vào khu vực tương ứng của tông; vào 
 - Định kỳ: Đại Khảo (thi đấu định hạng, thưởng phạt rõ), phát tài nguyên định kỳ, bầu quản sự, tông chủ bế quan (lúc phe phái nhúc nhích mạnh nhất).
 - Đột phát: đệ tử mất tích, trộm công pháp (bạn cùng phòng có thể thành nghi phạm, hoặc chính là thủ phạm), mỏ bị tấn công, gián điệp Ma đạo tiềm nhập, luận kiếm khách quý.
 - Hậu quả kéo dài: kết quả Đại Khảo đổi thứ hạng, bầu quản sự đổi thế lực phe lên xuống, xử oan người trong án gián điệp sinh oán hận âm thầm về sau.
+
+## 8. HỆ ĐAN ĐỘC VÀ KHÁNG DƯỢC
+- Thang độc D: 0-100, bước 0,1 (lưu nguyên 0-1000). Độc tích lũy theo từng loại đan, không trộn lẫn: mỗi loại đan có một cột D riêng.
+- Bảng 9 đan phổ biến V1, mỗi đan có độ độc D cố định ghi trong thanh ghi hằng số CORE (giá trị D từng đan chốt ở M1 khi dựng bảng đan).
+- Ngưỡng hiệu ứng của D: 30 suy yếu (giảm hệ số tu luyện và chiến đấu), 60 thương tổn nội tạng định kỳ, 90 nguy kịch, 100 tử vong.
+- Ngoại lệ lúc D chạm 100: nếu cứu kịp lúc (đan giải độc xứng tầm hoặc NPC y thuật đủ cấp) thì sống sót nhưng D chỉ reset về 60, không về 0. Một lần chạm cửa tử là để lại di chứng.
+- Kháng dược: mỗi loại đan có bộ đếm kháng riêng n (số viên đã dùng), hiệu quả giảm theo công thức 1/(1+0,02n). Càng dùng nhiều cùng một đan, càng về sau càng kém; buộc người chơi xen kẽ đan khác hoặc nghỉ xả kháng.
+- Xả độc và xả kháng nhiều cách: ngừng dùng đan một thời gian (n giảm dần theo tháng), đan giải độc, tẩy tủy (mục 20), linh tuyền đặc biệt. Mỗi cách có chi phí và tốc độ riêng.
+- Đan hỗ trợ tu luyện là con dao hai lưỡi: tăng tốc ngắn hạn nhưng tích độc D và kháng dược dài hạn. Đây là trục căng thẳng kinh điển của cả hệ.
+
+## 9. HỆ TÂM CẢNH VÀ CHẤP NIỆM
+- Tâm cảnh thang 0-100, khởi điểm 70. Lưu nguyên 0-1000, bước 0,1.
+- Tâm cảnh chi phối: hệ số tu luyện TM = 0,8 + TC/250 (TC 100 ra 1,2, TC 50 ra 1,0); khả năng kháng Tâm Ma Kiếp; một số cửa ngộ công pháp yêu cầu tầm tâm cảnh.
+- Bảng 8 chấp niệm: mỗi chấp niệm là một niềm tin hoặc ràng buộc cá nhân (tham sống sợ chết, hiếu thắng, tình nghĩa, báo thù...). Mỗi chấp niệm có hai cột: giữ thì tâm cảnh và hiệu ứng thay đổi thế nào, buông thì thế nào. Danh sách 8 chấp niệm cụ thể chốt ở M1.
+- Chấp niệm là lựa chọn nhân vật, không có đáp án đúng: giữ chấp niệm thường giảm tâm cảnh nhưng đổi lại hiệu ứng thực chiến hoặc cơ hội nhất định; buông chấp niệm tăng tâm cảnh nhưng phải trả giá thật (mất ân nhân, mất danh dự, hao tài nguyên).
+- Nút thắt vĩnh viễn: chấp niệm giữ qua biến cố ép buộc mà không buông sẽ thắt thành nút, trần tâm cảnh giảm còn 80 vĩnh viễn. Tâm Ma Kiếp không phải khuôn mẫu cố định: nội dung kiếp sinh từ đúng nút thắt thật của nhân vật (sợ chết gặp kiếp tử, hiếu thắng gặp kiếp nhục nhã).
+- Chọn phương án thực dụng (lợi ích đặt trước đạo tâm) trong biến cố lớn: trừ 10 trần tâm cảnh vĩnh viễn mỗi lần, cộng dồn với nút thắt, không hoàn tác. Trần đã hạ không đan nào mua lại được: đây là con đường kiếp cứng nhất của hệ.
+- Tâm cảnh hồi chậm (tĩnh tọa, danh thắng, tri kỷ, rượu) và sụp nhanh (thân hữu chết, phản bội, sát nhân lần đầu, đột phá thất bại). Biến động tâm cảnh lớn phát sự kiện qua đồng hồ CORE để các hệ khác nghe.
+
+## 10. BỐN NGHỀ CHẾ TÁC: ĐAN DƯỢC, VŨ KHÍ PHÁP BẢO, PHÙ LỤC, TRẬN PHÁP
+- Bốn nghề dùng chung khung kỹ năng: mỗi nghề có 5 bậc thợ (tập sự, thục luyện, tinh thông, đại thành, tông sư), nguyên liệu, thời gian chế tác theo phút, tỉ lệ hỏng.
+- Tất định: kết quả chế tác do CORE roll từ seed và chỉ số; cùng trạng thái luôn ra cùng kết quả. Thất bại là mất nguyên liệu và thời gian, không hoàn vốn.
+- Đan Dược: từ đan phàm (cầm máu, giải độc nhẹ) tới đan hỗ trợ đột phá. Một mẻ tốn nhiều canh; thất bại nặng có thể nổ lò (thương thế, cháy phòng luyện đan). Đan tốt gắn độc D theo mục 8.
+- Vũ Khí Pháp Bảo: rèn từ quặng và nguyên liệu linh tính; pháp bảo có phẩm cấp, cần dưỡng luyện lâu dài (mục 21) mới lên cấp; hư hỏng phải sửa bằng nguyên liệu cùng loại.
+- Phù Lục: bùa một lần dùng, tốn bút mực giấy linh khí; bùa mạnh bắt buộc giấy bút xứng tầm. Vẽ hỏng là mất nguyên liệu.
+- Trận Pháp: bày từ trận kỳ, trận bàn, linh thạch làm mắt trận; dùng bảo vệ động phủ, bẫy địch, tụ linh khí. Trận có độ bền theo thời gian, trấn giữ lâu dài tốn chi phí duy trì.
+- Chuyên sâu: chọn một nghề chính; nghề khác học được nhưng bị hệ số đa nghề giảm dần theo số nghề theo học (con số chốt M1). Cổng kiểm soát sức mạnh chế tác là nguyên liệu quý (mục 6, 14), không phải điểm kỹ năng: thợ giỏi không nguyên liệu vẫn vô dụng.
+
+## 11. HỆ CHIẾN ĐẤU, THƯƠNG THẾ VÀ BẢNG CHỈ SỐ NHÂN VẬT
+- Nguyên tắc: NPC và người chơi dùng chung một bảng chỉ số, cùng công thức. NPC không được cộng ẩn ngoài hợp đồng công khai.
+- Bảng chỉ số 5 nhóm:
+  A. Bẩm sinh: linh căn, thể chất bẩm sinh, ngộ tính, huyết mạch (V1 chỉ là modifier đơn giản).
+  B. Thể chất rèn luyện: khí huyết, sức mạnh, thân pháp, kháng tính ngũ cảm.
+  C. Công pháp: mỗi bộ có đặc trưng (công, thủ, thân, bổ trợ), bậc tu luyện công pháp quyết định hiệu lực.
+  D. Trang bị: vũ khí pháp bảo, phù mang theo, trận đã bày, đan buff tạm thời.
+  E. Lá bài tẩy ẩn: độc (mục 8), ma chiêu (mục 18), thủ đoạn bí mật, lợi dụng địa hình và biến động môi trường (mục 15).
+- Trục thiết kế: đánh thắng cảnh giới cao hơn chỉ khả thi qua nhóm E và biến động môi trường, không bao giờ qua đấu chính diện C-D. Chênh cảnh giới trong đấu chính diện gần như tuyệt đối (triết lý mục 0). Đây là thế giới của độc, của mưu, không của đấu khí vũ lực.
+- Chiến đấu theo lượt, engine tính hết: mỗi hiệp engine tính điểm hành động từ chỉ số, biến động và roll, ghi nhật ký; AI chỉ đọc kết quả và diễn đạt. Kết cục do engine: thắng, thua, bỏ chạy, đầu hàng, đồng quy.
+- Thương thế có loại rõ: chảy máu, gãy xương, thương nội tạng, tẩu hỏa nhập ma. Thương nặng để lâu thành di chứng vĩnh viễn (giảm chỉ số vĩnh viễn). Chữa cần đan dược, y thuật NPC, thời gian nghỉ; tự chữa nguy hiểm cao.
+- Chết trong chiến đấu là chết thật: mất save (mục 13).
