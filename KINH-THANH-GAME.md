@@ -182,3 +182,62 @@ Mỗi bậc chức vị được vào khu vực tương ứng của tông; vào 
 - Chiến đấu theo lượt, engine tính hết: mỗi hiệp engine tính điểm hành động từ chỉ số, biến động và roll, ghi nhật ký; AI chỉ đọc kết quả và diễn đạt. Kết cục do engine: thắng, thua, bỏ chạy, đầu hàng, đồng quy.
 - Thương thế có loại rõ: chảy máu, gãy xương, thương nội tạng, tẩu hỏa nhập ma. Thương nặng để lâu thành di chứng vĩnh viễn (giảm chỉ số vĩnh viễn). Chữa cần đan dược, y thuật NPC, thời gian nghỉ; tự chữa nguy hiểm cao.
 - Chết trong chiến đấu là chết thật: mất save (mục 13).
+## 12. HỆ NPC VÀ QUAN HỆ
+- NPC dùng chung bảng chỉ số 5 nhóm A-E với người chơi (mục 11). Chỉ số sinh ra lúc tạo và lớn lên theo thời gian game: NPC tu luyện, đột phá, tranh đấu, chết. Không NPC đứng chờ người chơi.
+- Mỗi NPC có: cảnh giới, công pháp, thể chất, ngộ tính, phe phái, chức vị, lịch trình theo canh (mục 4), quan hệ riêng với người chơi và NPC khác.
+- Lịch trình theo canh: NPC xuất hiện đúng nơi đúng lúc (trưởng lão bế quan thì không gặp được).
+- Cảm tình với người chơi là số nguyên, tích lũy từ hành vi (tặng quà, cứu giúp, cùng phe, hoàn thành nhiệm vụ; ngược lại là thất hứa, tranh giành, hại). Cảm tình chi phối: nhận nhiệm vụ hay không, bán rẻ hay đắt, tiết lộ tin hay giấu, che chở hay bán đứng.
+- Quan hệ NPC với NPC: thù oán, ân nghĩa, phe phái tồn tại độc lập với người chơi; xen vào là bị cuốn theo cuộc chơi của họ.
+- Cấp trên trực tiếp (mục 7.3) là NPC quan trọng nhất giai đoạn đầu: quyết định nhiệm vụ, đánh giá, che chở hoặc gây khó dễ.
+- Hàn Lập là NPC đặc biệt: đúng timeline nguyên tác, xuất hiện đúng thời điểm lịch sử, mạnh lên đúng như truyện; cơ duyên của Hàn Lập không khả dụng cho người chơi (mục 0).
+
+## 13. HỆ CHẾT CHÓC VÀ ĐẠO TIÊU
+- Chết là mất save: toàn bộ tiến trình, vật phẩm, quan hệ bị xóa vĩnh viễn. Không hồi sinh, không đan cứu chết, không save thủ công.
+- Nguyên nhân chết: thương thế quá nặng (mục 11), độc D chạm 100 không cứu kịp (mục 8), tẩu hỏa nhập ma khi đột phá thất bại (mục 5), bị giết, thọ nguyên hết (mục 20).
+- NPC chết cũng là chết thật: kẻ thù đã giết không quay lại; oán hận có thể để lại cho người thân kẻ chết (mục 12, 22).
+- Giết NPC để lại chứng cứ (mục 7.4) và nghiệp (mục 19): giết vô tội là nghiệp nặng, giết nơi đông người là tự đào hố.
+- V1 không có chơi tiếp bằng hậu duệ: chết là kết thúc, chơi lại là nhân vật mới từ đầu.
+
+## 14. HỆ KHÔNG GIAN VÀ MÊ CUNG CẤM ĐỊA
+- Mê cung sinh từ seed thế giới qua RNG CORE: cùng seed cùng cấu trúc; sinh theo tầng khi vào, tất định.
+- Không minimap miễn phí: phải tự ghi nhớ hoặc vẽ bằng giấy bút (vật phẩm); hết giấy mực là mất bản đồ. Lạc là lạc thật.
+- Cấm địa có tầng: sâu hơn nguy hiểm hơn, nguyên liệu quý gắn tầng sâu (mục 6). Huyết Sắc Cấm Địa mở 30 năm một lần theo danh ngạch (mục 7.7) là cấm địa trung tâm hồi 2.
+- Cơ quan bẫy do engine đặt, phát hiện qua hàm kiểm định chung CORE (mục 3): trượt là không thấy, trúng là trúng.
+- Di chuyển giữa vùng tốn phút qua đồng hồ CORE; đường xa có yêu thú, cướp, thời tiết xấu (mục 15). V1 hạ giới không dịch chuyển tức thời.
+
+## 15. HỆ BIẾN ĐỘNG MÔI TRƯỜNG
+- Hệ số MT trong công thức chu thiên (mục 5): linh khí đậm tu nhanh, ô uế tạp loạn tu chậm. Giá trị từng vùng ghi trong thanh ghi hằng số CORE kèm chú thích nguồn duyệt.
+- Chu kỳ ngày đêm, tháng, mùa: ảnh hưởng tu luyện (Thái Âm đêm x2 ngày x0,5), yêu thú (mục 23), tầm nhìn mê cung (mục 14).
+- Biến động thiên nhiên theo seed nhưng tất định: bão, linh triều, điểm linh khí bùng nổ, yêu thú di trú đúng lịch sử seed; ai biết trước (mục 16) có lợi thế thật.
+- Biến động nhân tạo: chiến tranh tông phái, mỏ cạn, khai quật thay đổi vĩnh viễn vùng đó (mục 6, 7.8).
+
+## 16. HỆ THÔNG TIN VÀ TIN ĐỒN
+- Tin là tài nguyên: tin đúng lúc đúng việc có giá trị thật (mua rẻ bán đắt mục 6, biết trước cấm địa mở, phe phái sắp đảo).
+- Tin đồn có độ chính xác và độ tươi: có thể sai, quá hạn, bị xuyên tạc có chủ đích. Engine gắn nguồn gốc và thời điểm cho mỗi tin.
+- Nguồn tin: nói chuyện NPC (phụ thuộc cảm tình, mục 12), tin đồn chợ phiên, mật báo trả tiền, quan sát, tàng thư tông.
+- Tung tin giả là một đường chơi: yếu lòng tin và bằng chứng quyết định bị lật mặt hay không; lật mặt thì trả giá uy tín và quan hệ.
+
+## 17. HỆ LINH ÁP VÀ CHÈN ÉP
+- Linh áp là áp lực cảnh giới: chênh lớn cảnh giới gây tác động vật lý thật lên thân thể và tâm thần.
+- Chênh 2 đại cảnh trở lên (Luyện Khí, Trúc Cơ, Kim Đan, Nguyên Anh, Hóa Thần) là tê liệt: không cưỡng lại bằng ý chí; chỉ thoát bằng tránh từ xa hoặc hóa giải bằng vật ngoài thân (trận pháp, phù, pháp bảo).
+- Chênh 1 đại cảnh: áp lực rõ, giảm điểm hành động (mục 11), tâm cảnh non dễ hoảng loạn.
+- Cùng đại cảnh: cảnh giới cao hơn chỉ tạo cảm giác nặng nề nhẹ, mang tính cảnh báo.
+- Nguồn linh áp: tu giả cao cảnh, yêu thú cấp cao (mục 23), pháp bảo linh tính mạnh, một số vùng cấm địa chèn ép riêng.
+- Chèn ép không gian: vùng không gian nặng nề lệch thường, hạn chế thân pháp, giảm hiệu quả công pháp; cửa ải tự nhiên chặn kẻ yếu.
+
+## 18. HỆ MA CHIÊU VÀ BẪY
+- Ma chiêu là đường tắt: học nhanh hơn chính đạo, mạnh sớm; cái giá là nghiệp (mục 19).
+- Mỗi lần vận ma chiêu +1 nghiệp; luyện ma công +30; luyện sâu +100 (mục 19). Nghiệp tăng đẩy đạo tâm vào vùng ám đạm, nghiệp chướng, làm Tâm Ma Kiếp nguy hiểm hơn (mục 9).
+- Ma chiêu để lại dấu vết: người có nhãn lực hoặc đồng ma đạo nhận ra; dùng nơi đông người là tự lộ.
+- Bẫy do engine đặt: cấm địa, động phủ hoang, cổ mộ có cơ quan; phát hiện qua hàm kiểm định chung CORE, trượt là trúng, không roll may mắn lần hai.
+- Bẫy do NPC đặt: NPC có mưu toan (giết người đo bảo, hãm hại) giăng bẫy cho người chơi hoặc NPC khác; người chơi cũng tự bày được (trận pháp mục 10).
+- Cạm bẫy xã hội: dụ dỗ, lừa gạt, mượn dao giết người cũng là bẫy; engine ghi chứng cứ (mục 7.4) và nghiệp (mục 19) đầy đủ.
+
+## 19. HỆ THIÊN ĐẠO VÀ TAI KIẾP (BẢNG NGHIỆP)
+- Nghiệp là số nguyên -9999 đến +9999, khởi điểm 0. Lưu và tính trong CORE, mọi thay đổi ghi nhật ký.
+- Bảng giá trị hành động (đã chốt): giết vô tội +50; cứu người -30; luyện ma công +30; mỗi lần vận ma chiêu +1; luyện ma công sâu +100; nghịch thiên kéo thọ +200. Mở rộng theo nội dung, mỗi giá trị mới phải được chủ game duyệt.
+- Hệ số kiếp = 1 + N/2500 với N nghiệp dương (N +9999 ra 5,0). Nghiệp âm có sàn: kiếp không nhẹ hơn 60% độ khó chuẩn.
+- Ngưỡng đạo tâm theo nghiệp: dưới 0 thanh minh; 0-250 vướng bụi; 250-750 ám đạm; 750-2000 nghiệp chướng; trên 2000 sát khí như thực. Chi phối cách NPC cảm nhận và cách engine mô tả nhân vật.
+- 4 kiếp mốc: Trúc Cơ Tâm Ma Kiếp (sinh từ nút thắt thật, mục 9), Kim Đan Đan Kiếp, Nguyên Anh Lôi Kiếp, Hóa Thần Phong Hỏa Kiếp. Nghiệp cao làm kiếp mạnh qua hệ số; vượt kiếp không xóa nghiệp.
+- Thiên đạo không thiện không ác: chỉ kết toán theo nghiệp, không thưởng người tốt máy móc, không trừng kẻ dữ không để lại chứng cứ. Tai kiếp là đòi nợ.
+- Chuyển kiếp và trì hoãn kiếp (module hoãn, mục 28): mỗi chuyển kiếp +100 nghiệp, trì hoãn +10% độ khó lần kế tiếp, trước kiếp có thiên tượng báo trước. V1 chỉ cần lưu và cộng trừ nghiệp đúng.
