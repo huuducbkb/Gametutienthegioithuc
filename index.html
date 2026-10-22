@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <!--
+MỤC LỤC MODULE V0.2
+Khung giao diện V0.1 nguyên bản: dòng 17.
+Mô đun THANH GHI - dòng 197.
+Mô đun CORE - dòng 232.
+Mô đun THỜI GIAN - dòng 286.
+Mô đun SINH LÝ - dòng 305.
+Mô đun TU LUYỆN - dòng 365.
+Mô đun THẾ GIỚI VÀ LƯU - dòng 436.
+Mô đun KIỂM THỬ HỒI QUY - dòng 452.
+Mô đun GIAO DIỆN - dòng 535.
+Giao tiếp công khai qua CORE và các hàm có hợp đồng tại từng mô đun.
+-->
+
+<!--
 HỒNG ĐỨC TU TIÊN LỘ V1 • bản khung V0.1
 Thiết kế được duyệt: giấy dó mực tàu; 3 bố cục di động.
 Hardcore: chết là mất save. Đồng nhân Phàm Nhân Tu Tiên.
@@ -34,7 +48,7 @@ Một tệp UTF-8 độc lập; không CDN, không tài nguyên bên ngoài.
 <section id="page-system" aria-labelledby="title-system" hidden></section>
 <footer>Bản khung V0.1 - giao diện<br>Giấy dó · Mực tàu · Hành trình đang thành hình</footer>
 </main>
-<aside class="journal-strip" id="journal" aria-label="Bút ký hệ thống"><div class="journal-inner"><button type="button" id="journal-toggle" aria-expanded="false"><b>BÚT KÝ · khung</b><span>Mở rộng ▴</span></button><div class="log-lines" id="log-lines" tabindex="0"><p>卯 · Mở cuốn thư — bước đầu tiên trên tiên lộ.</p><p>卯 · Khung giao diện đã sẵn sàng, chưa chạy thời gian thật.</p><p>卯 · 23 hệ thống sẽ dần được ghi vào bản thảo.</p></div></div></aside>
+<aside class="journal-strip" id="journal" aria-label="Bút ký hệ thống"><div class="journal-inner"><button type="button" id="journal-toggle" aria-expanded="false"><b>BÚT KÝ · khung</b><span>Mở rộng ▴</span></button><div class="log-lines" id="log-lines" tabindex="0"><p>Mão · Mở cuốn thư — bước đầu tiên trên tiên lộ.</p><p>Mão · Khung giao diện đã sẵn sàng, chưa chạy thời gian thật.</p><p>Mão · 23 hệ thống sẽ dần được ghi vào bản thảo.</p></div></div></aside>
 <nav class="bottom-nav" id="bottom-nav" aria-label="Năm trang chính"></nav>
 <div class="scrim" id="scrim" hidden></div>
 <aside class="drawer" id="drawer" aria-label="Mục lục gấp" aria-hidden="true" inert><div class="drawer-title"><div><p class="eyebrow">Bìa sách · Mục lục</p><h2>Sổ tay tiên lộ</h2></div><button id="close-menu" type="button" aria-label="Đóng mục lục">✕</button></div><p class="muted">Sáu trang bản thảo · cùng một hành trình</p><nav id="drawer-nav" aria-label="Tất cả trang"></nav><span class="seal">KHUNG<br>V0.1</span><p class="notice">Chưa có logic chơi. Mọi số liệu đều là ví dụ để theo dõi tiến độ.</p></aside>
@@ -92,9 +106,9 @@ const LAYOUTS = [
   {id:3,name:'Trang giấy + Bút ký',preview:'journal',desc:'Cuốn thư · nhật ký nổi · mở rộng bút ký'}
 ];
 const TABS = [
-  {id:'character',name:'Nhân vật',glyph:'人'}, {id:'training',name:'Tu luyện',glyph:'修'},
-  {id:'time',name:'Thời gian',glyph:'時'}, {id:'economy',name:'Kinh tế',glyph:'市'},
-  {id:'story',name:'Cốt truyện',glyph:'卷'}, {id:'system',name:'Hệ Thống',glyph:'印'}
+  {id:'character',name:'Nhân vật',glyph:'NV'}, {id:'training',name:'Tu luyện',glyph:'TL'},
+  {id:'time',name:'Thời gian',glyph:'TG'}, {id:'economy',name:'Kinh tế',glyph:'KT'},
+  {id:'story',name:'Cốt truyện',glyph:'CT'}, {id:'system',name:'Hệ Thống',glyph:'HT'}
 ];
 const CANH = ['tý','sửu','dần','mão','thìn','tỵ','ngọ','mùi','thân','dậu','tuất','hợi'];
 // === STATE: thay bố cục không dựng lại tab, không xóa lựa chọn nhân vật ===
@@ -112,7 +126,7 @@ function renderTraining(){
   $('page-training').innerHTML=pageHead('training','TU LUYỆN','02 / Chu thiên')+'<article class="card"><h3>Công thức lõi</h3><p class="formula">T_chuthiên = C_realm x LR(linh căn) x TC(thể chất) x CP(công pháp) x MT(môi trường) x DL(ngày/đêm)</p><p class="muted">Tính theo ngày/chu thiên. Hệ số trong MODIFIERS chỉ là mẫu, chưa cân bằng.</p><table><caption>Số ngày cơ sở minh họa · C_realm = 1</caption><thead><tr><th>Linh căn</th><th>Ngày/chu thiên</th></tr></thead><tbody>'+MODIFIERS.linhCan.map(x=>'<tr><td>'+x.name+'</td><td>'+x.days+'</td></tr>').join('')+'</tbody></table></article><p class="notice">Hằng số sẽ được tinh chỉnh bằng mô phỏng. Mốc: tạp lục 25-40 năm tới LK13; thiên linh căn 5-8 năm.</p><article class="card"><h3>Tĩnh tọa · khung</h3><p>Phòng tạp dịch · Công pháp nhập môn · Ban ngày</p><button type="button" disabled>Vận công — chưa xây dựng</button></article>';
 }
 function renderTime(){
-  $('page-time').innerHTML=pageHead('time','THỜI GIAN','03 / Nhật nguyệt')+'<article class="card"><p class="eyebrow">Đồng hồ 12 canh · mô phỏng tĩnh</p><div class="clock" aria-label="12 canh, hiện tại canh mão">'+CANH.map((x,i)=>'<span class="'+(i===3?'active':'')+'" style="--a:'+i*30+'deg">'+x+'</span>').join('')+'<div class="clock-center"><small>☀ BAN NGÀY</small><strong>Canh mão</strong><small>Giờ mẫu · không chạy</small></div></div><p style="text-align:center"><b>Ngày 1 - canh mão - Tháng 1 - Năm 1</b></p><span class="cumulative">TỔNG THỜI GIAN · 0 năm · 0 tháng · 0 ngày</span></article><article class="card"><h3>Quy tắc tua thời gian</h3><ul><li>Chỉ lặp hành động đã làm tại đúng chỗ.</li><li>Thiếu nguyên liệu là dừng.</li><li>Khung - đang xây dựng; chưa có thời gian hay tua thật.</li></ul></article>';
+  $('page-time').innerHTML=pageHead('time','THỜI GIAN','03 / Nhật nguyệt')+'<article class="card"><p class="eyebrow">Đồng hồ 12 canh · mô phỏng tĩnh</p><div class="clock" aria-label="12 canh, hiện tại canh mão">'+CANH.map((x,i)=>'<span class="'+(i===3?'active':'')+'" style="--a:'+i*30+'deg">'+x+'</span>').join('')+'<div class="clock-center"><small> BAN NGÀY</small><strong>Canh mão</strong><small>Giờ mẫu · không chạy</small></div></div><p style="text-align:center"><b>Ngày 1 - canh mão - Tháng 1 - Năm 1</b></p><span class="cumulative">TỔNG THỜI GIAN · 0 năm · 0 tháng · 0 ngày</span></article><article class="card"><h3>Quy tắc tua thời gian</h3><ul><li>Chỉ lặp hành động đã làm tại đúng chỗ.</li><li>Thiếu nguyên liệu là dừng.</li><li>Khung - đang xây dựng; chưa có thời gian hay tua thật.</li></ul></article>';
 }
 function renderEconomy(){
   $('page-economy').innerHTML=pageHead('economy','KINH TẾ','04 / Phường thị')+'<article class="card"><h3>Bảng giá phường thị</h3><p class="muted">8 vật phẩm mẫu · giá tính bằng linh thạch · vuốt ngang để xem đủ cột</p><div class="table-scroll" tabindex="0" role="region" aria-label="Bảng thị trường, cuộn ngang"><table class="market"><thead><tr><th>Vật phẩm</th><th>Phẩm cấp</th><th>Giá gốc</th><th>Giá hiện tại</th><th>Tồn kho</th></tr></thead><tbody>'+ITEMS.map(x=>'<tr><td>'+x.name+'</td><td>'+x.grade+'</td><td>'+x.base+'</td><td>'+x.price+'</td><td>'+x.stock+'</td></tr>').join('')+'</tbody></table></div><p class="notice">Toàn bộ thư viện ITEMS khoảng 350 vật phẩm sẽ nằm ở đây dưới dạng dữ liệu. Chưa mua bán thật.</p></article><article class="card"><h3>Cơ chế đã duyệt · chờ bổ sung</h3><ul><li>Giám định.</li><li>Hàng giả 4 dạng — chi tiết sẽ bổ sung.</li><li>Giết người mua hàng.</li><li>Đấu giá ngầm.</li><li>Lũng đoạn tông môn.</li><li>Thuế cấm địa 50-70%.</li><li>Cống phẩm.</li></ul></article>';
@@ -175,5 +189,427 @@ $('journal-toggle').addEventListener('click',toggleJournal);
 window.addEventListener('resize',syncGeometry);
 showTab(state.tab);setLayout(state.layout);
 </script>
+
+<!-- BẮT ĐẦU PHẦN NỐI V0.2; giữ nguyên khung V0.1 phía trên -->
+<script>
+'use strict';
+/*
+MÔ ĐUN THANH GHI V02 - thiết kế duyệt ngày 22/10/2026.
+Nguồn: KINH-THANH-GAME mục 2, 3, 4, 5, 9 và bộ số chủ nhân duyệt.
+Mọi hệ số là phân số nguyên; EXP có 10000 đơn vị mỗi điểm.
+Sinh lý dùng 1440 đơn vị mỗi điểm để suy giảm chính xác từng phút.
+Mọi hằng cân bằng nằm tại đây; dữ liệu khung V0.1 không được dùng tính toán.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+const HD_CAN_BANG=Object.freeze({
+ PHUT_NGAY:1440,PHUT_CANH:120,NGAY_THANG:30,THANG_NAM:12,EXP:10000,THANG_TC:10,
+ THANH:1440,TOI_DA_THANH:144000,TY_LE:10000,C_LK:100,NGUONG_TANG:1500,SO_TANG:13,
+ EXP_TRUC_CO:300000,KHO_TRUC_CO:30,P_MIN:5,P_MAX:95,TC_GOC:700,TC_TRAN:1000,
+ NGHIEP_DUONG:2500,NGHIEP_AM:5000,SAN_NGHIEP:[6,10],NUT_THAT:10,
+ D_NANG:600,D_NGUY:900,PHAT_D:5,DAN_DOT_PHA:10,BANG_TAM:5,
+ MAT_NUA:[1,2],MAT_B_NHE:[85,100],MAT_B_NANG:[2,3],TRAN_TC_MAT:150,
+ NOI_TANG_PHAT:3000,NOI_TANG_NGAY:30,LIET_GIUONG_NGAY:90,
+ BIEN_NHE:20,BIEN_TAU_HOA:40,NO_LK:25,NO_NANG:35,KHAT_LK:40,NO_TC:5,KHAT_TC:10,
+ TINH_THAN_NGAY:25,BUA_AN:40,LAN_UONG:60,NGU_PHUT:480,TINH_TOA_PHUT:960,
+ TICH_COC_NGAY:10,THUC_TOI_DA:2880,TA_VONG_TC:100,
+ DOI_KHI_HUYET:500,DOI_THUONG:1440,KHAT_GAP:2,
+ HAT_GIONG:20261022,BUOC_HAT:1831565813,MIEN_HAT:4294967296,
+ CANH:['Tý','Sửu','Dần','Mão','Thìn','Tỵ','Ngọ','Mùi','Thân','Dậu','Tuất','Hợi'],
+ LINH_CAN:[
+  {ten:'Thiên căn',hs:[5,1],ngay:1},{ten:'Đơn căn',hs:[16,5],ngay:5},
+  {ten:'Song căn',hs:[11,5],ngay:12},{ten:'Tam căn',hs:[8,5],ngay:25},
+  {ten:'Tạp ngũ căn',hs:[6,5],ngay:30},{ten:'Tạp lục căn',hs:[1,1],ngay:36}],
+ THE_CHAT:[
+  {ten:'Thần Lôi',hs:[1,5]},{ten:'Thái Âm',hs:[1,2],dem:[2,1]},
+  {ten:'Thuần Dương',hs:[2,1],dem:[1,2]},{ten:'Hỗn Nguyên',hs:[3,2]},
+  {ten:'Hấp Linh',hs:[1,2]},{ten:'Kiếm Đạo',hs:[1,1]},{ten:'Mị Cốt',hs:[1,1]},
+  {ten:'Kim Cang Bất Hoại',hs:[4,5]},{ten:'Băng Tâm Ngọc',hs:[11,10]},
+  {ten:'Huyết Ma',hs:[13,10]}],
+ COT_D:['Tụ Khí','Hồi Xuân','Trúc Cơ','Tích Cốc','Giải Độc','Dưỡng Thần','Bổ Huyết','Hộ Mạch','Ngưng Khí'],
+ KHOA_LUU:'hongduc.hanhtrinh.v02',KHOA_CHET:'hongduc.daotieu.v02',PHIEN_LUU:2
+});
+/*
+MÔ ĐUN CORE V02 - duyệt 22/10/2026, mục 2 và 3.
+Số học dùng BigInt trung gian: nhân toàn bộ tử, nhân toàn bộ mẫu, chốt mới chia.
+Một hàm kiemDinh duy nhất sở hữu Mulberry32 nguyên và mọi lượt d100.
+Nhật ký giữ toàn bộ lượt, gồm phút, hạt trước/sau, d100, xác suất và kết quả.
+Bus phát bản sao, đồng hồ chạy từng phút, không tự đổi hành động khi tua.
+Công khai: taoCore(hat,duLieu?) tạo một thế giới độc lập; giao diện trong kết quả.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+function HD_taoCore(hat=HD_CAN_BANG.HAT_GIONG,duLieu){
+ const C=HD_CAN_BANG,bus=new Map();
+ let phut=0,seed=hat>>>0,goc=seed,daChet=false,nhatKy=[];
+ const sao=x=>structuredClone(x);
+ // CORE: mọi mô đun gọi nguyen để từ chối số lẻ, vô cực và tràn miền an toàn.
+ function nguyen(x){if(!Number.isSafeInteger(x))throw Error('Cần số nguyên an toàn');return x;}
+ // CORE: nhận tử/mẫu nguyên, trả phân số tối giản; giữ dư giữa các nhịp.
+ function phanSo(n,d=1){n=BigInt(n);d=BigInt(d);if(d<=0n)throw Error('Mẫu số phải dương');let a=n<0n?-n:n,b=d;while(b){const r=a%b;a=b;b=r;}return [n/(a||1n),d/(a||1n)];}
+ function nhanPS(a,b){return phanSo(a[0]*BigInt(b[0]),a[1]*BigInt(b[1]));}
+ function congPS(a,b){return phanSo(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);}
+ // CORE: chỉ chốt một lần sau khi đã nhân đủ các hệ số; trả số nguyên an toàn.
+ function tinh(giaTri,heSo=[]){let n=BigInt(nguyen(giaTri)),d=1n;for(const f of heSo){n*=BigInt(f[0]);d*=BigInt(f[1]);}if(d<=0n)throw Error('Mẫu số sai');return nguyen(Number(n/d));}
+ function chan(x,a,b){return Math.max(a,Math.min(b,nguyen(x)));}
+ // CORE: bus công khai cho mọi mô đun; không trao biến nội bộ.
+ function nghe(ten,fn){if(!bus.has(ten))bus.set(ten,new Set());bus.get(ten).add(fn);return ()=>bus.get(ten).delete(fn);}
+ function phat(ten,data={}){for(const fn of [...(bus.get(ten)||[])])fn(sao(data));}
+ // CORE: ghi sự kiện công khai, trả bản sao, không lược bỏ lượt kiểm định.
+ function ghi(ten,data={}){const dong={phut,ten,...sao(data)};nhatKy.push(dong);phat('nhatKy',dong);return sao(dong);}
+ // CORE: đầu vào P nguyên và nhãn; duy nhất hàm này được phép sinh số ngẫu nhiên.
+ function kiemDinh(p,nhan='Kiểm định'){
+  if(daChet)throw Error('Đã đạo tiêu');p=chan(p,C.P_MIN,C.P_MAX);
+  const truoc=seed;seed=(seed+C.BUOC_HAT)>>>0;let t=seed;
+  t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);
+  const u=(t^(t>>>14))>>>0,roll=1+tinh(u,[[100,C.MIEN_HAT]]);
+  return ghi(nhan,{hatGoc:goc,hatTruoc:truoc,hatSau:seed,roll,P:p,thanhCong:roll<=p});
+ }
+ // CORE: tăng n phút; dừng khi chết hoặc điều kiện lặp không còn đúng.
+ function tien(n,dieuKien=()=>true){nguyen(n);if(n<0)throw Error('Không thể quay ngược thời gian');let daQua=0;
+  for(let i=0;i<n&&!daChet&&dieuKien();i++){phut++;phat('phut',{phut});daQua++;}phat('capNhat');return daQua;}
+ function chet(lyDo){if(daChet)return;daChet=true;ghi('Đạo tiêu',{lyDo});phat('chet',{lyDo});}
+ // CORE: mọi hiển thị số đi qua dinhDang; số lẻ chỉ sinh trong lớp hiển thị.
+ function dinhDang(loai,x){
+  if(loai==='exp'){const n=BigInt(x),am=n<0n?'-':'',v=n<0n?-n:n;return am+(v/10000n).toLocaleString('vi-VN')+','+String(v%10000n/100n).padStart(2,'0');}
+  if(loai==='thanh')return String(tinh(x,[[1,C.THANH]]));
+  if(loai==='tc')return String(tinh(x,[[1,C.THANG_TC]]));
+  if(loai==='ngay')return String(tinh(x,[[100,C.PHUT_NGAY]])/100).replace('.',',');
+  return nguyen(x).toLocaleString('vi-VN');
+ }
+ function xem(){return sao({phut,seed,goc,daChet});}
+ function xuat(){return sao({phut,seed,goc,daChet,nhatKy});}
+ // CORE: chỉ bộ lưu và kiểm thử gọi nhap trên thế giới mới, sau xác minh phiên bản.
+ function nhap(s){phut=nguyen(s.phut);seed=nguyen(s.seed)>>>0;goc=nguyen(s.goc)>>>0;daChet=!!s.daChet;nhatKy=sao(s.nhatKy);}
+ if(duLieu)nhap(duLieu);
+ return Object.freeze({nguyen,phanSo,nhanPS,congPS,tinh,chan,nghe,phat,ghi,kiemDinh,tien,chet,dinhDang,xem,xuat,nhap,nhatKy:()=>sao(nhatKy)});
+}
+/*
+MÔ ĐUN THỜI GIAN V02 - duyệt 22/10/2026, mục 4.
+1440 phút/ngày, 12 canh/ngày, 30 ngày/tháng, 12 tháng/năm.
+Quy ước giờ địa chi: Tý 23:00-00:59; ban ngày 06:00-17:59.
+Ngày đầu bắt đầu 00:00. Thời gian chỉ đọc từ CORE, không có bộ đếm riêng.
+Công khai: xem(phut?) trả lịch và ngày/đêm; chuoi(phut?) trả chuỗi tiếng Việt.
+Sự kiện canh, ngay phát qua CORE. Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+function HD_taoThoiGian(core){
+ const C=HD_CAN_BANG;
+ function xem(p=core.xem().phut){core.nguyen(p);const ngay=core.tinh(p,[[1,C.PHUT_NGAY]]),m=p%C.PHUT_NGAY;
+  return {ngay:ngay%C.NGAY_THANG+1,thang:core.tinh(ngay,[[1,C.NGAY_THANG]])%C.THANG_NAM+1,
+   nam:core.tinh(ngay,[[1,C.NGAY_THANG*C.THANG_NAM]])+1,canh:C.CANH[core.tinh((m+60)%1440,[[1,C.PHUT_CANH]])],
+   gio:core.tinh(m,[[1,60]]),phut:m%60,dem:m<360||m>=1080};}
+ function chuoi(p){const t=xem(p);return 'Ngày '+core.dinhDang('so',t.ngay)+' - canh '+t.canh+' - tháng '+core.dinhDang('so',t.thang)+' - năm '+core.dinhDang('so',t.nam)+' · '+String(t.gio).padStart(2,'0')+':'+String(t.phut).padStart(2,'0');}
+ core.nghe('phut',({phut})=>{if((phut+60)%C.PHUT_CANH===0)core.phat('canh',xem());if(phut%C.PHUT_NGAY===0)core.phat('ngay',xem());});
+ return Object.freeze({xem,chuoi});
+}
+
+/*
+MÔ ĐUN SINH LÝ V02 - thiết kế duyệt 22/10/2026.
+Ba thanh 0-100 khởi đầu 100; lưu 0-144000 nguyên để chia phút không mất dư.
+LK: No -25/ngày (lao động nặng -35), Khát -40; Trúc Cơ -5/-10;
+Kim Đan trở lên đóng băng No/Khát. Tinh thần -25/ngày thức, ngủ đủ 480 phút
+hồi đầy; tĩnh tọa hồi tốc độ bằng nửa ngủ. SL lấy thanh thấp nhất.
+Tích Cốc giữ No đúng 14400 phút. Đói: mỗi ngày mất tạm 5% khí huyết,
+tích 1 ngày thương; khát gấp đôi. Đủ no/khát hồi 1 ngày thương và 5% mỗi ngày.
+Thức quá 2880 phút: tà vọng, phạt tạm 100 đơn vị tâm cảnh (10 điểm),
+chỉ xóa khi ngủ liền 480 phút. Các số bổ sung được chủ nhân duyệt trong nhiệm vụ.
+Công khai: xem trả bản sao; hanhDong đổi nghỉ/lao động qua bus; an/uong/tichCoc;
+onDinh xác nhận không thương chưa hồi; hauQua áp hệ quả được tu luyện gửi bus.
+Không đọc trạng thái tu luyện. Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+function HD_taoSinhLy(core,luu){
+ const C=HD_CAN_BANG;
+ let s={no:C.TOI_DA_THANH,khat:C.TOI_DA_THANH,tinhThan:C.TOI_DA_THANH,canhGioi:0,
+  hanhDong:'nghi',thuc:0,nguLien:0,taVong:false,tichCocDen:0,doiPhut:0,khatPhut:0,hoiPhut:0,
+  thuongDoi:0,matKhiHuyet:0,thuong:[],lietDen:0,nhomB:[10000,10000,10000,10000,10000]};
+ if(luu)s=structuredClone(luu);
+ // SINH LÝ: mọi mô đun được đọc bản sao; nhóm B đơn vị 1/10000 chỉ số gốc.
+ function xem(){return structuredClone({...s,SL:heSo(),phatTamCanh:s.taVong?C.TA_VONG_TC:0,khiHuyet:khiHuyet()});}
+ function heSo(){const m=Math.min(s.no,s.khat,s.tinhThan);return m>=80*C.THANH?[1,1]:m>=50*C.THANH?[9,10]:m>=25*C.THANH?[3,4]:m>0?[1,2]:[2,5];}
+ function khiHuyet(){return core.tinh(s.nhomB[0],[[C.TY_LE-s.matKhiHuyet,C.TY_LE],...s.thuong.map(t=>[C.TY_LE-t.phat,C.TY_LE])]);}
+ function onDinh(){return s.thuong.length===0&&s.thuongDoi===0&&core.xem().phut>=s.lietDen;}
+ function doiHanhDong(ten){if(core.xem().daChet)return false;if(!['nghi','ngu','tinhToa','laoDong'].includes(ten))throw Error('Hành động không hợp lệ');s.hanhDong=ten;s.nguLien=0;return true;}
+ function hanhDong(ten){if(core.xem().daChet)return false;core.phat('hanhDong',{ten});core.ghi('Đổi hành động',{hanhDong:ten});core.phat('capNhat');return true;}
+ function an(){if(core.xem().daChet)return false;hanhDong('nghi');s.no=core.chan(s.no+C.BUA_AN*C.THANH,0,C.TOI_DA_THANH);core.ghi('Ăn một bữa',{hoi:C.BUA_AN});core.phat('capNhat');return true;}
+ function uong(){if(core.xem().daChet)return false;hanhDong('nghi');s.khat=core.chan(s.khat+C.LAN_UONG*C.THANH,0,C.TOI_DA_THANH);core.ghi('Uống nước',{hoi:C.LAN_UONG});core.phat('capNhat');return true;}
+ // SINH LÝ: móc gỡ lỗi trạng thái, không tạo vật phẩm hay tính năng đan chưa duyệt.
+ function tichCoc(){if(core.xem().daChet)return;s.tichCocDen=core.xem().phut+C.TICH_COC_NGAY*C.PHUT_NGAY;core.ghi('Tích Cốc hiệu lực',{den:s.tichCocDen});core.phat('capNhat');}
+ // SINH LÝ: kịch bản kiểm thử được tạo mới, không sửa thế giới đang chơi.
+ function cauHinhDebug(p){for(const k of ['no','khat','tinhThan'])if(k in p)s[k]=core.chan(p[k],0,C.TOI_DA_THANH);if('canhGioi'in p)s.canhGioi=core.chan(p.canhGioi,0,4);}
+ function phatDoi(he){s.matKhiHuyet=core.chan(s.matKhiHuyet+C.DOI_KHI_HUYET*he,0,C.TY_LE);s.thuongDoi+=C.DOI_THUONG*he;core.ghi('Thương đói khát',{muc:he,thuongDoi:s.thuongDoi});}
+ function hauQua({loai}){const now=core.xem().phut;
+  if(loai==='nhe')s.thuong.push({ten:'Nội tạng',phat:C.NOI_TANG_PHAT,den:now+C.NOI_TANG_NGAY*C.PHUT_NGAY});
+  if(loai==='tauHoa'){s.nhomB=s.nhomB.map(x=>core.tinh(x,[C.MAT_B_NHE]));s.lietDen=now+C.LIET_GIUONG_NGAY*C.PHUT_NGAY;s.thuong.push({ten:'Tẩu hỏa',phat:0,den:s.lietDen});}
+  if(loai==='tanPhe')s.nhomB=s.nhomB.map(x=>core.tinh(x,[C.MAT_B_NANG]));
+  if(loai==='chet')core.chet('Nhập ma khi có độc hoặc thương chưa hồi');
+  if(loai!=='thanhCong')hanhDong('nghi');
+ }
+ core.nghe('hanhDong',({ten})=>doiHanhDong(ten));
+ core.nghe('canhGioi',({bac})=>{s.canhGioi=bac;});
+ core.nghe('hauQuaDotPha',hauQua);
+ core.nghe('phut',({phut})=>{
+  const dangNgu=s.hanhDong==='ngu',tinhToa=s.hanhDong==='tinhToa';
+  // Giảm đúng số đơn vị mỗi phút; 1440 đơn vị/điểm triệt tiêu mẫu ngày.
+  if(s.canhGioi<2){if(phut>s.tichCocDen)s.no=core.chan(s.no-(s.canhGioi===1?C.NO_TC:s.hanhDong==='laoDong'?C.NO_NANG:C.NO_LK),0,C.TOI_DA_THANH);
+   s.khat=core.chan(s.khat-(s.canhGioi===1?C.KHAT_TC:C.KHAT_LK),0,C.TOI_DA_THANH);}
+  if(dangNgu){s.nguLien++;s.tinhThan=core.chan(s.tinhThan+core.tinh(C.TOI_DA_THANH,[[1,C.NGU_PHUT]]),0,C.TOI_DA_THANH);
+   if(s.nguLien===C.NGU_PHUT){s.tinhThan=C.TOI_DA_THANH;s.thuc=0;s.taVong=false;s.hanhDong='nghi';core.ghi('Ngủ đủ bốn canh');core.phat('thucDay');}}
+  else{s.nguLien=0;s.thuc++;s.tinhThan=core.chan(s.tinhThan+(tinhToa?core.tinh(C.TOI_DA_THANH,[[1,C.TINH_TOA_PHUT]]):-C.TINH_THAN_NGAY),0,C.TOI_DA_THANH);
+   if(s.thuc>C.THUC_TOI_DA&&!s.taVong){s.taVong=true;core.ghi('Tà vọng phát sinh',{phatTamCanh:C.TA_VONG_TC});}}
+  if(s.no===0){s.doiPhut++;if(s.doiPhut>=C.PHUT_NGAY){s.doiPhut-=C.PHUT_NGAY;phatDoi(1);}}else s.doiPhut=0;
+  if(s.khat===0){s.khatPhut++;if(s.khatPhut>=C.PHUT_NGAY){s.khatPhut-=C.PHUT_NGAY;phatDoi(C.KHAT_GAP);}}else s.khatPhut=0;
+  if(s.no>0&&s.khat>0){s.hoiPhut++;if(s.hoiPhut>=C.PHUT_NGAY){s.hoiPhut-=C.PHUT_NGAY;s.thuongDoi=Math.max(0,s.thuongDoi-C.DOI_THUONG);s.matKhiHuyet=Math.max(0,s.matKhiHuyet-C.DOI_KHI_HUYET);}}else s.hoiPhut=0;
+  const cu=s.thuong.length;s.thuong=s.thuong.filter(t=>t.den>phut);if(cu!==s.thuong.length)core.ghi('Thương thế đã hồi phục');
+ });
+ return Object.freeze({xem,heSo,onDinh,hanhDong,an,uong,tichCoc,cauHinhDebug,xuat:()=>structuredClone(s)});
+}
+/*
+MÔ ĐUN TU LUYỆN V02 - thiết kế duyệt 22/10/2026, mục 5 và 9.
+T = 100 x LR x TH x TM x MT x DL x SL; TM là tâm cảnh (2000+TC)/2500,
+KHÔNG phải ngộ tính. Học riêng = (4+NT)/10. MT/DL mặc định 1.
+TH ngày/đêm và SL thay đổi được tích phân chính xác từng phút bằng phân số;
+chỉ hoàn tất chu thiên mới chốt EXP, không làm tròn giữa nhịp. Khi T không đổi,
+EXP = T x số ngày. Ngắt phiên mất toàn bộ phần chưa chốt, không tự lặp phiên.
+Mỗi phiên đủ chỉ tăng tối đa một tầng LK, tiêu 1500 x k x k điểm, không roll.
+LK13 tích bể đột phá riêng 300000 điểm. Phiên hoàn tất cấp một chứng nhận;
+chứng nhận bị tiêu khi thử đột phá, không thể dùng lại sau thất bại.
+Khó nghiệp được tính phân số rồi áp sàn 60% chuẩn, sau đó tâm cảnh/nút/độc/đan/thể.
+P = 100 - khó, chốt nguyên rồi kẹp 5..95; một kiểm định duy nhất.
+Hậu quả biên 1..20,21..40,>40 qua bus; nhóm B do sinh lý sở hữu.
+Công khai xem/tocDo/hoc/batDau/dung/dotPha; gỡ lỗi qua cauHinhDebug/themEXP.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+function HD_taoTuLuyen(core,thoiGian,sinhLy,luu){
+ const C=HD_CAN_BANG;
+ let s={canhGioi:0,tang:1,exp:0,expDotPha:0,linhCan:5,theChat:5,ngoTinh:5,tamCanh:C.TC_GOC,tranTC:C.TC_TRAN,
+ nghiep:0,nutThat:0,doc:C.COT_D.map(()=>0),danHoTro:false,MT:[1,1],DL:[1,1],phien:null,duPhien:false};
+ if(luu)s=structuredClone(luu);
+ function tamCanh(){return core.chan(s.tamCanh-sinhLy.xem().phatTamCanh,0,s.tranTC);}
+ // TU LUYỆN: trả danh sách phân số; mọi mô đun được đọc, không thay đổi nguồn.
+ function heSo(p=core.xem().phut){const tc=C.THE_CHAT[s.theChat],dem=thoiGian.xem(p).dem;return [C.LINH_CAN[s.linhCan].hs,dem&&tc.dem?tc.dem:tc.hs,[2000+tamCanh(),2500],s.MT,s.DL,sinhLy.heSo()];}
+ function tocDo(p){return core.tinh(C.C_LK*C.EXP,heSo(p));}
+ function hoc(){return [4+s.ngoTinh,10];}
+ function nguong(){return (s.tang<C.SO_TANG?C.NGUONG_TANG*s.tang*s.tang:C.EXP_TRUC_CO)*C.EXP;}
+ function xem(){return structuredClone({...s,tamCanhHieuLuc:tamCanh(),nguong:nguong(),tocDo:tocDo(),hoc:hoc()});}
+ function batDau(){if(core.xem().daChet||s.phien||core.xem().phut<sinhLy.xem().lietDen)return false;
+  s.duPhien=false;s.phien={batDau:core.xem().phut,phut:0,dai:C.LINH_CAN[s.linhCan].ngay*C.PHUT_NGAY,tich:['0','1']};
+  core.phat('hanhDong',{ten:'tinhToa'});core.ghi('Bắt đầu chu thiên',{linhCan:C.LINH_CAN[s.linhCan].ten,phut:s.phien.dai});core.phat('capNhat');return true;}
+ function dung(lyDo='Chủ động dừng'){if(!s.phien)return false;core.ghi('Mất toàn bộ tiến độ phiên',{lyDo,phut:s.phien.phut,EXP:0});s.phien=null;s.duPhien=false;core.phat('hanhDong',{ten:'nghi'});core.phat('capNhat');return true;}
+ function themEXP(diem,beDotPha=s.tang===C.SO_TANG){core.nguyen(diem);if(diem<0)throw Error('EXP thêm không âm');if(beDotPha)s.expDotPha=core.nguyen(s.expDotPha+diem);else s.exp=core.nguyen(s.exp+diem);core.phat('capNhat');}
+ function cauHinhDebug(p){if(core.xem().daChet)return;dung('Đổi cấu hình thử');for(const [k,max]of [['linhCan',5],['theChat',9],['ngoTinh',10],['tang',13],['tamCanh',1000],['nutThat',100],['canhGioi',4]])if(k in p)s[k]=core.chan(p[k],k==='tang'||k==='ngoTinh'?1:0,max);
+  if('nghiep'in p)s.nghiep=core.nguyen(p.nghiep);if('doc'in p){if(!Array.isArray(p.doc)||p.doc.length!==C.COT_D.length)throw Error('Cần đủ cột độc');s.doc=p.doc.map(x=>core.chan(x,0,1000));}
+  if('danHoTro'in p)s.danHoTro=!!p.danHoTro;
+  for(const k of ['MT','DL'])if(k in p){const f=p[k];if(f.length!==2||!f.every(Number.isSafeInteger)||f[0]<0||f[1]<=0)throw Error('Hệ số không hợp lệ');s[k]=f.slice();}
+  core.phat('canhGioi',{bac:s.canhGioi});core.ghi('Cấu hình gỡ lỗi');core.phat('capNhat');}
+ // TU LUYỆN: tính khó trên thang phần mười để tâm cảnh 0,1 vẫn có tác dụng.
+ function doKho(){const mau=s.nghiep>=0?C.NGHIEP_DUONG:C.NGHIEP_AM;
+  let nghiep=core.phanSo(C.KHO_TRUC_CO*(mau+s.nghiep)*10,mau),san=core.phanSo(C.KHO_TRUC_CO*10*C.SAN_NGHIEP[0],C.SAN_NGHIEP[1]);
+  if(nghiep[0]*san[1]<san[0]*nghiep[1])nghiep=san;
+  const d=Math.max(...s.doc),them=(C.TC_GOC-tamCanh())+s.nutThat*C.NUT_THAT*10+(d>=C.D_NANG?C.PHAT_D*10:0)+(d>=C.D_NGUY?C.PHAT_D*10:0)-(s.danHoTro?C.DAN_DOT_PHA*10:0)-(s.theChat===8?C.BANG_TAM*10:0);
+  return core.congPS(nghiep,core.phanSo(them));}
+ function xacSuat(){const k=doKho();return core.chan(Number((1000n*k[1]-k[0])/(10n*k[1])),C.P_MIN,C.P_MAX);}
+ // TU LUYỆN: chỉ kiểm định khi ba điều kiện đủ; thất bại không tiêu RNG nếu thiếu.
+ function dotPha(){if(core.xem().daChet||s.canhGioi!==0||s.tang!==13||s.expDotPha<C.EXP_TRUC_CO*C.EXP||!s.duPhien||!sinhLy.onDinh())return {hopLe:false,lyDo:'Cần LK13, đủ bể EXP, một phiên hoàn tất và thân thể ổn định'};
+  s.duPhien=false;const k=doKho(),r=core.kiemDinh(xacSuat(),'Đột phá Trúc Cơ');s.danHoTro=false;
+  let loai;
+  if(r.thanhCong){s.expDotPha-=C.EXP_TRUC_CO*C.EXP;s.canhGioi=1;s.tang=1;loai='thanhCong';core.phat('canhGioi',{bac:1});}
+  else{const bien=r.roll-r.P;
+   if(bien<=C.BIEN_NHE){loai='nhe';s.expDotPha=core.tinh(s.expDotPha,[C.MAT_NUA]);}
+   else if(bien<=C.BIEN_TAU_HOA){loai='tauHoa';s.expDotPha=0;}
+   else if(Math.max(...s.doc)>=C.D_NANG||!sinhLy.onDinh()){loai='chet';}
+   else{loai='tanPhe';s.tranTC=Math.max(0,s.tranTC-C.TRAN_TC_MAT);s.tamCanh=Math.min(s.tamCanh,s.tranTC);}}
+  core.ghi('Kết quả đột phá',{loai,bien:r.roll-r.P,khoTu:k[0].toString(),khoMau:(k[1]*10n).toString()});core.phat('hauQuaDotPha',{loai});core.phat('capNhat');return {...r,hopLe:true,loai};}
+ core.nghe('hanhDong',({ten})=>{if(ten!=='tinhToa'&&s.phien)dung('Hành động làm gián đoạn');});
+ core.nghe('chet',()=>{s.phien=null;s.duPhien=false;});
+ core.nghe('phut',({phut})=>{if(!s.phien)return;
+  const f=s.phien;let rate=core.phanSo(C.C_LK*C.EXP,C.PHUT_NGAY);for(const hs of heSo(phut-1))rate=core.nhanPS(rate,hs);
+  const tong=core.congPS([BigInt(f.tich[0]),BigInt(f.tich[1])],rate);f.tich=tong.map(String);f.phut++;
+  if(f.phut===f.dai){const gain=core.nguyen(Number(tong[0]/tong[1]));s.phien=null;
+   if(s.tang===13)s.expDotPha=core.nguyen(s.expDotPha+gain);else s.exp=core.nguyen(s.exp+gain);
+   core.ghi('Hoàn tất chu thiên',{EXP:gain,linhCan:C.LINH_CAN[s.linhCan].ten});
+   if(s.canhGioi===0&&s.tang<13&&s.exp>=nguong()){s.exp-=nguong();s.tang++;core.ghi('Tăng tầng tất định',{tang:s.tang});}
+   else if(s.canhGioi===0&&s.tang===13)s.duPhien=true;
+   core.phat('hanhDong',{ten:'nghi'});core.phat('phienHoanTat',{EXP:gain});}
+ });
+ return Object.freeze({xem,tocDo,hoc,nguong,batDau,dung,dotPha,xacSuat,themEXP,cauHinhDebug,xuat:()=>structuredClone(s)});
+}
+
+/*
+MÔ ĐUN THẾ GIỚI VÀ LƯU V02 - duyệt 22/10/2026 theo kiến trúc mục 1 và 13.
+Ghép mô đun bằng giao diện công khai. Lưu phiên bản 2, chia CORE/sinh lý/tu luyện.
+Không tua ngoại tuyến, không tự phát sinh tài nguyên hay tự đổi hành động.
+Đạo tiêu: đánh dấu xóa lưu, xóa hành trình, không ghi lại trạng thái chết.
+Kiểm thử tạo thế giới cô lập, không chạm localStorage hoặc hành trình đang chơi.
+Công khai HD_taoTheGioi(seed,save?) và HD_V02 trên trình duyệt.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+function HD_taoTheGioi(hat=HD_CAN_BANG.HAT_GIONG,luu){
+ const C=HD_CAN_BANG;
+ if(luu&&luu.phienBan!==C.PHIEN_LUU)throw Error('Phiên bản lưu không tương thích');
+ const core=HD_taoCore(hat,luu&&luu.core),thoiGian=HD_taoThoiGian(core),sinhLy=HD_taoSinhLy(core,luu&&luu.sinhLy),tuLuyen=HD_taoTuLuyen(core,thoiGian,sinhLy,luu&&luu.tuLuyen);
+ function xuat(){return {phienBan:C.PHIEN_LUU,core:core.xuat(),sinhLy:sinhLy.xuat(),tuLuyen:tuLuyen.xuat()};}
+ return Object.freeze({core,thoiGian,sinhLy,tuLuyen,xuat});
+}
+/*
+MÔ ĐUN KIỂM THỬ HỒI QUY V02 - duyệt 22/10/2026.
+Chạy HD_V02.kiemThu() trong bảng điều khiển; mỗi kiểm thử in PASS/FAIL.
+Seed cố định, thế giới độc lập, không làm mất hành trình hay thay đổi seed thật.
+Kiểm từng ranh giới: phân số, RNG, lịch, LR/TH/TM/MT/DL/SL, chu thiên,
+ngắt phiên, tầng, điều kiện đột phá, khó và nghiệp, hậu quả, đói khát/ngủ/tà vọng,
+Tích Cốc, lưu/tải, ba bố cục và sáu thẻ khi có giao diện.
+Công khai: HD_kiemThuV02({inBang=true}?) trả danh sách và tổng đạt/trượt.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+function HD_kiemThuV02({inBang=true}={}){
+ const C=HD_CAN_BANG,kq=[];
+ const tao=(seed=123456)=>HD_taoTheGioi(seed),eq=(a,b)=>{if(JSON.stringify(a)!==JSON.stringify(b))throw Error('Mong '+JSON.stringify(b)+'; nhận '+JSON.stringify(a));};
+ function kt(ten,fn){try{fn();kq.push({ten,ketQua:'PASS'});}catch(e){kq.push({ten,ketQua:'FAIL',loi:e.message});}}
+ function dongBang(w){w.tuLuyen.cauHinhDebug({canhGioi:2});}
+ function sanSang(seed=123456,patch={}){const w=tao(seed);w.tuLuyen.cauHinhDebug({linhCan:0,tang:13,...patch});w.tuLuyen.themEXP(C.EXP_TRUC_CO*C.EXP,true);w.tuLuyen.batDau();w.core.tien(C.PHUT_NGAY);return w;}
+ function seedCho(p,lo,hi){for(let seed=1;seed<10000;seed++){const c=HD_taoCore(seed),r=c.kiemDinh(p);if(r.roll>=lo&&r.roll<=hi)return seed;}throw Error('Không tìm được hạt kiểm thử');}
+ kt('CORE: nhân hết tử/mẫu trước khi chốt',()=>eq(tao().core.tinh(7,[[1,3],[3,2]]),3));
+ kt('CORE: trung gian BigInt không tràn',()=>eq(tao().core.tinh(9000000,[[1000000,1000000],[1000000,1000000]]),9000000));
+ kt('CORE: giữ phân số qua nhiều nhịp',()=>{const c=tao().core;eq(c.congPS(c.phanSo(1,3),c.phanSo(2,3)).map(String),['1','1']);});
+ kt('CORE: từ chối số lẻ',()=>{let sai=false;try{tao().core.tien(1/2);}catch(e){sai=true;}eq(sai,true);});
+ kt('CORE: định dạng EXP hai số lẻ',()=>eq(tao().core.dinhDang('exp',1234758),'123,47'));
+ kt('RNG: cùng hạt cùng chuỗi 100 lượt',()=>{const a=tao(),b=tao();for(let i=0;i<100;i++)eq(a.core.kiemDinh(70),b.core.kiemDinh(70));});
+ kt('RNG: d100 trong 1..100 và đủ trường nhật ký',()=>{const w=tao();for(let i=0;i<200;i++){const r=w.core.kiemDinh(60);if(r.roll<1||r.roll>100)throw Error('Ngoài d100');eq(r.thanhCong,r.roll<=r.P);for(const k of ['phut','hatTruoc','hatSau','roll','P','thanhCong'])if(!(k in r))throw Error('Thiếu '+k);}eq(w.core.nhatKy().length,200);});
+ kt('RNG: kẹp P thấp/cao',()=>{const c=tao().core;eq(c.kiemDinh(-100).P,5);eq(c.kiemDinh(500).P,95);});
+ kt('RNG: tiếp tục hạt từ lưu',()=>{const w=tao();w.core.kiemDinh(40);const b=HD_taoTheGioi(0,w.xuat());eq(w.core.kiemDinh(40),b.core.kiemDinh(40));});
+ kt('Bus: người nghe không sửa dữ liệu của nhau',()=>{const c=tao().core;let x;c.nghe('thu',d=>d.a=9);c.nghe('thu',d=>x=d.a);c.phat('thu',{a:1});eq(x,1);});
+ kt('Đồng hồ: đúng số tick, dừng theo điều kiện',()=>{const w=tao();let n=0;w.core.nghe('phut',()=>n++);eq(w.core.tien(10,()=>n<3),3);eq(w.core.xem().phut,3);});
+ kt('Lịch: 30 ngày/tháng, 12 tháng/năm',()=>{const t=tao().thoiGian;eq([t.xem(30*1440).ngay,t.xem(30*1440).thang],[1,2]);eq([t.xem(360*1440).ngay,t.xem(360*1440).thang,t.xem(360*1440).nam],[1,1,2]);});
+ kt('Lịch: canh Tý qua nửa đêm',()=>{const t=tao().thoiGian;eq([t.xem(0).canh,t.xem(59).canh,t.xem(60).canh,t.xem(1380).canh],['Tý','Tý','Sửu','Tý']);});
+ kt('Lịch: ranh giới ngày đêm',()=>{const t=tao().thoiGian;eq([359,360,1079,1080].map(p=>t.xem(p).dem),[true,false,false,true]);});
+ kt('Lịch: sự kiện canh/ngày',()=>{const w=tao();let a=0,b=0;w.core.nghe('canh',()=>a++);w.core.nghe('ngay',()=>b++);w.core.tien(1440);eq([a,b],[12,1]);});
+ C.LINH_CAN.forEach((lc,i)=>kt('LR: '+lc.ten,()=>{const w=tao();w.tuLuyen.cauHinhDebug({linhCan:i});eq(w.tuLuyen.tocDo(360),w.core.tinh(100*C.EXP,[lc.hs,[27,25]]));eq(lc.ngay,[1,5,12,25,30,36][i]);}));
+ C.THE_CHAT.forEach((tc,i)=>kt('TH ngày/đêm: '+tc.ten,()=>{const w=tao();w.tuLuyen.cauHinhDebug({theChat:i});for(const [p,hs]of [[360,tc.hs],[0,tc.dem||tc.hs]])eq(w.tuLuyen.tocDo(p),w.core.tinh(100*C.EXP,[hs,[27,25]]));}));
+ kt('C_realm: 100 ở đủ 13 tầng LK',()=>{const w=tao();for(let i=1;i<=13;i++){w.tuLuyen.cauHinhDebug({tang:i});eq(w.tuLuyen.tocDo(),108*C.EXP);}});
+ kt('TM: tâm cảnh 0/50/70/100',()=>{const w=tao();for(const [tc,t]of [[0,80],[500,100],[700,108],[1000,120]]){w.tuLuyen.cauHinhDebug({tamCanh:tc});eq(w.tuLuyen.tocDo(),t*C.EXP);}});
+ kt('Ngộ tính chỉ học, không đổi T',()=>{const w=tao();w.tuLuyen.cauHinhDebug({ngoTinh:1});const t=w.tuLuyen.tocDo();eq(w.tuLuyen.hoc(),[5,10]);w.tuLuyen.cauHinhDebug({ngoTinh:10});eq(w.tuLuyen.tocDo(),t);eq(w.tuLuyen.hoc(),[14,10]);});
+ kt('MT/DL mặc định 1, áp phân số đúng',()=>{const w=tao();eq(w.tuLuyen.xem().MT,[1,1]);eq(w.tuLuyen.xem().DL,[1,1]);w.tuLuyen.cauHinhDebug({MT:[3,2],DL:[2,3]});eq(w.tuLuyen.tocDo(),108*C.EXP);});
+ for(const [bar,hs]of [[100,[1,1]],[80,[1,1]],[79,[9,10]],[50,[9,10]],[49,[3,4]],[25,[3,4]],[24,[1,2]],[1,[1,2]],[0,[2,5]]])kt('SL: ranh giới '+bar,()=>{const w=tao();w.sinhLy.cauHinhDebug({khat:bar*C.THANH});eq(w.sinhLy.heSo(),hs);eq(w.tuLuyen.tocDo(),w.core.tinh(108*C.EXP,[hs]));});
+ kt('SL: luôn lấy thanh thấp nhất',()=>{const w=tao();for(const k of ['no','khat','tinhThan']){w.sinhLy.cauHinhDebug({no:144000,khat:144000,tinhThan:144000,[k]:24*C.THANH});eq(w.sinhLy.heSo(),[1,2]);}});
+ kt('Phiên: không cấp EXP trước phút cuối',()=>{const w=tao();dongBang(w);w.tuLuyen.cauHinhDebug({linhCan:0});w.tuLuyen.batDau();w.core.tien(1439);eq(w.tuLuyen.xem().exp,0);w.core.tien(1);eq(w.tuLuyen.xem().exp,540*C.EXP);eq(w.tuLuyen.xem().phien,null);});
+ kt('Phiên: T x số ngày, tích phân TH ngày đêm',()=>{const w=tao();dongBang(w);w.tuLuyen.cauHinhDebug({linhCan:0,theChat:1});w.tuLuyen.batDau();w.core.tien(1440);eq(w.tuLuyen.xem().exp,675*C.EXP);});
+ kt('Phiên: ngắt mất EXP và tiến độ',()=>{const w=tao();w.tuLuyen.cauHinhDebug({linhCan:0});w.tuLuyen.batDau();w.core.tien(1439);w.tuLuyen.dung();eq(w.tuLuyen.xem().exp,0);eq(w.tuLuyen.xem().phien,null);w.tuLuyen.batDau();eq(w.tuLuyen.xem().phien.phut,0);});
+ kt('Phiên: ngủ/ăn/uống/lao động đều làm gián đoạn',()=>{for(const fn of [w=>w.sinhLy.hanhDong('ngu'),w=>w.sinhLy.an(),w=>w.sinhLy.uong(),w=>w.sinhLy.hanhDong('laoDong')]){const w=tao();w.tuLuyen.batDau();w.core.tien(5);fn(w);eq(w.tuLuyen.xem().phien,null);eq(w.tuLuyen.xem().exp,0);}});
+ C.LINH_CAN.forEach((lc,i)=>kt('Độ dài chu thiên đầy đủ: '+lc.ten,()=>{const w=tao();dongBang(w);w.tuLuyen.cauHinhDebug({linhCan:i,MT:[0,1]});w.tuLuyen.batDau();w.core.tien(lc.ngay*1440-1);eq(w.tuLuyen.xem().phien.phut,lc.ngay*1440-1);w.core.tien(1);eq(w.tuLuyen.xem().phien,null);}));
+ kt('Tầng LK: đủ EXP nhưng thiếu phiên không tăng',()=>{const w=tao();w.tuLuyen.themEXP(2000*C.EXP);eq(w.tuLuyen.xem().tang,1);});
+ kt('Tầng LK: chỉ tăng sau phiên, trừ đúng EXP, không roll',()=>{const w=tao();w.tuLuyen.cauHinhDebug({linhCan:0});w.tuLuyen.themEXP(2000*C.EXP);w.tuLuyen.batDau();w.core.tien(1440);eq(w.tuLuyen.xem().tang,2);if(w.tuLuyen.xem().exp<500*C.EXP)throw Error('Trừ sai EXP');eq(w.core.nhatKy().filter(r=>'roll'in r).length,0);});
+ kt('Tầng LK: ngưỡng 1500 x k bình phương',()=>{const w=tao();for(let i=1;i<13;i++){w.tuLuyen.cauHinhDebug({tang:i});eq(w.tuLuyen.nguong(),1500*i*i*C.EXP);}});
+ kt('LK13: tách bể đột phá khỏi EXP thường',()=>{const w=tao();w.tuLuyen.cauHinhDebug({tang:13,linhCan:0});w.tuLuyen.batDau();w.core.tien(1440);eq(w.tuLuyen.xem().exp,0);if(w.tuLuyen.xem().expDotPha<=0)throw Error('Thiếu bể');});
+ kt('Đột phá: thiếu điều kiện không roll',()=>{const w=tao();eq(w.tuLuyen.dotPha().hopLe,false);w.tuLuyen.cauHinhDebug({tang:13});w.tuLuyen.themEXP(300000*C.EXP,true);eq(w.tuLuyen.dotPha().hopLe,false);eq(w.core.nhatKy().filter(r=>'roll'in r).length,0);});
+ kt('Đột phá: thân thể có thương bị chặn',()=>{const w=sanSang();w.core.phat('hauQuaDotPha',{loai:'nhe'});eq(w.tuLuyen.dotPha().hopLe,false);});
+ kt('Đột phá: P chuẩn 70, Băng Tâm +5, đan +10',()=>{const w=tao();eq(w.tuLuyen.xacSuat(),70);w.tuLuyen.cauHinhDebug({theChat:8,danHoTro:true});eq(w.tuLuyen.xacSuat(),85);});
+ kt('Đột phá: nghiệp dương/âm và sàn 60%',()=>{const w=tao();for(const [n,p]of [[2500,40],[-2500,82],[-10000,82]]){w.tuLuyen.cauHinhDebug({nghiep:n});eq(w.tuLuyen.xacSuat(),p);}});
+ kt('Đột phá: tâm cảnh, nút thắt và độc 60/90',()=>{const w=tao();w.tuLuyen.cauHinhDebug({tamCanh:600,nutThat:1,doc:[600,0,0,0,0,0,0,0,0]});eq(w.tuLuyen.xacSuat(),45);w.tuLuyen.cauHinhDebug({doc:[900,0,0,0,0,0,0,0,0]});eq(w.tuLuyen.xacSuat(),40);});
+ kt('Độc: chín cột giả lập khởi đầu bằng 0',()=>eq(tao().tuLuyen.xem().doc,[0,0,0,0,0,0,0,0,0]));
+ kt('Đột phá: thành công một roll, tiêu 300000 điểm',()=>{const seed=seedCho(70,1,70),w=sanSang(seed);const truoc=w.tuLuyen.xem().expDotPha,r=w.tuLuyen.dotPha();eq(r.loai,'thanhCong');eq(w.tuLuyen.xem().canhGioi,1);eq(w.tuLuyen.xem().expDotPha,truoc-300000*C.EXP);eq(w.core.nhatKy().filter(r=>'roll'in r).length,1);eq(w.sinhLy.xem().canhGioi,1);});
+ for(const bien of [1,20])kt('Thất bại nhẹ: biên '+bien,()=>{const seed=seedCho(70,70+bien,70+bien),w=sanSang(seed),tr=w.tuLuyen.xem().expDotPha;eq(w.tuLuyen.dotPha().loai,'nhe');eq(w.tuLuyen.xem().expDotPha,Math.trunc(tr/2));eq(w.sinhLy.xem().khiHuyet,7000);eq(w.sinhLy.xem().thuong[0].den,w.core.xem().phut+30*1440);eq(w.tuLuyen.dotPha().hopLe,false);});
+ for(const bien of [21,40])kt('Tẩu hỏa: biên '+bien,()=>{const seed=seedCho(50,50+bien,50+bien),w=sanSang(seed,{nutThat:2});eq(w.tuLuyen.dotPha().loai,'tauHoa');eq(w.tuLuyen.xem().expDotPha,0);eq(w.sinhLy.xem().nhomB,[8500,8500,8500,8500,8500]);eq(w.sinhLy.xem().lietDen,w.core.xem().phut+90*1440);eq(w.tuLuyen.batDau(),false);});
+ kt('Nhập ma: biên 41 không độc thì tàn phế',()=>{const seed=seedCho(30,71,71),w=sanSang(seed,{nutThat:4});eq(w.tuLuyen.dotPha().loai,'tanPhe');eq(w.sinhLy.xem().nhomB,[6666,6666,6666,6666,6666]);eq(w.tuLuyen.xem().tranTC,850);});
+ kt('Nhập ma: độc 60 thì chết, đồng hồ và hành động dừng',()=>{const seed=seedCho(25,80,100),w=sanSang(seed,{nutThat:4,doc:[600,0,0,0,0,0,0,0,0]});eq(w.tuLuyen.dotPha().loai,'chet');eq(w.core.xem().daChet,true);eq(w.core.tien(1),0);eq(w.tuLuyen.batDau(),false);eq(w.sinhLy.an(),false);});
+ kt('Hồi thương nội tạng sau 30 ngày',()=>{const w=tao();dongBang(w);w.core.phat('hauQuaDotPha',{loai:'nhe'});w.core.tien(30*1440);eq(w.sinhLy.xem().thuong.length,0);eq(w.sinhLy.onDinh(),true);});
+ kt('Sinh lý: khởi đầu ba thanh 100',()=>{const b=tao().sinhLy.xem();eq([b.no,b.khat,b.tinhThan],[144000,144000,144000]);});
+ for(const [bac,no,khat]of [[0,75,60],[1,95,90],[2,100,100],[3,100,100],[4,100,100]])kt('Sinh lý: tiêu hao cảnh giới '+bac,()=>{const w=tao();w.tuLuyen.cauHinhDebug({canhGioi:bac});w.core.tien(1440);const b=w.sinhLy.xem();eq([b.no,b.khat,b.tinhThan],[no*1440,khat*1440,75*1440]);});
+ kt('Sinh lý: tạp dịch No -35/ngày',()=>{const w=tao();w.sinhLy.hanhDong('laoDong');w.core.tien(1440);eq(w.sinhLy.xem().no,65*1440);});
+ kt('Sinh lý: ăn +40/uống +60 có chặn trần',()=>{const w=tao();w.sinhLy.cauHinhDebug({no:30*1440,khat:20*1440});w.sinhLy.an();w.sinhLy.uong();eq([w.sinhLy.xem().no,w.sinhLy.xem().khat],[70*1440,80*1440]);w.sinhLy.an();w.sinhLy.uong();eq([w.sinhLy.xem().no,w.sinhLy.xem().khat],[144000,144000]);});
+ kt('Sinh lý: ngủ 4 canh hồi đầy ở mọi cảnh',()=>{for(let bac=0;bac<=4;bac++){const w=tao();w.tuLuyen.cauHinhDebug({canhGioi:bac});w.sinhLy.cauHinhDebug({tinhThan:0});w.sinhLy.hanhDong('ngu');w.core.tien(479);if(w.sinhLy.xem().tinhThan>=144000)throw Error('Hồi sớm');w.core.tien(1);eq(w.sinhLy.xem().tinhThan,144000);eq(w.sinhLy.xem().hanhDong,'nghi');}});
+ kt('Sinh lý: tĩnh tọa hồi bằng nửa tốc độ ngủ',()=>{const w=tao();w.sinhLy.cauHinhDebug({tinhThan:0});w.sinhLy.hanhDong('tinhToa');w.core.tien(480);eq(w.sinhLy.xem().tinhThan,72000);w.core.tien(480);eq(w.sinhLy.xem().tinhThan,144000);});
+ kt('Tà vọng: sau hơn hai ngày, thật sự làm khó tăng 10',()=>{const w=tao();dongBang(w);const p=w.tuLuyen.xacSuat();w.core.tien(2880);eq(w.sinhLy.xem().taVong,false);w.core.tien(1);eq(w.sinhLy.xem().taVong,true);eq(w.tuLuyen.xacSuat(),p-10);eq(w.tuLuyen.xem().tamCanhHieuLuc,600);eq(w.tuLuyen.tocDo(),104*C.EXP*3/4);});
+ kt('Tà vọng: ngủ chưa đủ không xóa, đủ 4 canh mới xóa',()=>{const w=tao();dongBang(w);w.core.tien(2881);w.sinhLy.hanhDong('ngu');w.core.tien(479);eq(w.sinhLy.xem().taVong,true);w.core.tien(1);eq(w.sinhLy.xem().taVong,false);eq(w.tuLuyen.xacSuat(),70);});
+ kt('Đói: sau một ngày 5% khí huyết và một ngày thương',()=>{const w=tao();dongBang(w);w.sinhLy.cauHinhDebug({no:0});w.core.tien(1440);eq([w.sinhLy.xem().matKhiHuyet,w.sinhLy.xem().thuongDoi],[500,1440]);eq(w.sinhLy.onDinh(),false);});
+ kt('Khát: hiệu ứng đói gấp đôi',()=>{const w=tao();dongBang(w);w.sinhLy.cauHinhDebug({khat:0});w.core.tien(1440);eq([w.sinhLy.xem().matKhiHuyet,w.sinhLy.xem().thuongDoi],[1000,2880]);});
+ kt('Đủ no khát: mỗi ngày hồi 5% và một ngày thương',()=>{const w=tao();dongBang(w);w.sinhLy.cauHinhDebug({no:0});w.core.tien(1440);w.sinhLy.an();w.core.tien(1440);eq([w.sinhLy.xem().matKhiHuyet,w.sinhLy.xem().thuongDoi],[0,0]);});
+ kt('Tích Cốc: đóng băng đúng 10 ngày rồi tiêu tiếp',()=>{const w=tao();w.sinhLy.tichCoc();w.core.tien(10*1440);eq(w.sinhLy.xem().no,144000);w.core.tien(1);eq(w.sinhLy.xem().no,144000-25);});
+ kt('Lưu: có phiên bản và chia mô đun, không mất tiến độ/dư',()=>{const w=tao();w.tuLuyen.batDau();w.core.tien(123);const s=JSON.parse(JSON.stringify(w.xuat())),b=HD_taoTheGioi(0,s);eq(s.phienBan,2);w.core.tien(50);b.core.tien(50);eq(w.xuat(),b.xuat());});
+ kt('Lưu: từ chối phiên bản sai',()=>{let sai=false;try{HD_taoTheGioi(1,{phienBan:99});}catch(e){sai=true;}eq(sai,true);});
+ if(typeof document!=='undefined'&&document.querySelector('#page-training')){
+  kt('Giao diện: giữ sáu thẻ và ba bố cục',()=>{eq(document.querySelectorAll('main > section').length,6);eq(document.querySelectorAll('[data-layout-choice]').length,3);});
+  kt('Giao diện: đủ điều khiển và thanh sinh lý',()=>{for(const id of ['hd-bat-dau','hd-dung','hd-ngu','hd-debug','hd-log','hd-no','hd-khat','hd-tinhThan'])if(!document.getElementById(id))throw Error('Thiếu '+id);});
+ }
+ if(inBang){console.table(kq);console.log('V0.2: '+kq.filter(x=>x.ketQua==='PASS').length+' PASS / '+kq.filter(x=>x.ketQua==='FAIL').length+' FAIL');}
+ return {dat:kq.filter(x=>x.ketQua==='PASS').length,truot:kq.filter(x=>x.ketQua==='FAIL').length,danhSach:kq};
+}
+
+/*
+MÔ ĐUN GIAO DIỆN V02 - thiết kế duyệt 22/10/2026, giấy dó, ưu tiên 414 x 896.
+Chỉ nối bảng chơi mới vào thẻ Tu luyện và lịch vào Thời gian; nội dung khung cũ
+được giữ trong mục tham khảo, không tái sinh hay rút gọn nguồn V0.1.
+Nút dừng cần xác nhận rõ ràng; ngủ/ăn/uống làm ngắt chu thiên cũng phải xác nhận.
+Bảng gỡ lỗi đóng mặc định; thử đột phá chạy thế giới cô lập, không ghi đè nhân vật.
+Đồng hồ thật chỉ là bộ điều phối nhịp: mọi phút trò chơi đều đi qua CORE.
+Lưu theo phiên bản, tốc độ khởi động luôn tạm dừng để không chạy ngoài ý muốn.
+Công khai HD_V02 gồm theGioi, kiemThu, luu, debug.tichCoc, debug.thuDotPha.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+(function HD_giaoDien(){
+ const C=HD_CAN_BANG;
+ let duLieu=null,canhBao='';
+ try{const raw=localStorage.getItem(C.KHOA_LUU);if(raw)duLieu=JSON.parse(raw);if(localStorage.getItem(C.KHOA_CHET))canhBao='Hành trình trước đã đạo tiêu và bị xóa. Đây là hành trình mới.';}catch(e){canhBao='Không đọc được lưu cục bộ; đang chơi trong phiên.';}
+ let w;try{w=HD_taoTheGioi(C.HAT_GIONG,duLieu);}catch(e){w=HD_taoTheGioi();canhBao='Lưu không tương thích; không tự ghi đè. '+e.message;}
+ let tocDo=0,choDung=false,choHanhDong=null;
+ const el=id=>document.getElementById(id),tao=(tag,attrs={})=>{const e=document.createElement(tag);Object.assign(e,attrs);return e;};
+ const css=tao('style',{textContent:'.hd-v02{overflow-wrap:anywhere}.hd-v02 p{margin-bottom:8px}.hd-v02 .hd-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.hd-v02 .hd-row button{flex:1;min-width:95px}.hd-v02 label{display:block;font-size:.85rem;margin:8px 0}.hd-v02 select,.hd-v02 input{width:100%;min-height:44px;font:inherit;background:#f6ecd4;color:var(--ink);border:1px solid var(--line);padding:7px}.hd-v02 progress{display:block;width:100%;height:12px;accent-color:var(--red)}.hd-v02 .hd-bar{margin:9px 0}.hd-v02 .hd-bar span{display:flex;justify-content:space-between;font-size:.85rem}.hd-v02 pre{white-space:pre-wrap;font:inherit;font-size:.76rem;max-height:230px;overflow:auto;border-top:1px dashed var(--line);padding-top:8px}.hd-v02 details{margin:12px 0}.hd-v02 summary{cursor:pointer;min-height:44px;padding:8px}.hd-v02 [hidden]{display:none!important}.hd-v02 .hd-small{font-size:.78rem;color:#695b48}.hd-v02 .hd-danger{border:2px solid var(--red);padding:10px}.hd-v02 .hd-clock{font-size:.82rem}.hd-v02 output{font-variant-numeric:tabular-nums}'});document.head.append(css);
+ // Giao diện chỉ tạo vùng bổ sung, giữ nguyên DOM khung trong mục tham khảo.
+ const training=el('page-training'),archive=tao('details',{className:'hd-v02'}),sum=tao('summary',{textContent:'Khung V0.1 nguyên bản - chỉ tham khảo'});archive.append(sum);while(training.firstChild)archive.append(training.firstChild);training.append(archive);
+ const panel=tao('div',{className:'hd-v02'});panel.innerHTML='<div class="page-head"><div><p class="eyebrow">V0.2 / Động cơ đã vận hành</p><h2>TU LUYỆN</h2></div><span class="seal">LÕI<br>V0.2</span></div><article class="card" id="hd-tu-luyen"><p id="hd-clock" class="hd-clock"></p><p class="hd-small" id="hd-seed"></p><h3 id="hd-realm"></h3><div class="progress-row"><b id="hd-exp-label">EXP tầng</b><output id="hd-exp"></output></div><progress id="hd-exp-bar" value="0" max="100" aria-label="Tiến độ EXP"></progress><p id="hd-session" style="margin-top:12px"></p><p id="hd-rate" class="hd-small"></p><div class="hd-row"><button id="hd-bat-dau">Bắt đầu tĩnh tọa</button><button id="hd-dung">Dừng phiên</button><button id="hd-ngu">Ngủ 4 canh</button></div><div id="hd-confirm" hidden class="hd-danger"><p id="hd-confirm-text"></p><div class="hd-row"><button id="hd-confirm-yes">Xác nhận ngắt phiên</button><button id="hd-confirm-no">Giữ phiên</button></div></div><div class="hd-row"><button id="hd-dot-pha">Đột phá Trúc Cơ</button></div><p id="hd-condition" class="hd-small"></p><p id="hd-result" role="status"></p></article><article class="card" id="hd-sinh-ly"><h3>Sinh lý</h3><div id="hd-bars"></div><p id="hd-body" class="hd-small"></p><div class="hd-row"><button id="hd-an">Ăn một bữa</button><button id="hd-uong">Uống nước</button></div><p class="hd-small">Ăn +40; uống +60. Ăn, uống hoặc ngủ làm mất phiên đang tu luyện. Vật phẩm và kinh tế chưa triển khai.</p></article><article class="card"><h3>Nhật ký CORE</h3><p class="hd-small">40 dòng mới nhất; toàn bộ nhật ký có trong HD_V02.theGioi.core.nhatKy().</p><pre id="hd-log" tabindex="0" aria-label="Nhật ký CORE"></pre><button id="hd-debug-toggle" aria-expanded="false" aria-controls="hd-debug">Mở gỡ lỗi</button><div id="hd-debug" hidden><h3 style="margin-top:14px">Gỡ lỗi V0.2</h3><p class="hd-small">Đổi cấu hình sẽ ngắt phiên. Nút thử đột phá không thay đổi nhân vật thật.</p><label>Linh căn<select id="hd-lc"></select></label><label>Thể chất<select id="hd-th"></select></label><label>Ngộ tính<select id="hd-nt"></select></label><button id="hd-apply">Áp dụng cấu hình</button><label>Thêm EXP (điểm nguyên)<input id="hd-add-value" type="number" min="0" max="1000000" step="1" value="1500"></label><button id="hd-add">Thêm EXP vào bể hiện tại</button><label>Tốc độ thời gian<select id="hd-speed"><option value="0">Tạm dừng</option><option value="1">1 phút mỗi giây</option><option value="10">10 phút mỗi giây</option><option value="60">1 canh mỗi hai giây</option><option value="1440">1 ngày mỗi giây</option></select></label><div class="hd-row"><button id="hd-step">Qua 1 canh</button><button id="hd-tich-coc">Thử trạng thái Tích Cốc</button></div><button id="hd-test-break">Thử một đột phá cô lập</button><button id="hd-tests">Chạy kiểm thử hồi quy</button><pre id="hd-test-output" role="status"></pre><button id="hd-save">Lưu hành trình</button><p class="hd-small">Chỉ lưu trong trình duyệt này, không tua ngoại tuyến. Đạo tiêu xóa hành trình. Mỗi lần mở trang tốc độ mặc định tạm dừng.</p></div></article>';
+ training.prepend(panel);
+ for(const [id,ten]of [['no','No'],['khat','Khát'],['tinhThan','Tinh thần']]){const bar=tao('div',{className:'hd-bar'});bar.innerHTML='<span><b>'+ten+'</b><output id="hd-'+id+'-value"></output></span><progress id="hd-'+id+'" max="144000" value="144000" aria-label="'+ten+'"></progress>';el('hd-bars').append(bar);}
+ for(const [id,list,key]of [['hd-lc',C.LINH_CAN,'ten'],['hd-th',C.THE_CHAT,'ten']])list.forEach((x,i)=>el(id).append(new Option(x[key],i)));
+ for(let i=1;i<=10;i++)el('hd-nt').append(new Option(w.core.dinhDang('so',i),i));
+ const t=w.tuLuyen.xem();el('hd-lc').value=t.linhCan;el('hd-th').value=t.theChat;el('hd-nt').value=t.ngoTinh;
+ const time=el('page-time'),live=tao('article',{className:'card hd-v02'});live.innerHTML='<h3>Đồng hồ CORE đang chạy</h3><p id="hd-time-live"></p><p>12 canh/ngày · 30 ngày/tháng · 12 tháng/năm. Điều khiển thời gian trong bảng gỡ lỗi ở Tu luyện; các phần V0.1 bên dưới là minh họa tĩnh.</p>';time.prepend(live);
+ // Lưu công khai, không tự ghi lại sau đạo tiêu hoặc khi lưu đầu vào lỗi.
+ function luu(){if(w.core.xem().daChet)return false;try{localStorage.setItem(C.KHOA_LUU,JSON.stringify(w.xuat()));return true;}catch(e){canhBao='Không thể lưu cục bộ; đừng đóng trang khi cần giữ hành trình.';return false;}}
+ function thuDotPha(){const thu=HD_taoTheGioi(123456);thu.tuLuyen.cauHinhDebug({linhCan:0,tang:13});thu.tuLuyen.themEXP(C.EXP_TRUC_CO*C.EXP,true);thu.tuLuyen.batDau();thu.core.tien(C.PHUT_NGAY);const r=thu.tuLuyen.dotPha();w.core.ghi('Thử đột phá cô lập',{roll:r.roll,P:r.P,loai:r.loai,hatThu:123456});return r;}
+ function hien(){const c=w.core.xem(),t=w.tuLuyen.xem(),b=w.sinhLy.xem(),f=w.core.dinhDang;
+  el('hd-clock').textContent=w.thoiGian.chuoi();el('hd-time-live').textContent=w.thoiGian.chuoi();
+  el('hd-seed').textContent='Hạt thế giới: '+f('so',c.goc)+' · Trạng thái hạt: '+f('so',c.seed)+' · '+(tocDo?'Đang chạy':'Tạm dừng');
+  el('hd-realm').textContent=c.daChet?'ĐẠO TIÊU - hành trình đã bị xóa':(['Luyện Khí','Trúc Cơ','Kim Đan','Nguyên Anh','Hóa Thần'][t.canhGioi]+' · tầng '+f('so',t.tang));
+  const be=t.tang===13?t.expDotPha:t.exp;el('hd-exp-label').textContent=t.tang===13?'Bể đột phá':'EXP tầng';el('hd-exp').textContent=f('exp',be)+' / '+f('exp',t.nguong);el('hd-exp-bar').value=Math.min(100,w.core.tinh(be,[[100,t.nguong]]));
+  const lc=C.LINH_CAN[t.linhCan];el('hd-session').textContent=lc.ten+' · '+f('so',lc.ngay)+' ngày/chu thiên · '+(t.phien?'Đang tĩnh tọa: '+f('ngay',t.phien.phut)+' / '+f('so',lc.ngay)+' ngày':t.duPhien?'Đã hoàn tất phiên, có chứng nhận đột phá':'Chưa có phiên đang chạy');
+  el('hd-rate').textContent='T hiện tại: '+f('exp',t.tocDo)+' điểm/ngày · SL '+f('so',b.SL[0])+'/'+f('so',b.SL[1])+' · Tâm cảnh '+f('tc',t.tamCanhHieuLuc)+' · Học '+f('so',t.hoc[0])+'/'+f('so',t.hoc[1]);
+  for(const k of ['no','khat','tinhThan']){el('hd-'+k).value=b[k];el('hd-'+k+'-value').textContent=f('thanh',b[k])+' / 100';}
+  el('hd-body').textContent='Khí huyết: '+f('so',w.core.tinh(b.khiHuyet,[[100,C.TY_LE]]))+'% · '+(b.taVong?'Tà vọng: -10 tâm cảnh. ':'')+(b.thuong.length?b.thuong.map(x=>x.ten+' (còn '+f('ngay',Math.max(0,x.den-c.phut))+' ngày)').join(', '):'Không có thương nội tạng')+' · Thương đói: '+f('ngay',b.thuongDoi)+' ngày · '+(b.tichCocDen>c.phut?'Tích Cốc còn '+f('ngay',b.tichCocDen-c.phut)+' ngày':'Tích Cốc không hoạt động');
+  el('hd-bat-dau').disabled=c.daChet||!!t.phien||c.phut<b.lietDen;el('hd-dung').disabled=c.daChet||!t.phien;el('hd-ngu').disabled=c.daChet||b.hanhDong==='ngu';
+  el('hd-dot-pha').disabled=c.daChet||t.canhGioi!==0||t.tang!==13||t.expDotPha<C.EXP_TRUC_CO*C.EXP||!t.duPhien||!w.sinhLy.onDinh();
+  el('hd-condition').textContent='Trúc Cơ: LK13 + 300.000 EXP riêng + một phiên đủ + không thương chưa hồi. P hiện tại '+f('so',w.tuLuyen.xacSuat())+'%. Cột D (giả lập): '+t.doc.map(x=>f('tc',x)).join(' / ')+'.';
+  const lines=w.core.nhatKy().slice(-40).reverse().map(r=>w.thoiGian.chuoi(r.phut)+' | '+r.ten+('roll'in r?' | hạt '+f('so',r.hatTruoc)+' > '+f('so',r.hatSau)+' | d100='+f('so',r.roll)+' | P='+f('so',r.P)+' | '+(r.thanhCong?'Thành công':'Thất bại'):'EXP'in r?' | EXP '+f('exp',r.EXP):r.loai?' | '+r.loai:''));el('hd-log').textContent=lines.join('\n');
+  if(canhBao)el('hd-result').textContent=canhBao;
+ }
+ // Mọi điều khiển gọi API công khai; không đọc biến nội bộ mô đun.
+ function canNgat(fn){if(w.core.xem().daChet)return;if(w.tuLuyen.xem().phien){choHanhDong=fn;choDung=true;el('hd-confirm').hidden=false;el('hd-confirm-text').textContent='Phiên đang tu luyện sẽ mất toàn bộ EXP và tiến độ chưa chốt. Có chắc muốn ngắt?';}else fn();hien();}
+ el('hd-bat-dau').onclick=()=>{w.tuLuyen.batDau();luu();};
+ el('hd-dung').onclick=()=>canNgat(()=>w.tuLuyen.dung());
+ el('hd-ngu').onclick=()=>canNgat(()=>w.sinhLy.hanhDong('ngu'));
+ el('hd-an').onclick=()=>canNgat(()=>w.sinhLy.an());el('hd-uong').onclick=()=>canNgat(()=>w.sinhLy.uong());
+ el('hd-confirm-yes').onclick=()=>{if(choDung&&choHanhDong)choHanhDong();choHanhDong=null;choDung=false;el('hd-confirm').hidden=true;luu();hien();};
+ el('hd-confirm-no').onclick=()=>{choHanhDong=null;choDung=false;el('hd-confirm').hidden=true;};
+ el('hd-dot-pha').onclick=()=>{const r=w.tuLuyen.dotPha();el('hd-result').textContent=r.hopLe?'Đột phá: '+(r.thanhCong?'thành công':r.loai)+' · d100 '+w.core.dinhDang('so',r.roll)+' / P '+w.core.dinhDang('so',r.P):r.lyDo;luu();hien();};
+ el('hd-debug-toggle').onclick=()=>{const show=el('hd-debug').hidden;el('hd-debug').hidden=!show;el('hd-debug-toggle').setAttribute('aria-expanded',String(show));el('hd-debug-toggle').textContent=show?'Đóng gỡ lỗi':'Mở gỡ lỗi';};
+ el('hd-apply').onclick=()=>canNgat(()=>{w.tuLuyen.cauHinhDebug({linhCan:Number(el('hd-lc').value),theChat:Number(el('hd-th').value),ngoTinh:Number(el('hd-nt').value)});luu();});
+ el('hd-add').onclick=()=>{const n=Number(el('hd-add-value').value);if(!Number.isSafeInteger(n)||n<0||n>1000000){el('hd-test-output').textContent='Cần số nguyên từ 0 đến 1.000.000.';return;}w.tuLuyen.themEXP(n*C.EXP);w.core.ghi('Thêm EXP gỡ lỗi',{EXP:n*C.EXP});luu();hien();};
+ el('hd-speed').onchange=()=>{tocDo=Number(el('hd-speed').value);hien();};
+ el('hd-step').onclick=()=>{w.core.tien(C.PHUT_CANH);luu();hien();};el('hd-tich-coc').onclick=()=>{w.sinhLy.tichCoc();luu();hien();};
+ el('hd-test-break').onclick=()=>{const r=thuDotPha();el('hd-test-output').textContent='Thế giới thử: d100 '+w.core.dinhDang('so',r.roll)+' / P '+w.core.dinhDang('so',r.P)+' · '+r.loai+'. Nhân vật thật không đổi.';hien();};
+ el('hd-tests').onclick=()=>{const kq=HD_kiemThuV02();el('hd-test-output').textContent=kq.dat+' PASS / '+kq.truot+' FAIL\n'+kq.danhSach.filter(x=>x.ketQua==='FAIL').map(x=>x.ten+': '+x.loi).join('\n');};
+ el('hd-save').onclick=()=>{el('hd-test-output').textContent=luu()?'Đã lưu hành trình trong trình duyệt.':'Không thể lưu.';};
+ w.core.nghe('capNhat',hien);
+ w.core.nghe('chet',()=>{tocDo=0;el('hd-speed').value='0';try{localStorage.removeItem(C.KHOA_LUU);localStorage.setItem(C.KHOA_CHET,'1');}catch(e){canhBao='Đã đạo tiêu; không thể ghi cờ xóa lưu. Không tải lại lưu cũ.';}hien();});
+ w.core.ghi('Khởi động V0.2',{hatGoc:w.core.xem().goc});
+ window.HD_V02=Object.freeze({theGioi:w,taoTheGioi:HD_taoTheGioi,kiemThu:HD_kiemThuV02,luu,debug:Object.freeze({tichCoc:()=>w.sinhLy.tichCoc(),thuDotPha})});
+ // Bộ nhịp không dùng thời gian thực làm dữ liệu trò chơi, không tua nền/offline.
+ setInterval(()=>{if(tocDo&&!document.hidden){w.core.tien(tocDo);luu();hien();}},1000);
+ hien();
+})();
+
+</script>
+<!-- KẾT THÚC PHẦN NỐI V0.2 -->
 </body>
 </html>
+
+<!--
+LỊCH SỬ THAY ĐỔI
+22/10/2026 - V0.2: Nối CORE số nguyên phân số, RNG một hạt và nhật ký, lịch sự kiện; tu luyện bảy nhân tử, chu thiên liên tục, LK1-13 và đột phá Trúc Cơ; ba thanh sinh lý, SL, thương đói, tà vọng và Tích Cốc; lưu phiên bản 2 và kiểm thử hồi quy.
+Giữ nguyên nguồn khung V0.1; thay đúng ký tự trang trí không hợp lệ thành chữ Latin theo chấp thuận chủ nhân. Nội dung cũ chỉ được gấp lại trong giao diện tham khảo. Không sửa KINH-THANH-GAME.md.
+-->
