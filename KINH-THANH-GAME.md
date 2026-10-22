@@ -241,3 +241,11 @@ Mỗi bậc chức vị được vào khu vực tương ứng của tông; vào 
 - 4 kiếp mốc: Trúc Cơ Tâm Ma Kiếp (sinh từ nút thắt thật, mục 9), Kim Đan Đan Kiếp, Nguyên Anh Lôi Kiếp, Hóa Thần Phong Hỏa Kiếp. Nghiệp cao làm kiếp mạnh qua hệ số; vượt kiếp không xóa nghiệp.
 - Thiên đạo không thiện không ác: chỉ kết toán theo nghiệp, không thưởng người tốt máy móc, không trừng kẻ dữ không để lại chứng cứ. Tai kiếp là đòi nợ.
 - Chuyển kiếp và trì hoãn kiếp (module hoãn, mục 28): mỗi chuyển kiếp +100 nghiệp, trì hoãn +10% độ khó lần kế tiếp, trước kiếp có thiên tượng báo trước. V1 chỉ cần lưu và cộng trừ nghiệp đúng.
+
+### 14.1 Trữ Vật Đồ và Pháp Bảo Không Gian
+- Túi trữ vật: chỉ chứa vật vô tri, không chứa sinh vật sống. V1 hai bậc: sơ cấp 1 khối lập phương, trung cấp 10 khối lập phương. Phải luyện hóa mới dùng được (mục 10). Gần như bắt buộc phải có: không túi thì sức mang theo giới hạn theo thể chất.
+- Pháp bảo không gian bậc cao (dạng Tu Di, Tàng Trữ Giới): dung tích lớn hơn hẳn, vẫn thiên về chứa đồ; xuất hiện từ tầm Trúc Cơ trở lên, giá trị cực cao.
+- Ngọc Cốt: pháp bảo không gian đặc biệt, bên trong là không gian ở được, sinh vật sống tồn tại được. V1 hạ giới duy nhất một kiện, gắn cơ duyên Tuyết Cơ: nàng trú ngụ bên trong, đi theo người chơi. Không chế tạo bằng nghề luyện khí, không mua được bằng linh thạch.
+- Luật cân bằng hardcore: bên trong không chênh lệch thời gian với bên ngoài; người ở trong vẫn tiêu linh khí, thức ăn theo đồng hồ CORE; Ngọc Cốt bị hỏng hoặc bị đoạt thì sinh mạng bên trong bị đe dọa trực tiếp.
+- Tuyết Cơ là NPC dùng chung bảng chỉ số 5 nhóm A-E (mục 11, 12); lai lịch, cảnh giới, thời điểm xuất hiện theo kịch bản 12 hồi, chốt khi viết arc-module.
+
