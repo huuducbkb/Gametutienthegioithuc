@@ -9,7 +9,7 @@ Mô đun SINH LÝ - dòng 305.
 Mô đun TU LUYỆN - dòng 365.
 Mô đun THẾ GIỚI VÀ LƯU - dòng 436.
 Mô đun KIỂM THỬ HỒI QUY - dòng 452.
-Mô đun GIAO DIỆN - dòng 535.
+Mô đun GIAO DIỆN - dòng 536.
 Giao tiếp công khai qua CORE và các hàm có hợp đồng tại từng mô đun.
 -->
 
@@ -526,6 +526,7 @@ function HD_kiemThuV02({inBang=true}={}){
  if(typeof document!=='undefined'&&document.querySelector('#page-training')){
   kt('Giao diện: giữ sáu thẻ và ba bố cục',()=>{eq(document.querySelectorAll('main > section').length,6);eq(document.querySelectorAll('[data-layout-choice]').length,3);});
   kt('Giao diện: đủ điều khiển và thanh sinh lý',()=>{for(const id of ['hd-bat-dau','hd-dung','hd-ngu','hd-debug','hd-log','hd-no','hd-khat','hd-tinhThan'])if(!document.getElementById(id))throw Error('Thiếu '+id);});
+  if(window.HD_V02)kt('Giao diện: nhật ký thử đột phá đủ hạt và không đổi nhân vật',()=>{const w=window.HD_V02.theGioi,truoc=JSON.stringify(w.tuLuyen.xuat()),r=window.HD_V02.debug.thuDotPha(),dong=w.core.nhatKy().at(-1);for(const k of ['hatGoc','hatTruoc','hatSau','roll','P'])if(!Number.isSafeInteger(dong[k]))throw Error('Thiếu số nguyên '+k);eq(dong.roll,r.roll);eq(dong.P,r.P);eq(dong.thanhCong,r.thanhCong);eq(JSON.stringify(w.tuLuyen.xuat()),truoc);});
  }
  if(inBang){console.table(kq);console.log('V0.2: '+kq.filter(x=>x.ketQua==='PASS').length+' PASS / '+kq.filter(x=>x.ketQua==='FAIL').length+' FAIL');}
  return {dat:kq.filter(x=>x.ketQua==='PASS').length,truot:kq.filter(x=>x.ketQua==='FAIL').length,danhSach:kq};
@@ -561,7 +562,7 @@ Tính năng đã qua kiểm thử - KHÔNG XÓA.
  const time=el('page-time'),live=tao('article',{className:'card hd-v02'});live.innerHTML='<h3>Đồng hồ CORE đang chạy</h3><p id="hd-time-live"></p><p>12 canh/ngày · 30 ngày/tháng · 12 tháng/năm. Điều khiển thời gian trong bảng gỡ lỗi ở Tu luyện; các phần V0.1 bên dưới là minh họa tĩnh.</p>';time.prepend(live);
  // Lưu công khai, không tự ghi lại sau đạo tiêu hoặc khi lưu đầu vào lỗi.
  function luu(){if(w.core.xem().daChet)return false;try{localStorage.setItem(C.KHOA_LUU,JSON.stringify(w.xuat()));return true;}catch(e){canhBao='Không thể lưu cục bộ; đừng đóng trang khi cần giữ hành trình.';return false;}}
- function thuDotPha(){const thu=HD_taoTheGioi(123456);thu.tuLuyen.cauHinhDebug({linhCan:0,tang:13});thu.tuLuyen.themEXP(C.EXP_TRUC_CO*C.EXP,true);thu.tuLuyen.batDau();thu.core.tien(C.PHUT_NGAY);const r=thu.tuLuyen.dotPha();w.core.ghi('Thử đột phá cô lập',{roll:r.roll,P:r.P,loai:r.loai,hatThu:123456});return r;}
+ function thuDotPha(){const thu=HD_taoTheGioi(123456);thu.tuLuyen.cauHinhDebug({linhCan:0,tang:13});thu.tuLuyen.themEXP(C.EXP_TRUC_CO*C.EXP,true);thu.tuLuyen.batDau();thu.core.tien(C.PHUT_NGAY);const r=thu.tuLuyen.dotPha();w.core.ghi('Thử đột phá cô lập',{hatGoc:r.hatGoc,hatTruoc:r.hatTruoc,hatSau:r.hatSau,roll:r.roll,P:r.P,thanhCong:r.thanhCong,loai:r.loai,hatThu:123456});return r;}
  function hien(){const c=w.core.xem(),t=w.tuLuyen.xem(),b=w.sinhLy.xem(),f=w.core.dinhDang;
   el('hd-clock').textContent=w.thoiGian.chuoi();el('hd-time-live').textContent=w.thoiGian.chuoi();
   el('hd-seed').textContent='Hạt thế giới: '+f('so',c.goc)+' · Trạng thái hạt: '+f('so',c.seed)+' · '+(tocDo?'Đang chạy':'Tạm dừng');
@@ -612,4 +613,5 @@ Tính năng đã qua kiểm thử - KHÔNG XÓA.
 LỊCH SỬ THAY ĐỔI
 22/10/2026 - V0.2: Nối CORE số nguyên phân số, RNG một hạt và nhật ký, lịch sự kiện; tu luyện bảy nhân tử, chu thiên liên tục, LK1-13 và đột phá Trúc Cơ; ba thanh sinh lý, SL, thương đói, tà vọng và Tích Cốc; lưu phiên bản 2 và kiểm thử hồi quy.
 Giữ nguyên nguồn khung V0.1; thay đúng ký tự trang trí không hợp lệ thành chữ Latin theo chấp thuận chủ nhân. Nội dung cũ chỉ được gấp lại trong giao diện tham khảo. Không sửa KINH-THANH-GAME.md.
+22/10/2026 - V0.2 sửa nhật ký gỡ lỗi: sao chép đủ hạt trước/sau và kết quả kiểm định, thêm kiểm thử hồi quy không đổi nhân vật thật.
 -->
