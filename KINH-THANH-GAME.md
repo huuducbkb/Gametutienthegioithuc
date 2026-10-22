@@ -84,3 +84,61 @@ Các hệ sở hữu công thức của mình nhưng bắt buộc gọi CORE khi
 - Công thức chu thiên: T = C_realm x LR x TH x TM x MT x DL, trong đó C_realm = hằng số tầng cảnh giới, LR = linh căn, TH = hệ số thể chất, TM = hệ số tâm cảnh (xem mục 9: 0,8 + tâm cảnh/250), MT = hệ số môi trường (mục 15), DL = hệ số đan và linh khí hỗ trợ.
 - Mục tiêu cân bằng: tạp lục căn 25-40 năm để tới LK13; thiên linh căn 5-8 năm.
 - Đột phá thất bại có hậu quả nặng theo cảnh: tẩu hỏa, thương nặng, tàn phế (chi tiết mục 11 và 19).
+
+## 6. HỆ KINH TẾ
+- Tiền tệ: linh thạch. 1 trung phẩm = 100 hạ phẩm. V1 hạ giới lưu hành chủ yếu hạ phẩm; trung phẩm xuất hiện từ tầm Trúc Cơ trở lên.
+- Danh mục vật phẩm khoảng 350 loại, quản lý trong registry ITEMS thống nhất: mỗi vật có tên, phẩm cấp, công dụng, độc D (nếu là đan), giá tham chiếu.
+- Giá cả do engine tính: giá cơ sở x hệ số vùng x hệ số cung cầu. Không định giá tay từng phiên. Cùng một nguyên liệu, vùng dư thì rẻ, vùng khan thì đắt: buôn tranh là nghề hợp pháp, nhưng đường xa có yêu thú và cướp.
+- Nguồn thu của người chơi: lương theo chức vị (mục 7), bán đồ chế tác, làm nhiệm vụ, thưởng sự kiện, hái lượm (khan hiếm, điểm hái lượm có thể cạn).
+- Nguồn chi: mua đan và nguyên liệu, công pháp, vũ khí pháp bảo, phù trận, thuê hoặc mua động phủ, hối lộ, chữa thương, giải độc.
+- Khan hiếm là luật: nguyên liệu quý gắn với vùng nguy hiểm (Huyết Sắc Cấm Địa, lãnh thổ yêu thú). Sự kiện lớn (mỏ cạn, chiến tranh tông phái) làm giá biến động; ai có thông tin sớm thì có lợi thế thật (liên kết mục 16).
+- Bảng giá chi tiết từng vật chốt ở M1 khi dựng registry ITEMS.
+
+## 7. HỆ TÔNG MÔN VÀ CƠ CẤU QUYỀN LỰC
+Người chơi nhập môn làm tạp dịch, chọn 1 trong 7 tông: Hoàng Phong Cốc, Yểm Nguyệt Tông, Hóa Đao Ổ, Thiên Khuyết Bảo, Cự Kiếm Môn, Thanh Hư Môn, Linh Thú Sơn. Mỗi tông có đặc trưng công pháp, phong cách ứng chiến và phe phái riêng (bảng chi tiết từng tông chốt ở M1).
+
+### 7.1 Bảng chức vị, lương, khu vực
+| Chức vị | Điều kiện | Lương/tháng | Quyền lợi chính |
+|---|---|---|---|
+| Tạp dịch | nhập môn | 2 hạ linh thạch | khu ở ngoại vi, tàng thư tầng 1 |
+| Đệ tử ngoại môn | LK3 | 5 hạ + 1 Tụ Khí Đan | khu ngoại môn, tàng thư tầng 2 |
+| Đệ tử nội môn | LK7 + 500 công lao | 20 hạ + 3 đan | khu nội môn, tàng thư tầng 3, được nhận nhiệm vụ tông |
+| Đệ tử thân truyền | Trúc Cơ | 100 hạ (cộng thêm 1 trung/năm) | động phủ riêng, tàng thư tầng 4, ưu tiên danh ngạch bí cảnh |
+| Trưởng lão | Kim Đan | 500 hạ | đỉnh riêng, được nhận đệ tử trực tiếp |
+| Tông chủ | Nguyên Anh | - | quản toàn tông |
+
+Mỗi bậc chức vị được vào khu vực tương ứng của tông; vào khu vượt bậc không có lý do là phạm luật tông.
+
+### 7.2 Công lao
+- Công lao là số nguyên, kiếm từ nhiệm vụ tông, sự kiện, chiến công.
+- Chi dùng: đổi công pháp, vật tư, danh ngạch vào bí cảnh, điều kiện thăng chức vị.
+- Công lao không đổi ra linh thạch trực tiếp. Hai đồng tiền tách bạch: linh thạch mua của cải, công lao mua địa vị.
+
+### 7.3 Cấp trên và phe phái
+- Mỗi đệ tử có cấp trên trực tiếp (quản sự đối với tạp dịch, trưởng lão đối với nội môn trở lên). Cấp trên quyết nhiệm vụ, đánh giá, có thể che chở hoặc gây khó dễ.
+- Mỗi tông có 2-3 phe phái tranh chấp. Theo phe được ưu đãi (nhiệm vụ tốt, thăng tiến nhanh) nhưng bị ràng buộc (phải làm việc phe yêu cầu) và chịu liên đới khi phe thua. Đứng trung lập thì tự do nhưng khó thăng tiến.
+- Cục diện phe phái thay đổi theo sự kiện (bầu quản sự, tông chủ bế quan, án oan án vu oán...).
+
+### 7.4 Luật tông và chứng cứ
+- Luật tông viết rõ các tội: giết đồng môn, trộm công pháp, tư thông Ma đạo, trộm mỏ... Xử phạt theo mức: trừ công lao, tước chức vị, phế tu vi, xử tử.
+- Engine theo dõi chứng cứ thật: ai nhìn thấy việc gì, ai được nghe tin, dấu vết để lại. Bị tố mà chứng cứ mờ thì có khả năng thoát tội; vu oan cho người khác cũng là một đường chơi, nhưng bị lộ là vu oán thì phạm tội nặng.
+- Phạm luật bí mật mà không để lại chứng cứ và không ai biết thì không bị phát hiện một cách máy móc.
+
+### 7.5 Ma trận quan hệ 7 tông
+- Bảng quan hệ tông với tông: đồng minh / hữu hảo / trung lập / cảnh giác / địch.
+- Quan hệ thay đổi theo sự kiện lớn và cả hành vi cá nhân người chơi (giết đệ tử tông khác, giúp tông khác lập công...).
+- Ảnh hưởng: giá mua bán giữa các vùng, nhiệm vụ liên tông, mời luận kiếm, chiến tranh tông phái.
+
+### 7.6 Cống phẩm và thuế
+- Quốc gia phàm phụ thuộc tông nộp cống phẩm (lương thực, quặng, tuyển người tài cho tông). Tông thu về và phân bổ lại qua lương và phát tài nguyên định kỳ.
+- Đệ tử đóng góp theo chức vị: khai thác mỏ, canh gác, làm nhiệm vụ tông đều tính thành công lao.
+
+### 7.7 Tài sản trọng yếu của tông
+- Mỏ linh thạch: có phẩm cấp (hạ, trung), có thể CẠN theo khai thác. Mỏ là lợi ích chiến lược, nguyên nhân tranh đoạt giữa tông phái. Đi khai thác đổi công lao; trộm mỏ là tội trọng.
+- Bí cảnh do tông kiểm soát danh ngạch: tiêu biểu là Huyết Sắc Cấm Địa, 30 năm mở một lần; danh ngạch chia theo chức vị, công lao và phe phái. Đây là cơ duyên đổi đời của hồi 2.
+- Quốc gia phàm: vương triều phụ thuộc tông, quốc sư là cao thủ do tông cử. Việc triều chính phàm nhân tác động ngược lại tông (thuế nộp, khai mỏ, tuyển đệ tử).
+
+### 7.8 Hệ sự kiện trong tông
+- Định kỳ: Đại Khảo (thi đấu định hạng, thưởng phạt rõ), phát tài nguyên định kỳ, bầu quản sự, tông chủ bế quan (lúc phe phái nhúc nhích mạnh nhất).
+- Đột phát: đệ tử mất tích, trộm công pháp (bạn cùng phòng có thể thành nghi phạm, hoặc chính là thủ phạm), mỏ bị tấn công, gián điệp Ma đạo tiềm nhập, luận kiếm khách quý.
+- Hậu quả kéo dài: kết quả Đại Khảo đổi thứ hạng, bầu quản sự đổi thế lực phe lên xuống, xử oan người trong án gián điệp sinh oán hận âm thầm về sau.
