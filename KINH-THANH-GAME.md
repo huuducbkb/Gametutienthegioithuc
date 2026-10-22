@@ -248,3 +248,75 @@ Mỗi bậc chức vị được vào khu vực tương ứng của tông; vào 
 - 4 kiếp mốc: Trúc Cơ Tâm Ma Kiếp (sinh từ nút thắt thật, mục 9), Kim Đan Đan Kiếp, Nguyên Anh Lôi Kiếp, Hóa Thần Phong Hỏa Kiếp. Nghiệp cao làm kiếp mạnh qua hệ số; vượt kiếp không xóa nghiệp.
 - Thiên đạo không thiện không ác: chỉ kết toán theo nghiệp, không thưởng người tốt máy móc, không trừng kẻ dữ không để lại chứng cứ. Tai kiếp là đòi nợ.
 - Chuyển kiếp và trì hoãn kiếp (module hoãn, mục 28): mỗi chuyển kiếp +100 nghiệp, trì hoãn +10% độ khó lần kế tiếp, trước kiếp có thiên tượng báo trước. V1 chỉ cần lưu và cộng trừ nghiệp đúng.
+
+## 20. HỆ SINH LÝ VÀ TẨY TỦY
+- Cơ thể là chỉ số thật: đói, khát, thiếu ngủ, thương thế đều ảnh hưởng hệ số tu luyện và điểm hành động (mục 11); không có thanh máu trừu tượng.
+- Thọ nguyên theo cảnh giới, hết thọ nguyên là chết tự nhiên (mục 13). Bảng thọ nguyên từng cảnh chốt ở M1. Nghịch thiên kéo thọ +200 nghiệp (mục 19).
+- Sinh lý không ai trốn được: người ở trong Ngọc Cốt vẫn tiêu linh khí, thức ăn theo đồng hồ CORE (mục 14.1).
+- Tẩy tủy: đột phá lớn (Trúc Cơ, Kim Đan...) thanh lọc kinh mạch, tăng vĩnh viễn chỉ số nhóm B (mục 11); đồng thời là một cách xả kháng dược (mục 8) nhưng mất thời gian tu luyện và nguy hiểm lúc thân thể yếu. Mức tăng cụ thể chốt ở M1.
+- Tu luyện vượt sức hoặc mang thương thế nặng không nghỉ là đường tẩu hỏa nhập ma (mục 5, 11).
+
+## 21. HỆ BẢO DƯỠNG VÀ KHÍ LINH
+- Pháp bảo không tự mạnh lên: phải dưỡng luyện lâu dài (mục 10), tốn thời gian và linh khí theo đồng hồ CORE. Bỏ bê lâu ngày linh tính suy giảm.
+- Pháp bảo hư hại sửa bằng nguyên liệu cùng loại (mục 10); bảo dưỡng định kỳ là chi phí thật trong nền kinh tế (mục 6).
+- Khí linh: pháp bảo dưỡng luyện đủ sâu sinh ra linh tính, tự nhận chủ, khó bị đoạt; khí linh có tính cách riêng, không phải tôi tớ tuyệt đối. Điều kiện sinh khí linh chốt ở M1.
+- Bảo dưỡng thân thể: nghỉ ngơi, ăn uống, tĩnh tọa ảnh hưởng tốc độ hồi phục thương thế và tâm cảnh (mục 9, 11).
+
+## 22. HỆ GIA TỘC VÀ KẾ THỪA
+- Gia tộc NPC là quan hệ máu mủ thật: oán hận của kẻ chết truyền cho người thân (mục 12, 13); hại một người là tạo oán với cả dòng.
+- Gia tộc có kế thừa: công pháp, pháp bảo, mỏ, thế lực truyền đời; con cháu kế thừa cả quan hệ phe phái.
+- Người chơi V1 không lập gia tộc riêng; kết hôn, sinh con thuộc hệ hoãn (mục 28).
+- Huyết thống NPC chi phối nhiệm vụ, tin đồn, phe phái (mục 7.3, 16); mức ảnh hưởng chi tiết chốt khi viết arc-module.
+
+## 23. HỆ SINH THÁI YÊU TỘC
+- Yêu thú dùng chung bảng chỉ số 5 nhóm A-E (mục 11), có cảnh giới, thể chất, lãnh thổ; không đứng chờ người chơi.
+- Sinh thái gắn vùng (mục 15): đàn yêu thú di trú theo lịch seed, linh triều kéo đàn đến điểm linh khí bùng nổ. Săn quá mức làm cạn khu vực: khan hiếm là luật (mục 6).
+- Yêu thú là nguồn nguyên liệu quý (mục 6, 10) và nguồn linh áp (mục 17); cảnh giới cao áp chế cảnh giới thấp.
+- Yêu tu (yêu thú khai trí): giao dịch được, có oán ơn, phe phái như NPC (mục 12). Hóa Hình Kiếp thuộc hệ hoãn (mục 28). V1 yêu tộc chỉ nằm ở hạ giới.
+
+## 24. VAI TRÒ AI VÀ HỢP ĐỒNG AI-ENGINE
+- Lặp lại triết lý mục 0: AI kể chuyện, engine quyết định. AI được phép: (1) dẫn truyện, mô tả, thoại NPC; (2) phiên dịch log khô thành văn phong nguyên tác; (3) đề xuất sự kiện kèm dữ liệu có cấu trúc, engine kiểm tra hợp lệ mới chạy.
+- AI không bao giờ chạm chỉ số, túi đồ, sinh mạng; chỉ đọc kết quả đã format từ CORE (mục 3).
+- Hợp đồng JSON: mọi giao tiếp AI-engine qua schema chốt trước. Engine gửi: trạng thái nhân vật đã format, log sự kiện, bối cảnh NPC (cảnh giới, cảm tình, phe, lịch trình mục 12). AI trả: văn bản hiển thị, thoại NPC, đề xuất sự kiện. Engine validate từng trường, từ chối mọi thứ ngoài hợp đồng.
+- AI là lớp trình bày: tắt lớp AI thì engine vẫn chạy đủ mọi hệ (dựng ở M3, mục 27).
+- Thoại NPC do AI viết phải nhất quán với cảm tình, phe phái, tính cách NPC; engine cấp dữ liệu đó trong hợp đồng, AI không tự bịa trạng thái.
+
+## 25. CẤU TRÚC 12 HỒI VÀ KIẾN TRÚC ARC-MODULE
+- Thế giới chia 3 phần: Hạ giới, Linh giới, Tiên giới. V1 chỉ build Hạ giới; 12 hồi là trọn arc Hạ giới, kết thúc bằng phi thăng.
+- Danh sách 12 hồi (đã duyệt):
+1. Tạp dịch: nhập môn làm tạp dịch, chọn 1 trong 7 tông (mục 7).
+2. Huyết Sắc Cấm Địa: cơ duyên đổi đời theo danh ngạch 30 năm một lần (mục 7.7, 14).
+3. Loạn Ma Đạo.
+4. Lưu vong Trúc Cơ.
+5. Ngưng Kim Đan: tranh tài nguyên kết đan, Kim Đan Đan Kiếp (mục 19).
+6. Hư Thiên Điện.
+7. Về Thiên Nam.
+8. Mộ Lan Tộc và Trụy Ma Cốc.
+9. Đệ nhất Thiên Nam.
+10. Đại Tấn và Côn Ngô Sơn.
+11. Đại Hàn Băng Nguyên: Hóa Thần Phong Hỏa Kiếp (mục 19).
+12. Không Gian Tiết Điểm: cửa phi thăng.
+- Nội dung chi tiết từng hồi (NPC, nhiệm vụ, sự kiện, địa danh) chốt khi viết arc-module hồi đó, từng hồi một, chủ game duyệt từng bản.
+- Kiến trúc arc-module: mỗi hồi là module nội dung độc lập, đăng ký sự kiện lên đồng hồ CORE (mục 3); hệ lõi không biết chi tiết hồi, hồi không sửa ruột hệ lõi (mục 1). Mọi hồi dùng chung bảng chỉ số, kinh tế, nghiệp.
+- Hàn Lập đi đúng timeline nguyên tác xuyên suốt 12 hồi (mục 0, 12); cơ duyên của hắn không rơi vào người chơi.
+
+## 26. GIAO DIỆN
+- Phong cách giấy dó mực tàu như V0.1; mobile-first, chuẩn màn hình iPhone 11 (414 x 896); kiểm tra cuối cùng trên máy thật.
+- 3 bố cục đổi được, mặc định Mode 1, lựa chọn lưu localStorage (V0.1 đã có).
+- Người chơi không bao giờ thấy số thô dài: mọi hiển thị qua hàm format chung (mục 2, 3).
+- Văn AI (truyện, thoại) nằm trong khung kể chuyện riêng; log kỹ thuật của engine xem được khi gỡ lỗi.
+- Thông tin sinh tử luôn hiển thị rõ: độc D, thương thế, tâm cảnh, kiếp sắp đến; bố cục không được che mất chúng.
+
+## 27. LỘ TRÌNH M1-M4
+- M1 - lõi số liệu: số học fixed-point, RNG một seed, đồng hồ CORE, thanh ghi hằng số, hàm kiểm định chung, hàm format; các bảng nền: linh căn, thể chất, ngộ tính, bảng đan, nghiệp, ITEMS, giá cả. Chạy kiểm chứng bằng log.
+- M2 - giao diện: các tab hệ thống dựng trên lõi M1, bố cục giấy dó, hiển thị chuẩn mục 26.
+- M3 - lớp AI: hợp đồng JSON (mục 24), AI kể chuyện và thoại NPC, engine validate.
+- M4 - nội dung 12 hồi: arc-module từng hồi, NPC, nhiệm vụ; test hồi quy toàn bộ; test trên iPhone thật.
+- Quy tắc milestone: chưa xanh toàn bộ test hồi quy của milestone trước thì không qua milestone sau; mỗi tính năng được chủ game duyệt xong mới cất vào milestone.
+
+## 28. CÁC HỆ HOÃN SANG MODULE LINH GIỚI TRỞ LÊN
+- Hồn Bối và Luân Hồi; Chủng Tộc; Huyết Mạch và Thức Tỉnh (V1 chỉ là modifier đơn giản, nhóm A mục 11); Kỳ Thị Chủng Tộc; Lai Tạo và Sinh Sản; Hóa Hình Kiếp.
+- Chuyển kiếp và trì hoãn kiếp chi tiết (mục 19): V1 chỉ lưu và cộng trừ nghiệp đúng.
+- Các hệ này không code ở V1, nhưng thiết kế V1 không được mâu thuẫn với chúng: khi mở Linh giới bổ sung module riêng, không sửa lõi.
+
+(Phần 5/5 gồm mục 20 đến mục 28. Hết tài liệu.)
