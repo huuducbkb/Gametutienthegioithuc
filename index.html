@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MODULE V0.6
+MỤC LỤC MODULE V0.7
+MÔ ĐUN KHO CHÂN DUNG VÀ KHO CẢNH V07 (script thứ bảy): registry art/, fallback onerror, cấu hình loại/ngoại hình, bìa JPEG và kiểm thử V07.
+VÁ TRÌNH BÀY V06: timestamp theo vị trí log (CORE không có stt); hình SVG đổi JPEG; giữ đủ 40 kiểm thử V06. CSS V07: select giấy dó, ảnh multiply, bìa cuộn dọc.
 TINH CHỈNH CONCEPT V06: giấy xuyến chỉ loang, viền cọ SVG, chân dung nhiều lớp kiếm sĩ/giáp vàng, tranh trận trúc và gợn sóng, nút dọc và nhật ký timestamp UI. Bổ sung trong script V06, không thay script V02-V05.
 MÔ ĐUN GIAO DIỆN SÁCH V06 (script thứ năm) và KIỂM THỬ V06 (script thứ sáu): bìa, sách ba trang thích ứng, mục lục ánh xạ tab cũ; modal đối đầu và chuyển động CSS/SVG từ public event V04 (tám hệ, vật lý, né, phù, bỏ chạy, chí mạng). Giữ nguyên bốn script/engine cũ.
 MÔ ĐUN GIAO DIỆN CHIẾN ĐẤU V05 và KIỂM THỬ V05 - khối script thứ tư cuối body. Các số dòng V02/V03/V04 bên dưới là mốc của bản V0.4.
@@ -32,7 +34,7 @@ Thiết kế được duyệt: giấy dó mực tàu; 3 bố cục di động.
 Hardcore: chết là mất save. Đồng nhân Phàm Nhân Tu Tiên.
 23 hệ thống sẽ bổ sung dần. Hiện chỉ là khung theo dõi tiến độ,
 không có logic trò chơi, AI, giao dịch hay save nhân vật thật.
-Một tệp UTF-8 độc lập; không CDN, không tài nguyên bên ngoài.
+Một tệp HTML UTF-8 cùng thư viện JPEG art/ trong kho; không CDN.
 -->
 <html lang="vi">
 <head>
@@ -67,6 +69,29 @@ Một tệp UTF-8 độc lập; không CDN, không tài nguyên bên ngoài.
 @media(min-width:650px){.v06-dialog .v05-fighter h3{font-size:1.3rem;top:40px}.v06-dialog .v05-face{height:185px}.v06-dialog .v05-realm{top:140px;font-size:.65rem}}
 
 .v06-dialog .v05-actions button:last-child{transform:none}.v06-dialog .v05-actions button:last-child small{left:0;width:100%;transform:none}
+</style>
+<style id="hd-v07-style">
+/* V0.7: tranh hòa giấy; chỉ lớp trình bày, không đổi nhịp hay reduced-motion. */
+.v07-ink{display:block;max-width:100%;height:auto;mix-blend-mode:multiply;object-fit:contain}
+.v05-fighter img.v05-face{object-fit:contain;object-position:left bottom;max-width:80%;mix-blend-mode:multiply;mask-image:linear-gradient(to right,#000 78%,transparent),linear-gradient(to bottom,#000 88%,transparent);mask-composite:intersect}
+#hd-v05-scene .v07-battle{position:absolute;inset:auto 0 0;width:100%;height:auto;max-height:100%;object-fit:contain;opacity:1;mask-image:linear-gradient(to bottom,transparent,#000 12%,#000 90%,transparent)}
+#hd-v05-scene .v05-prose{position:relative;z-index:3;pointer-events:none}
+#hd-v05-scene .v05-figures{pointer-events:none;z-index:2}
+#hd-v05-scene .v07-fx-person{display:block;width:49%;height:100%;border-radius:50%;background:transparent}
+#hd-v05-scene .v07-fx-person.v06-hit{background:radial-gradient(ellipse,#a3332740,transparent 70%)}
+#hd-v05-scene .v07-fx-person.v06-attack{background:linear-gradient(130deg,transparent 40%,#e1be4960,transparent 65%)}
+#hd-v06-cover>article{position:relative;isolation:isolate;padding:20px 14px 420px;width:min(100%,520px);min-height:820px;max-height:none;overflow:visible;background:#e8dcc0}
+#hd-v06-cover .v07-cover-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;z-index:-1}
+#hd-v06-cover .eyebrow{font-size:.76rem;letter-spacing:.05em;margin:0 0 10px}
+#hd-v06-cover h1{font-size:clamp(1.75rem,6.3vw,2.7rem);line-height:1.2;margin:8px 0}
+#hd-v06-cover article>p{margin:9px 0}
+#hd-v06-cover .v06-cover-actions{margin-top:12px}
+#hd-v06-cover{align-items:start;overflow-y:auto;overflow-x:hidden}
+#hd-v04-terrain{appearance:none;-webkit-appearance:none;min-height:48px;max-width:100%;font:inherit;font-size:16px;color:#342a1b;padding:10px 36px 10px 14px;border:2px solid #776348;border-width:2px 3px 3px 2px;border-radius:7px 3px 8px 4px;background-color:#ecdfbe;background-image:linear-gradient(45deg,transparent 50%,#665239 50%),linear-gradient(135deg,#665239 50%,transparent 50%),repeating-linear-gradient(6deg,#ffffff12 0 2px,#78603208 3px 4px);background-position:calc(100% - 19px) 21px,calc(100% - 13px) 21px,0 0;background-size:6px 6px,6px 6px,100% 100%;background-repeat:no-repeat;box-shadow:inset 0 0 10px #765a2420,1px 2px 0 #5e482c25}
+#hd-v04-terrain:focus-visible{outline:3px solid #a33327;outline-offset:3px}
+html body button{min-width:48px!important;min-height:48px!important}
+#hd-v06-combat{overflow-y:auto;overflow-x:hidden}.v06-dialog{max-width:100%;overflow-wrap:anywhere}
+@media(max-width:480px){#hd-v06-cover>article{min-height:800px;padding-bottom:440px}.v06-dialog{width:100%}#hd-v06-combat{padding:8px}#hd-v05-scene .v05-actions{min-width:0}}
 </style>
 </head>
 <body data-layout="1">
@@ -1398,7 +1423,7 @@ const warrior='<g stroke="#343123" stroke-linejoin="round"><path d="M82 101L59 1
 return '<svg class="'+(full?'v06-stage-person':'v05-face')+'" data-side="'+(enemy?1:0)+'" viewBox="0 '+(full?'0 200 280':'25 200 178')+'" role="img" aria-label="'+(enemy?'Chiến binh giáp vàng, mũ trụ nhiều gai':'Kiếm sĩ thủy mặc tóc buộc, nhìn nghiêng')+'"><defs><linearGradient id="'+id+'-cloth" x2="1" y2="1"><stop stop-color="#aaa994"/><stop offset=".4" stop-color="#585e50"/><stop offset=".7" stop-color="#888c78"/><stop offset="1" stop-color="#30392f"/></linearGradient><linearGradient id="'+id+'-metal" x2=".8" y2="1"><stop stop-color="#e0ca8a"/><stop offset=".24" stop-color="#665431"/><stop offset=".5" stop-color="#ba9d59"/><stop offset=".75" stop-color="#49432b"/><stop offset="1" stop-color="#a28a50"/></linearGradient><filter id="'+id+'-dry"><feTurbulence type="fractalNoise" baseFrequency=".065" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="1.1"/></filter></defs><g opacity=".16" fill="'+(enemy?gold:ink)+'"><path d="M12 200L44 97 74 58 139 83 188 198 167 253 24 248Z"/>'+marks+'</g><g filter="url(#'+id+'-dry)">'+(enemy?warrior:swordsman)+'</g><g fill="none" stroke="'+(enemy?'#796338':'#3d493b')+'" opacity=".3" stroke-width="1">'+Array.from({length:18},(_,i)=>'<path d="M'+(18+i*8)+' '+(220+i%4*8)+'l'+(i%2?12:-12)+' -'+(8+i%5)+'"/>').join('')+'</g></svg>';}
 function scenery(){return '<svg class="v05-land" viewBox="0 0 600 380" preserveAspectRatio="none" aria-hidden="true"><g fill="#4b5141" opacity=".22"><path d="M0 310L10 105 33 142 53 35 72 167 99 115 131 254 155 235 186 311ZM407 315L432 187 460 223 493 102 523 185 550 40 584 153 600 116V380H0V351Z"/><path d="M0 320L39 213 64 280 87 244 112 320 160 288 204 338 297 314 380 345 428 282 471 321 527 263 600 315V380H0Z" opacity=".45"/></g><g fill="none" stroke="#55543c" opacity=".38"><path d="M0 355Q170 320 600 358M0 368Q300 340 600 365M70 345L156 326M430 329L557 346"/><ellipse cx="300" cy="349" rx="188" ry="26"/><ellipse cx="300" cy="349" rx="147" ry="21"/><ellipse cx="300" cy="349" rx="105" ry="16"/><ellipse cx="300" cy="349" rx="57" ry="10"/><path d="M298 338q44 8 0 22q-41-8 0-22"/><path d="M564 317Q547 168 561 12M592 320Q573 153 588 45M548 194L514 170M555 113L519 87M583 166L599 144" stroke-width="4"/></g><g fill="#424e37" opacity=".53"><path d="M554 115q-41-9-46-35 31 2 46 35M560 107q3-34 24-50 4 25-24 50M552 168q-28-4-39-32 30 7 39 32M550 198q20-28 40-25-5 26-40 25M582 142q-25-12-31-35 24 4 31 35M584 180q6-30 28-38-4 24-28 38M564 69q-21-13-21-33 22 9 21 33"/></g><g fill="#6c6541" opacity=".13"><ellipse cx="120" cy="345" rx="108" ry="19"/><ellipse cx="475" cy="346" rx="111" ry="18"/></g></svg>';}
 function actionArt(i){const p=[ '<path d="M16 39L41 5 45 8 23 44Z" fill="#777d6b"/><path d="M19 32L31 42M20 40L12 51" stroke-width="4"/><path d="M25 34L42 10" stroke="#ded9bf"/>','<path d="M9 9L27 3 45 9 41 33 27 49 13 34Z" fill="#333a2d"/><path d="M15 14L27 9 39 14 35 31 27 40 19 31Z" fill="none" stroke="#b0aa89"/><path d="M27 14V34M20 21L34 23" stroke="#696c55"/>','<path d="M17 3L42 8 32 51 7 45Z" fill="#d9c18c"/><path d="M22 11L32 13 19 21 32 24 17 33 29 36 16 44M16 8L11 41M38 12L31 44" fill="none" stroke="#484831" stroke-width="2"/>','<path d="M18 45Q37 34 31 20 28 15 22 20 23 32 12 38 8 44 18 45Z" fill="#2e3428"/><ellipse cx="29" cy="12" rx="4" ry="6" fill="#2e3428"/><ellipse cx="39" cy="17" rx="3" ry="4" fill="#2e3428"/><ellipse cx="43" cy="25" rx="2" ry="3" fill="#2e3428"/><ellipse cx="41" cy="32" rx="2" ry="3" fill="#2e3428"/>' ];return '<svg viewBox="0 0 54 55" aria-hidden="true"><g stroke="#292d23" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+p[i]+'</g><path d="M3 48l10-6M38 45l10-6" stroke="#343d2a" stroke-width="2" opacity=".5"/></svg>';}
-function polish(root){if(root.dataset.v06Concept)return;root.dataset.v06Concept='ink-gold';root.querySelectorAll('.v05-fighter').forEach((c,i)=>{c.querySelector('.v05-face').outerHTML=figure(!!i);c.insertAdjacentHTML('afterbegin',brushFrame()+'<span class="v06-card-seal" aria-hidden="true">'+(i?'K':'HD')+'</span>');const label=c.querySelector('.v05-res span');label.textContent='Sinh Lực';});root.querySelector('.v05-land').outerHTML=scenery();root.querySelector('.v05-figures').innerHTML=figure(false,true)+figure(true,true);const titles=['Tấn Công','Phòng Thủ','Pháp Bảo','Chạy Trốn'],desc=['Gây sát thương','Giảm sát thương','Dùng bùa chú','Tỷ lệ thành công'];root.querySelectorAll('.v05-actions button').forEach((button,i)=>{button.disabled=true;button.innerHTML=i<4?brushFrame()+actionArt(i)+'<b>'+titles[i]+'</b><small>'+desc[i]+'</small>':'TỰ<br>ĐÁNH<small>Tự động chiến đấu</small>';});}
+function polish(root){if(root.dataset.v06Concept)return;root.dataset.v06Concept='ink-gold';root.querySelectorAll('.v05-fighter').forEach((c,i)=>{c.querySelector('.v05-face').outerHTML=figure(!!i);c.insertAdjacentHTML('afterbegin',brushFrame()+'<span class="v06-card-seal" aria-hidden="true">'+(i?'K':'HD')+'</span>');const label=c.querySelector('.v05-res span');label.textContent='Sinh Lực';});root.querySelector('.v05-land').outerHTML=scenery();root.querySelector('.v05-figures').innerHTML=figure(false,true)+figure(true,true);const titles=['Tấn Công','Phòng Thủ','Pháp Bảo','Chạy Trốn'],desc=['Gây sát thương','Giảm sát thương','Dùng bùa chú','Tỷ lệ thành công'];root.querySelectorAll('.v05-actions button').forEach((button,i)=>{button.disabled=true;button.innerHTML=i<4?brushFrame()+actionArt(i)+'<b>'+titles[i]+'</b><small>'+desc[i]+'</small>':'TỰ<br>ĐÁNH<small>Tự động chiến đấu</small>';});window.HD_V07?.apply(root);}
 polish($('hd-v05-scene'));
 /* Keep original controls/logs alive: place the picture first, fold only the raw duplicate journal. */
 const picture=$('hd-v05-scene');arena.prepend(picture);const rawRecord=d.createElement('details'),rawSummary=d.createElement('summary');rawRecord.className='v06-source-record';rawSummary.textContent='Nhật ký CORE đầy đủ và ghi chú';rawRecord.append(rawSummary);const rawLog=$('hd-v04-log'),rawHeading=rawLog.previousElementSibling,rawNote=rawLog.nextElementSibling;arena.append(rawRecord);if(rawHeading?.tagName==='H3')rawRecord.append(rawHeading);rawRecord.append(rawLog);if(rawNote?.tagName==='SMALL')rawRecord.append(rawNote);
@@ -1412,18 +1437,18 @@ function classify(x){if(x.loai==='trungNe')return [{kind:'attack',side:x.ben,ele
 function presenter(host,{enabled=true}={}){let seen=0,first=null;const history=[];function effect(a){history.push(a);if(!enabled)return;const cards=host.querySelectorAll('.v05-fighter'),card=cards[a.side];if(!card)return;card.classList.add('v06-motion');if(a.kind==='crit'){host.classList.remove('v06-crit');host.classList.add('v06-crit');setTimeout(()=>host.classList.remove('v06-crit'),350);return;}const cls='v06-'+a.kind;card.classList.remove(cls);card.classList.add(cls);setTimeout(()=>card.classList.remove(cls),400);const person=host.querySelector('.v06-stage-person[data-side="'+a.side+'"]');if(person){person.classList.add(cls);setTimeout(()=>person.classList.remove(cls),400);}if(a.kind==='dodge'){const t=d.createElement('b');t.className='v06-dodge-label';t.textContent='Né';card.append(t);setTimeout(()=>t.remove(),650);}const key=a.kind==='phu'?'phu':a.element;if(key&&paths[key]){const target=a.kind==='attack'?cards[1-a.side]:card;const el=d.createElement('span');el.className='v06-fx'+(key==='phu'?' v06-fx-phu':'');el.dataset.v06Element=key;el.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true">'+paths[key]+'</svg>';target.querySelectorAll('.v06-fx').forEach(n=>n.remove());target.append(el);setTimeout(()=>el.remove(),650);}}
 return {history,effect,reset(){seen=0;first=null;history.length=0;host.querySelectorAll('.v06-fx,.v06-dodge-label').forEach(n=>n.remove());},consume(z){const logs=z?.nhatKy||[];if(logs.length<seen||logs[0]?.stt!==first){seen=0;first=logs[0]?.stt;}logs.slice(seen).forEach(x=>classify(x).forEach(effect));seen=logs.length;},enabled};}
 const fx=presenter($('hd-v05-scene'));let lastFight=null,logStarted=0;const received=new Map();
-function update(){const fight=F.debug.tran();if(fight!==lastFight){fx.reset();lastFight=fight;received.clear();logStarted=Date.now();$('hd-v05-scene').querySelectorAll('.v06-stage-damage').forEach(n=>n.remove());}const z=fight?.xem();fx.consume(z);const logs=z?.nhatKy||[];live.replaceChildren(...logs.slice(-80).map(x=>{const text=F.debug.van(x,z.dauSi);if(!text)return null;if(!received.has(x.stt))received.set(x.stt,Math.max(0,Math.floor((Date.now()-logStarted)/1000)));const elapsed=received.get(x.stt),p=d.createElement('p'),time=d.createElement('span'),body=d.createElement('span');time.className='v06-log-time';time.title='Thời điểm trình bày nhận log; không phải thời gian CORE';time.textContent='['+String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(elapsed%60).padStart(2,'0')+']';body.textContent=text;if(x.chiMang){body.className='v06-log-critical';body.textContent=text.replace('Chí mạng!','(Bạo Kích!)');}p.dataset.coreEvent=String(x.stt);p.append(time,body);return p;}).filter(Boolean));live.scrollTop=live.scrollHeight;const root=$('hd-v05-scene');root.querySelectorAll('.v05-fighter>.v05-float').forEach(n=>{if(n.dataset.v06Stage)return;n.dataset.v06Stage='shown';const e=d.createElement('span');e.className='v06-stage-damage'+(n.classList.contains('crit')?' crit':'');e.dataset.side=n.closest('[data-side]').dataset.side;e.dataset.coreDamage=n.dataset.coreDamage;e.textContent=n.firstChild?.textContent||'';if(n.classList.contains('crit')){const label=d.createElement('small');label.textContent='(Bạo Kích!)';e.append(label);}root.querySelector('.v05-stage').append(e);setTimeout(()=>e.remove(),1250);});syncTOC();}
+function update(){const fight=F.debug.tran();if(fight!==lastFight){fx.reset();lastFight=fight;received.clear();logStarted=performance.now();$('hd-v05-scene').querySelectorAll('.v06-stage-damage').forEach(n=>n.remove());}const z=fight?.xem();window.HD_V07?.apply($('hd-v05-scene'),z?.dauSi);fx.consume(z);const logs=z?.nhatKy||[];live.replaceChildren(...logs.slice(-80).map((x,i)=>{const logIndex=Math.max(0,logs.length-80)+i;const text=F.debug.van(x,z.dauSi);if(!text)return null;if(!received.has(logIndex))received.set(logIndex,Math.max(0,Math.floor((performance.now()-logStarted)/1000)));const elapsed=received.get(logIndex),p=d.createElement('p'),time=d.createElement('span'),body=d.createElement('span');time.className='v06-log-time';time.title='Giây thực từ lúc mở trận; lưu riêng từng dòng, không phải phút CORE';time.textContent='['+String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(elapsed%60).padStart(2,'0')+']';body.textContent=text;if(x.chiMang){body.className='v06-log-critical';body.textContent=text.replace('Chí mạng!','(Bạo Kích!)');}p.dataset.coreEvent=String(logIndex);p.append(time,body);return p;}).filter(Boolean));live.scrollTop=live.scrollHeight;const root=$('hd-v05-scene');root.querySelectorAll('.v05-fighter>.v05-float').forEach(n=>{if(n.dataset.v06Stage)return;n.dataset.v06Stage='shown';const e=d.createElement('span');e.className='v06-stage-damage'+(n.classList.contains('crit')?' crit':'');e.dataset.side=n.closest('[data-side]').dataset.side;e.dataset.coreDamage=n.dataset.coreDamage;e.textContent=n.firstChild?.textContent||'';if(n.classList.contains('crit')){const label=d.createElement('small');label.textContent='(Bạo Kích!)';e.append(label);}root.querySelector('.v05-stage').append(e);setTimeout(()=>e.remove(),1250);});syncTOC();}
 let fxQueued=false;V.theGioi.core.nghe('chienDauV04',()=>{if(fxQueued)return;fxQueued=true;queueMicrotask(()=>{fxQueued=false;update();});});
 d.addEventListener('click',e=>{if(e.target.closest('#hd-v04-start')){fx.reset();openModal();queueMicrotask(update);}if(e.target.closest('#hd-v04-reset'))queueMicrotask(update);},true);
 d.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();hideCover();}});
 window.HD_V06=Object.freeze({kiemThu:options=>HD_kiemThuV06(options),debug:Object.freeze({classify,presenter,update,openModal,closeModal,map,navigate,fx,polish,figure,brushFrame})});
-const test=d.createElement('button');test.type='button';test.id='hd-v06-tests';test.textContent='Kiểm thử V0.6 và toàn bộ hồi quy';const out=d.createElement('pre');out.id='hd-v06-test-results';test.addEventListener('click',()=>{if(F.debug.tran()?.xem().dang){out.textContent='Đặt lại đấu trường trước khi kiểm thử.';return;}out.textContent=['02','03','04','05','06'].map(n=>{const r=window['HD_V'+n].kiemThu({inBang:false});return 'V0.'+Number(n)+': '+r.dat+' PASS / '+r.truot+' FAIL\n'+r.danhSach.filter(x=>x.ketQua==='FAIL').map(x=>x.ten+': '+x.loi).join('\n');}).join('\n');});$('hd-v04-debug').append(test,out);
+const test=d.createElement('button');test.type='button';test.id='hd-v06-tests';test.textContent='Kiểm thử V0.7 và toàn bộ hồi quy';const out=d.createElement('pre');out.id='hd-v06-test-results';test.addEventListener('click',()=>{if(F.debug.tran()?.xem().dang){out.textContent='Đặt lại đấu trường trước khi kiểm thử.';return;}out.textContent=['02','03','04','05','06','07'].map(n=>{const r=window['HD_V'+n].kiemThu({inBang:false});return 'V0.'+Number(n)+': '+r.dat+' PASS / '+r.truot+' FAIL\n'+r.danhSach.filter(x=>x.ketQua==='FAIL').map(x=>x.ten+': '+x.loi).join('\n');}).join('\n');});$('hd-v04-debug').append(test,out);
 })();
 </script>
 <script>
 function HD_kiemThuV06({inBang=true}={}){const d=document,$=id=>d.getElementById(id),V=window.HD_V04,F=window.HD_V05,X=window.HD_V06.debug,{map,presenter,classify,navigate,openModal,closeModal}=X,toc=$('hd-v06-book').querySelector('nav'),cover=$('hd-v06-cover'),modal=$('hd-v06-combat'),arena=$('hd-v04-arena'),style=$('hd-v06-style');const ds=[],eq=(a,b)=>{if(JSON.stringify(a)!==JSON.stringify(b))throw Error('Không khớp '+JSON.stringify(a)+' / '+JSON.stringify(b));},ok=x=>{if(!x)throw Error('Không đạt');},test=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};const h=d.createElement('div'),view=F.debug.taoView(h);function fixture(seed=123456){const c=HD_taoCore(seed),base={ten:'Kiếm sĩ',nhomB:[1000,350,500,100,1000,0],tranKhiHuyet:1000,phuLuc:[1,2,3],linhLuc:100,linhLucToiDa:100},a=V.taoDauSi(c,base),b=V.taoDauSi(c,{...base,ten:'Đối thủ'}),t=V.taoChienDau(c,a,b,'trong');t.batDau();return {c,t};}
 const coverState=cover.hidden,modalState=modal.classList.contains('is-open'),activeTab=map.find(([id])=>!$('page-'+id).hidden)?.[0];
-test('Bìa có tranh SVG, mở và bỏ qua không chạm save',()=>{const before=V.theGioi.core.xuat();cover.hidden=false;$('hd-v06-open').click();ok(cover.hidden);cover.hidden=false;$('hd-v06-skip').click();ok(cover.hidden);ok(cover.querySelector('svg'));eq(V.theGioi.core.xuat(),before);});
+test('Bìa có tranh JPEG, mở và bỏ qua không chạm save',()=>{const before=V.theGioi.core.xuat();cover.hidden=false;$('hd-v06-open').click();ok(cover.hidden);cover.hidden=false;$('hd-v06-skip').click();ok(cover.hidden);ok(cover.querySelector('img[data-v07-scene="bia"]'));eq(V.theGioi.core.xuat(),before);});
 test('Mục lục đủ sáu tab cũ và điều hướng đúng',()=>{map.forEach(([id])=>{toc.querySelector('[data-v06-tab="'+id+'"]').click();ok(!$('page-'+id).hidden);});});
 test('Bảy hệ chưa khai mở bị khóa, không tạo tab',()=>{eq(toc.querySelectorAll('button:disabled').length,7);ok([...toc.querySelectorAll('button:disabled')].every(b=>b.textContent.includes('chưa khai mở')));eq(d.querySelectorAll('main>section').length,6);});
 test('Modal mở/đóng và giữ nguyên node đấu trường',()=>{openModal();ok(modal.classList.contains('is-open'));$('hd-v06-close').click();ok(!modal.classList.contains('is-open'));ok(modal.contains(arena));});
@@ -1443,8 +1468,8 @@ test('Quét CJK Cyrillic emoji bằng 0',()=>{const text=d.documentElement.outer
 
 test('Concept giấy nhiều lớp và hạt SVG tĩnh',()=>{ok(style.textContent.includes('#e8d9b0'));ok(style.textContent.includes('radial-gradient(ellipse at 0 0'));ok(modal.querySelector('.v06-paper-grain feTurbulence'));});
 test('Concept hai viền cọ và hai triện Latin',()=>{X.polish(h);eq(h.querySelectorAll('.v05-fighter>.v06-brush-frame').length,2);eq(h.querySelectorAll('.v06-card-seal').length,2);ok([...h.querySelectorAll('.v06-card-seal')].every(n=>/^[A-Z]+$/.test(n.textContent)));});
-test('Concept chân dung nhiều lớp và giáp vảy vàng',()=>{ok(h.querySelector('[data-side="0"] .v05-face').querySelectorAll('path').length>40);ok(h.querySelector('[data-side="1"] .v05-face').querySelectorAll('path').length>90);eq(h.querySelectorAll('.v06-stage-person').length,2);});
-test('Concept cảnh trúc và gợn sóng có SVG inline',()=>{ok(h.querySelector('.v05-land').querySelectorAll('ellipse').length>=6);ok(h.querySelector('.v05-land').querySelectorAll('path').length>=5);});
+test('Concept chân dung JPEG kiếm sĩ và giáp vàng',()=>{eq(h.querySelector('[data-side="0"] .v05-face').getAttribute('src'),'art/kiem-si.jpg');eq(h.querySelector('[data-side="1"] .v05-face').getAttribute('src'),'art/giap-vang.jpg');eq(h.querySelectorAll('.v06-stage-person').length,2);});
+test('Concept cảnh trúc và gợn sóng dùng JPEG trong art/',()=>{eq(h.querySelector('.v05-land').getAttribute('src'),'art/tran-dau.jpg');ok(h.querySelector('.v05-land').tagName==='IMG');});
 test('Concept bốn nút dọc chú giải và Tự Đánh tròn',()=>{const bs=[...h.querySelectorAll('.v05-actions button')];eq(bs.length,5);ok(bs.every(b=>b.disabled));eq(bs.slice(0,4).map(b=>b.querySelector('small').textContent),['Gây sát thương','Giảm sát thương','Dùng bùa chú','Tỷ lệ thành công']);eq(bs[4].querySelector('small').textContent,'Tự động chiến đấu');});
 test('Concept trình bày mới không thay CORE hay snapshot',()=>{const q=fixture(),before=q.c.xuat(),state=q.t.xem();X.polish(h);view.render(state,state.dauSi,'trong');eq(q.c.xuat(),before);eq(q.t.xem(),state);eq(h.querySelector('[data-num="hp"]').textContent,'100/100');});
 test('Concept nhật ký có khung và thời điểm từ UI',()=>{ok(d.querySelector('.v06-journal>.v06-brush-frame'));ok(d.querySelector('.v06-log-head').textContent.includes('Tự động cuộn'));ok(d.querySelector('.v06-log-head').textContent.includes('Nhật Ký Chiến Đấu'));});
@@ -1456,6 +1481,106 @@ test('Concept hiệu ứng tấn công đồng bộ nhân vật sân tranh',()=>
 test('Concept năm ô hành động tối thiểu 48px',()=>{const was=modal.classList.contains('is-open');openModal();try{const bs=[...d.querySelectorAll('#hd-v05-scene .v05-actions button')];eq(bs.length,5);ok(bs.every(b=>{const r=b.getBoundingClientRect();return r.width>=48&&r.height>=48;}));}finally{if(!was)closeModal();}});
 
 cover.hidden=coverState;modal.classList.toggle('is-open',modalState);if(activeTab)navigate(activeTab);const result={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};if(inBang)console.table(ds);return result;}
+</script>
+<script>
+(function HD_khoTranhV07(){
+'use strict';
+/* MÔ ĐUN KHO CHÂN DUNG VÀ KHO CẢNH V0.7
+Thiết kế: tranh JPEG nguyên trạng nằm cùng kho trong art/, không nhúng base64,
+không CDN. Hai registry độc lập khóa -> đường dẫn tương đối. Thêm chân dung:
+upload art/khoa-moi.jpg rồi thêm đúng một dòng vào chanDung bên dưới. Nếu
+loại/ngoại hình dùng chính khóa đó thì resolver tự nhận, không sửa code khác.
+Bảng biDanh chỉ dành cho tên gọi đồng nghĩa; có thể thêm một dòng khi cần.
+Thêm cảnh: upload JPEG và thêm một dòng canh; màn mới gọi anhCanh(khoa).
+Không dùng giáp vàng cho loại lạ. mac-dinh là bóng mực trung tính. Mọi img có
+onerror một lần chuyển sang bóng mực; lỗi file/khóa không làm vỡ khung ảnh.
+Engine hiện tại không giữ giới tính/ngoại hình/loại NPC trong taoDauSiV04.
+CẤU HÌNH DUY NHẤT: macDinh (người chơi kiếm sĩ, NPC thử nghiệm giáp vàng).
+ĐIỂM CẮM SAU NÀY: public snapshot dauSi có chanDung, gioiTinh, ngoaiHinh,
+loai hoặc trangPhuc thì resolver tự ánh xạ; không đọc/sửa nội bộ engine.
+Chỉ đọc HD_V04/HD_V05 public API và bus qua presenter V06; không ghi CORE,
+không gọi RNG, không thay cân bằng hay nhịp 1150ms. Kho tải trước đủ chân dung
+trong DOM modal để chuyển nhân vật không phải tạo lại giao diện.
+Đồng hồ thuộc presenter V06: khóa bằng vị trí log trong nhatKy của từng trận
+(vì log CORE KHÔNG có stt), giây thực từ performance.now, không phải phút CORE.
+Kiểm thử V06 chỉ đổi ba kỳ vọng SVG đã được thay bằng JPEG, giữ đủ 40 ca.
+*/
+const d=document;
+const bongMuc='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320"><g fill="#39372e" opacity=".65"><ellipse cx="120" cy="87" rx="38" ry="47"/><path d="M92 122 Q42 145 32 301 Q119 282 209 304 Q193 154 149 122 Q120 150 92 122"/><path d="M91 57 Q110 20 146 57L151 89 86 92Z"/></g></svg>');
+const chanDung=Object.freeze({
+ 'mac-dinh':bongMuc,
+ 'kiem-si':'art/kiem-si.jpg',
+ 'giap-vang':'art/giap-vang.jpg',
+ 'yeu-thu':'art/yeu-thu.jpg',
+ 'nu-tu':'art/nu-tu.jpg',
+ 'yeu-ma':'art/yeu-ma.jpg',
+ 'khoi-loi':'art/khoi-loi.jpg'
+});
+const canh=Object.freeze({
+ 'bia':'art/bia.jpg',
+ 'tran-dau':'art/tran-dau.jpg'
+});
+const biDanh=Object.freeze({'nam':'kiem-si','nu':'nu-tu','female':'nu-tu','nữ nhân':'nu-tu','nu-nhan':'nu-tu','kiếm sĩ':'kiem-si','yêu thú':'yeu-thu','yêu ma':'yeu-ma','khôi lỗi':'khoi-loi','giáp vàng':'giap-vang','nữ tu':'nu-tu'});
+const macDinh=Object.freeze({nguoiChoi:'kiem-si',doiThuThuNghiem:'giap-vang'});
+function chuan(x){return String(x||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[ _]+/g,'-');}
+function khoa(x){const raw=String(x||'').trim().toLowerCase();const key=biDanh[raw]||biDanh[chuan(raw)]||chuan(raw);return Object.hasOwn(chanDung,key)?key:'mac-dinh';}
+function lookup(key){return chanDung[khoa(key)];}
+function resolve(f={},side=0){
+ const explicit=f.chanDung||f.ngoaiHinh||f.trangPhuc;
+ if(explicit)return khoa(explicit);
+ if(f.loai)return khoa(f.loai);
+ if(f.gioiTinh)return khoa(f.gioiTinh);
+ return side?macDinh.doiThuThuNghiem:macDinh.nguoiChoi;
+}
+function taoAnh(path,alt,cls=''){
+ const img=d.createElement('img');img.className='v07-ink '+cls;img.alt=alt;
+ img.decoding='async';img.dataset.v07Path=path;img.src=path;
+ img.onerror=()=>{img.onerror=null;img.dataset.v07Fallback='true';img.src=bongMuc;};
+ return img;
+}
+function anhCanh(key,cls=''){const img=taoAnh(canh[key]||bongMuc,key==='bia'?'Núi mờ, am nhỏ bên tùng và người tu trên đường núi':'Hai đấu sĩ đối đầu giữa núi trúc và gợn sóng',cls);img.dataset.v07Scene=key;return img;}
+function apply(root,fs){
+ if(!root)return;
+ root.querySelectorAll('.v05-fighter').forEach((card,i)=>{
+  const key=resolve(fs?.[i]||{},i),old=card.querySelector('.v05-face');
+  if(old?.dataset.v07Portrait===key)return;
+  const img=taoAnh(lookup(key),'Chân dung '+key,'v05-face');img.dataset.v07Portrait=key;old?.replaceWith(img);
+ });
+ if(!root.querySelector('[data-v07-scene="tran-dau"]')){
+  root.querySelector('.v05-land')?.replaceWith(anhCanh('tran-dau','v05-land v07-battle'));
+  const figures=root.querySelector('.v05-figures');
+  if(figures){figures.replaceChildren();for(let i=0;i<2;i++){
+   const span=d.createElement('span');span.className='v06-stage-person v07-fx-person';span.dataset.side=String(i);span.setAttribute('aria-hidden','true');figures.append(span);
+  }}
+ }
+}
+const cover=d.getElementById('hd-v06-cover'),article=cover.querySelector('article');
+article.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v07-cover-art'));
+article.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.7';
+const preload=d.createElement('div');preload.hidden=true;preload.id='hd-v07-kho';preload.setAttribute('aria-hidden','true');
+for(const [key,path]of Object.entries(chanDung))if(key!=='mac-dinh'){
+ const img=taoAnh(path,'Kho chân dung '+key);img.dataset.v07Portrait=key;preload.append(img);
+}
+d.getElementById('hd-v06-combat').append(preload);
+apply(d.getElementById('hd-v05-scene'),window.HD_V05.debug.tran()?.xem().dauSi);
+d.querySelector('footer').textContent='V0.7 · Kho tranh art/ · Engine V0.2–V0.5 giữ nguyên';
+function kiemThu({inBang=true}={}){
+ const ds=[],eq=(a,b)=>{if(a!==b)throw Error(String(a)+' khác '+String(b));},ok=x=>{if(!x)throw Error('Không đạt');},test=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
+ for(const [key,path]of Object.entries(chanDung))test('Lookup chân dung '+key,()=>eq(lookup(key),path));
+ for(const [key,path]of Object.entries(canh))test('Lookup cảnh '+key,()=>{const img=anhCanh(key);eq(img.getAttribute('src'),path);});
+ for(const [type,key]of [['yêu thú','yeu-thu'],['yeu-ma','yeu-ma'],['khôi lỗi','khoi-loi'],['nữ nhân','nu-tu']])test('Map loại '+type,()=>eq(resolve({loai:type},1),key));
+ test('Nữ người chơi, nam mặc định và cấu hình NPC',()=>{eq(resolve({gioiTinh:'nữ'}),'nu-tu');eq(resolve({}),'kiem-si');eq(resolve({},1),'giap-vang');});
+ test('Loại lạ không dùng giáp vàng',()=>eq(resolve({loai:'chua-co-tranh'},1),'mac-dinh'));
+ test('onerror chuyển bóng mực đúng một lần',()=>{const img=taoAnh('art/chua-co.jpg','Thử');img.dispatchEvent(new Event('error'));eq(img.getAttribute('src'),bongMuc);eq(img.onerror,null);eq(img.dataset.v07Fallback,'true');});
+ test('Tất cả tám tranh có trong DOM, dùng đường tương đối',()=>{for(const path of [...Object.values(canh),...Object.entries(chanDung).filter(([k])=>k!=='mac-dinh').map(([,p])=>p)])ok([...d.querySelectorAll('img.v07-ink')].some(n=>n.dataset.v07Path===path));});
+ test('Hai thẻ và tranh giữa không còn tranh SVG cũ',()=>{const root=d.getElementById('hd-v05-scene');eq(root.querySelectorAll('img.v05-face').length,2);eq(root.querySelectorAll('img.v07-battle').length,1);eq(root.querySelectorAll('.v06-stage-person').length,2);});
+ test('Bìa giữ chữ và hai nút HTML',()=>{ok(article.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));ok(article.textContent.includes('Một trang giấy dó, một đời cầu đạo.'));ok(d.getElementById('hd-v06-open'));ok(d.getElementById('hd-v06-skip'));eq(article.querySelector('.v06-seal').textContent,'HỒNG ĐỨC · V0.7');});
+ test('Select Thế trận vẫn là select gốc',()=>eq(d.getElementById('hd-v04-terrain').tagName,'SELECT'));
+ test('Không có ký tự cấm trong DOM nguồn',()=>ok(!/[\p{Script=Han}\p{Script=Cyrillic}\p{Extended_Pictographic}]/u.test(d.documentElement.outerHTML)));
+ const result={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};if(inBang)console.table(ds);return result;
+}
+window.HD_V07=Object.freeze({chanDung,canh,biDanh,macDinh,khoa,lookup,resolve,taoAnh,anhCanh,apply,kiemThu});
+})();
 </script>
 </body>
 </html>
@@ -1493,3 +1618,8 @@ LỊCH SỬ THAY ĐỔI V0.6
 -->
 
 <!-- LỊCH SỬ THAY ĐỔI V0.6 - TINH CHỈNH CONCEPT 23/10/2026: dựng lại giấy be nâu, hạt giấy SVG tĩnh, viền cọ không đều và triện Latin; kiếm sĩ tóc buộc nhìn nghiêng và chiến binh giáp vàng nhiều lớp nét, mũ gai, vảy giáp; sân tranh đầy đủ với trúc, núi, mực đất và gợn sóng. Thanh Sinh Lực trái xanh/phải đỏ vẫn số public state, thanh dưới Linh lực đúng tài nguyên engine (không giả Thể lực). Năm nút dọc có icon, chú giải, nút Tự Đánh đỏ tròn vẫn disabled. Nhật ký timestamp thời điểm UI nhận log, màu chí mạng, sát thương từ coreDamage thật trên sân tranh. Giữ nguyên bốn script V02-V05, nhịp 1150ms, RNG, save/load, manual và reduced-motion. Bổ sung tự kiểm chi tiết concept. -->
+
+<!--
+LỊCH SỬ THAY ĐỔI V0.7
+23/10/2026 - Thư viện tám JPEG nguyên trạng trong art/; kho chân dung và kho cảnh độc lập, alias loại/ngoại hình, bóng mực onerror. Bìa tranh núi am tùng giữ chữ và nút HTML; triện HỒNG ĐỨC · V0.7. Hai chân dung và tranh đối đầu thay SVG, giữ thanh số/VS/Hồi/FX. Vá timestamp: CORE không có stt, dùng vị trí log riêng từng trận và giây thực performance.now. Select Thế trận vẫn native iOS, nét mực giấy dó. CSS co giãn, modal/bìa cuộn dọc, vùng chạm 48px. Bốn script V02-V05 nguyên từng ký tự; không đổi RNG, save/load, nhịp 1150ms hay reduced-motion. Bổ sung HD_V07.kiemThu; ba ca hình ảnh V06 cập nhật sang JPEG, giữ đủ 40 ca. Không sửa main hay tài liệu thiết kế.
+-->
