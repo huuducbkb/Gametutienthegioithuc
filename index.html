@@ -998,7 +998,7 @@ Tính năng đã qua kiểm thử - KHÔNG XÓA.
   el('hd-bat-dau').disabled=c.daChet||!!t.phien||c.phut<b.lietDen;el('hd-dung').disabled=c.daChet||!t.phien;el('hd-ngu').disabled=c.daChet||b.hanhDong==='ngu';
   el('hd-dot-pha').disabled=c.daChet||t.canhGioi!==0||t.tang!==13||t.expDotPha<C.EXP_TRUC_CO*C.EXP||!t.duPhien||!w.sinhLy.onDinh();
   el('hd-condition').textContent='Trúc Cơ: LK13 + 300.000 EXP riêng + một phiên đủ + không thương chưa hồi. P hiện tại '+f('so',w.tuLuyen.xacSuat())+'%. Cột D (giả lập): '+t.doc.map(x=>f('tc',x)).join(' / ')+'.';
-  const lines=w.core.nhatKy().slice(-40).reverse().map(r=>w.thoiGian.chuoi(r.phut)+' | '+r.ten+('roll'in r?' | hạt '+f('so',r.hatTruoc)+' > '+f('so',r.hatSau)+' | d100='+f('so',r.roll)+' | P='+f('so',r.P)+' | '+(r.thanhCong?'Thành công':'Thất bại'):'EXP'in r?' | EXP '+f('exp',r.EXP):r.loai?' | '+r.loai:''));el('hd-log').textContent=lines.join('\n');
+  const lines=w.core.nhatKy().slice(-40).reverse().map(r=>w.thoiGian.chuoi(r.phut)+' | '+r.ten+('roll'in r&&Number.isSafeInteger(r.hatTruoc)&&Number.isSafeInteger(r.hatSau)&&Number.isSafeInteger(r.P)?' | hạt '+f('so',r.hatTruoc)+' > '+f('so',r.hatSau)+' | d100='+f('so',r.roll)+' | P='+f('so',r.P)+' | '+(r.thanhCong?'Thành công':'Thất bại'):'roll'in r?' | d100='+f('so',r.roll)+(r.nguong!==undefined?' | ngưỡng='+f('so',r.nguong):''):'EXP'in r?' | EXP '+f('exp',r.EXP):r.loai?' | '+r.loai:''));el('hd-log').textContent=lines.join('\n');
   if(canhBao)el('hd-result').textContent=canhBao;
  }
  // Mọi điều khiển gọi API công khai; không đọc biến nội bộ mô đun.
