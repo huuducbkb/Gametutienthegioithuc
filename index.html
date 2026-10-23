@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MODULE V0.3
-Khung giao diện V0.1 nguyên bản: dòng 17.
-Mô đun THANH GHI - dòng 197.
-Mô đun CORE - dòng 232.
-Mô đun THỜI GIAN - dòng 286.
-Mô đun SINH LÝ - dòng 305.
-Mô đun TU LUYỆN - dòng 365.
-Mô đun THẾ GIỚI VÀ LƯU - dòng 436.
-Mô đun KIỂM THỬ HỒI QUY - dòng 452.
-Mô đun GIAO DIỆN - dòng 536.
-Phần nối V0.3: THANH GHI MẪU; CHỈ SỐ; GHÉP VÀ LƯU; KIỂM THỬ HỒI QUY; GIAO DIỆN V03.
-Các mô đun V0.2 và bộ kiểm thử gốc bên dưới được bảo toàn.
-Giao tiếp công khai qua CORE và các hàm có hợp đồng tại từng mô đun.
--->
+MỤC LỤC MODULE V0.4
+Khung giao diện V0.1 được giữ nguyên; giao tiếp qua hàm công khai và bus CORE.
+MÔ ĐUN THANH GHI V02 - dòng 205.
+MÔ ĐUN CORE V02 - dòng 240.
+MÔ ĐUN THỜI GIAN V02 - dòng 294.
+MÔ ĐUN SINH LÝ V02 - dòng 313.
+MÔ ĐUN TU LUYỆN V02 - dòng 373.
+MÔ ĐUN THẾ GIỚI VÀ LƯU V02 - dòng 444.
+MÔ ĐUN KIỂM THỬ HỒI QUY V02 - dòng 460.
+MÔ ĐUN THANH GHI MẪU V03 - dòng 546.
+MÔ ĐUN CHỈ SỐ V03 - dòng 578.
+MÔ ĐUN GHÉP VÀ LƯU V03 - dòng 669.
+MÔ ĐUN KIỂM THỬ HỒI QUY V03 - dòng 684.
+MÔ ĐUN THANH GHI CHIẾN ĐẤU V04 - dòng 736.
+MÔ ĐUN CHIẾN ĐẤU V04 - dòng 776.
+MÔ ĐUN KIỂM THỬ CHIẾN ĐẤU V04 - dòng 881.
+MÔ ĐUN GIAO DIỆN V02 - dòng 958.
+MÔ ĐUN GIAO DIỆN V03 - dòng 1034.
+MÔ ĐUN GIAO DIỆN CHIẾN ĐẤU V04 - dòng 1075.
+Nhóm B tương thích V03 và sáu chỉ số đầy đủ V04 được ghi trong hợp đồng CHỈ SỐ.
+--> 
 
 <!--
 HỒNG ĐỨC TU TIÊN LỘ V1 • bản khung V0.1
@@ -570,7 +577,8 @@ const HD_V03_DU_LIEU=Object.freeze({
 function HD_v03Tra(loai,id){const a=HD_V03_DU_LIEU[loai];if(!Array.isArray(a))return null;return structuredClone(a.find(x=>x.id===id)||null);}
 /*
 MÔ ĐUN CHỈ SỐ V03 - thiết kế duyệt 22/10/2026, mục 2, 3, 11 và 20.
-Sở hữu bốn chỉ số B 0..1000, hiển thị 0..100 bước 0,1; khí huyết chính là máu.
+Bổ sung V04: chính xác và né tránh 0..1000, mặc định 150, cùng tẩy tủy; nhomBDayDu trả sáu chỉ số, nhomB giữ bốn phần tử tương thích hồi quy V03.
+Sở hữu bốn chỉ số B gốc 0..1000, hiển thị 0..100 bước 0,1; khí huyết chính là máu.
 Không tạo thanh HP khác. 0 khí huyết là hấp hối, mọi hành động chủ động bị chặn.
 Thần niệm = bẩm sinh + 2 mỗi tầng LK đã đạt + 30 mỗi đại cảnh thành công.
 Sau LK giữ 13 tầng đã đạt; không dùng tầng 1 của Trúc Cơ thay lịch sử LK.
@@ -590,11 +598,11 @@ function HD_taoChiSoV03(w,luu){
  const ng=x=>core.nguyen(x),kep=(x,a,b)=>core.chan(x,a,b);
  const sao=x=>structuredClone(x),tinh=(n,hs)=>core.tinh(n,hs);
  const gocSinhLy=w.sinhLy.xem();
- let s={nhomB:C.B_GOC.map((v,i)=>tinh(v,[[gocSinhLy.nhomB[i],10000]])),
+ let s={chinhXac:150,neTranh:150,congPhap:1,phuLuc:[1,2,3],daHien:[],tnNhanDien:0,thuongV04:{chayMau:false,lanh:0,dot:0,anThan:0,mocTran:false,nang:false},nhomB:C.B_GOC.map((v,i)=>tinh(v,[[gocSinhLy.nhomB[i],10000]])),
   tnBamSinh:C.TN_BAM_SINH,nguyenTo:Object.fromEntries(C.NGUYEN_TO.map(x=>[x,C.NGUYEN_TO_GOC])),
   linhLuc:tranLL(),dieuKhien:[],tayTuy:[],heSoBCu:gocSinhLy.nhomB.slice(0,4),
   tranKhiHuyet:C.B_GOC[0],heKhiCu:[gocSinhLy.khiHuyet,Math.max(1,gocSinhLy.nhomB[0])],phutCanh:0,phutNghi:0,chienDau:false};
- if(luu){s=sao(luu);kiemTraLuu();}else{s.nhomB[0]=tinh(s.nhomB[0],[s.heKhiCu]);s.tranKhiHuyet=tinh(C.B_GOC[0],[[gocSinhLy.nhomB[0],10000]]);}
+ if(luu){s={...s,...sao(luu)};kiemTraLuu();}else{s.nhomB[0]=tinh(s.nhomB[0],[s.heKhiCu]);s.tranKhiHuyet=tinh(C.B_GOC[0],[[gocSinhLy.nhomB[0],10000]]);}
  let hoiDayPhut=-1;
  function tranLL(){const t=w.tuLuyen.xem();return t.canhGioi===0?C.LL_MOI_TANG*t.tang:C.LL_DAI_CANH[t.canhGioi];}
  function tn(){const t=w.tuLuyen.xem(),tang=t.canhGioi===0?t.tang:13;return ng(s.tnBamSinh+C.TN_MOI_TANG*tang+C.TN_MOI_DAI_CANH*s.tayTuy.length);}
@@ -605,15 +613,15 @@ function HD_taoChiSoV03(w,luu){
   const hieuLuc=vuotCap?C.HIEU_VUOT_CAP:[1,1];return {...v,vuotCap,hieuLuc: hieuLuc.slice(),
    haoThucTe:tinh(v.haoLLMoiCanh,[vuotCap?C.HAO_VUOT_CAP:[1,1]]),
    heSoTong:[v.heSoSatThuong[0]*hieuLuc[0]*heNguyenTo(v.he)[0],v.heSoSatThuong[1]*hieuLuc[1]*heNguyenTo(v.he)[1]],
-   dangDieuKhien:s.dieuKhien.includes(id),duTN:s.dieuKhien.includes(id)||chiem()+v.yeuCauTN<=tn()};}
+   dangDieuKhien:s.dieuKhien.includes(id),duTN:s.dieuKhien.includes(id)||chiem()+v.yeuCauTN<=tn()-s.tnNhanDien};}
  function khiHuyet(){return s.nhomB[0];}
  function coTheHanhDong(){return !core.xem().daChet&&khiHuyet()>0;}
- function chuanHoa(){s.linhLuc=kep(s.linhLuc,0,tranLL());while(chiem()>tn())s.dieuKhien.pop();if(!coTheHanhDong())s.dieuKhien=[];}
+ function chuanHoa(){s.linhLuc=kep(s.linhLuc,0,tranLL());while(chiem()>Math.max(0,tn()-s.tnNhanDien))s.dieuKhien.pop();if(!coTheHanhDong())s.dieuKhien=[];}
  function xem(){chuanHoa();return sao({...s,khiHuyet:khiHuyet(),hapHoi:khiHuyet()===0,
-  thanNiem:tn(),tnDangChiem:chiem(),tnConTrong:tn()-chiem(),linhLucToiDa:tranLL(),
+  thanNiem:tn(),tnDangChiem:chiem(),tnConTrong:Math.max(0,tn()-chiem()-s.tnNhanDien),nhomBDayDu:[...s.nhomB,s.chinhXac,s.neTranh],linhLucToiDa:tranLL(),
   haoMoiCanh:s.dieuKhien.reduce((n,id)=>n+thongTinVuKhi(id).haoThucTe,0)});}
  function doi(){chuanHoa();core.phat('chiSoThayDoi');core.phat('capNhat');}
- function datB(i,n){ng(i);if(i<0||i>=4)throw Error('Chỉ số B không hợp lệ');s.nhomB[i]=kep(n,0,C.TRAN_B);if(i===0)s.tranKhiHuyet=Math.max(s.tranKhiHuyet,s.nhomB[0]);doi();}
+ function datB(i,n){ng(i);if(i===4||i===5){s[i===4?'chinhXac':'neTranh']=kep(n,0,C.TRAN_B);doi();return;}if(i<0||i>=4)throw Error('Chỉ số B không hợp lệ');s.nhomB[i]=kep(n,0,C.TRAN_B);if(i===0)s.tranKhiHuyet=Math.max(s.tranKhiHuyet,s.nhomB[0]);doi();}
  function datTN(n){ng(n);if(n<0||!Number.isSafeInteger(n+500))throw Error('Thần niệm không hợp lệ');s.tnBamSinh=n;doi();}
  function datLL(n){s.linhLuc=kep(n,0,tranLL());doi();}
  function datNguyenTo(he,n){if(!C.NGUYEN_TO.includes(he))throw Error('Hệ nguyên tố không hợp lệ');s.nguyenTo[he]=kep(n,0,100);doi();}
@@ -628,8 +636,8 @@ function HD_taoChiSoV03(w,luu){
   s.heKhiCu=moi;
  }
  function tayTuy(bac){ng(bac);if(bac<1||bac>4||s.tayTuy.includes(bac))return false;
-  s.nhomB=s.nhomB.map(n=>kep(tinh(n,[C.TAY_TUY[bac]]),0,C.TRAN_B));s.tranKhiHuyet=kep(tinh(s.tranKhiHuyet,[C.TAY_TUY[bac]]),0,C.TRAN_B);s.tayTuy.push(bac);core.ghi('Tẩy tủy đại cảnh',{bac,heSo:C.TAY_TUY[bac]});doi();return true;}
- function kiemTraLuu(){if(!Array.isArray(s.nhomB)||s.nhomB.length!==4||!s.nhomB.every(x=>Number.isSafeInteger(x)&&x>=0&&x<=1000))throw Error('Lưu nhóm B không hợp lệ');
+  s.nhomB=s.nhomB.map(n=>kep(tinh(n,[C.TAY_TUY[bac]]),0,C.TRAN_B));for(const k of ['chinhXac','neTranh'])s[k]=kep(tinh(s[k],[C.TAY_TUY[bac]]),0,C.TRAN_B);s.tranKhiHuyet=kep(tinh(s.tranKhiHuyet,[C.TAY_TUY[bac]]),0,C.TRAN_B);s.tayTuy.push(bac);core.ghi('Tẩy tủy đại cảnh',{bac,heSo:C.TAY_TUY[bac]});doi();return true;}
+ function kiemTraLuu(){if(![1,2,3].includes(s.congPhap)||!Array.isArray(s.phuLuc)||!s.phuLuc.every(id=>[1,2,3].includes(id))||!Array.isArray(s.daHien)||!s.daHien.every(id=>[1,3].includes(id))||!Number.isSafeInteger(s.tnNhanDien)||s.tnNhanDien<0||!s.thuongV04)throw Error('Lưu chiến đấu không hợp lệ');for(const k of ['chinhXac','neTranh'])if(!Number.isSafeInteger(s[k])||s[k]<0||s[k]>1000)throw Error('Lưu chỉ số V04 không hợp lệ');if(!Array.isArray(s.nhomB)||s.nhomB.length!==4||!s.nhomB.every(x=>Number.isSafeInteger(x)&&x>=0&&x<=1000))throw Error('Lưu nhóm B không hợp lệ');
   if(!Number.isSafeInteger(s.tnBamSinh)||s.tnBamSinh<0||!Number.isSafeInteger(s.tnBamSinh+500))throw Error('Lưu thần niệm không hợp lệ');
   if(!s.nguyenTo||!C.NGUYEN_TO.every(k=>Number.isSafeInteger(s.nguyenTo[k])&&s.nguyenTo[k]>=0&&s.nguyenTo[k]<=100))throw Error('Lưu nguyên tố không hợp lệ');
   if(!Array.isArray(s.dieuKhien)||new Set(s.dieuKhien).size!==s.dieuKhien.length||!s.dieuKhien.every(id=>HD_v03Tra('vuKhi',id)))throw Error('Lưu vũ khí không hợp lệ');
@@ -640,7 +648,7 @@ function HD_taoChiSoV03(w,luu){
  }
  core.nghe('hauQuaDotPha',d=>{noiThuong(d.loai);if(d.loai==='thanhCong')tayTuy(w.tuLuyen.xem().canhGioi);else doi();});
  core.nghe('dotPhaDaiCanhThanhCong',({bac})=>tayTuy(bac));
- core.nghe('phienHoanTat',()=>{s.linhLuc=tranLL();hoiDayPhut=core.xem().phut;doi();});
+ core.nghe('phienHoanTat',()=>{if(!s.chienDau)s.linhLuc=tranLL();hoiDayPhut=core.xem().phut;doi();});
  core.nghe('canhGioi',()=>chuanHoa());
  core.nghe('chet',()=>{s.dieuKhien=[];});
  core.nghe('phut',()=>{if(core.xem().daChet)return;noiThuong();chuanHoa();
@@ -649,11 +657,13 @@ function HD_taoChiSoV03(w,luu){
    if(hao>s.linhLuc){s.linhLuc=0;s.dieuKhien=[];core.ghi('Cạn linh lực, thả toàn bộ vũ khí');}else s.linhLuc-=hao;}
   const b=w.sinhLy.xem(),nghi=['nghi','ngu'].includes(b.hanhDong)&&!s.chienDau;
   if(nghi){if(++s.phutNghi===HD_CAN_BANG.PHUT_NGAY){s.phutNghi=0;s.nhomB[0]=Math.min(s.tranKhiHuyet,s.nhomB[0]+C.HOI_KHI_HUYET_NGAY);}}else s.phutNghi=0;
-  if(hoiDayPhut===core.xem().phut)s.linhLuc=tranLL();
+  if(hoiDayPhut===core.xem().phut&&!s.chienDau)s.linhLuc=tranLL();
   if(!coTheHanhDong()&&w.tuLuyen.xem().phien)w.tuLuyen.dung('Hấp hối không thể tĩnh tọa');
  });
  chuanHoa();
  return Object.freeze({xem,xuat:()=>sao(s),datB,datTN,datLL,datNguyenTo,heNguyenTo,thongTinVuKhi,dieuKhien,tha,kiemTraHoc,chienDau,coTheHanhDong,
+  cauHinhChienDau:p=>{if(p.congPhap!==undefined){if(!HD_v03Tra('congPhap',p.congPhap))throw Error('Công pháp không hợp lệ');s.congPhap=p.congPhap;}if(p.phuLuc){if(!p.phuLuc.every(id=>[1,2,3].includes(id)))throw Error('Phù không hợp lệ');s.phuLuc=sao(p.phuLuc);}if(p.thuongV04)s.thuongV04=sao(p.thuongV04);doi();},
+  nhanDien:(id,duocBo=false)=>{if(!HD_v04An(id))return false;if(s.daHien.includes(id))return false;if(!duocBo){if(tn()-chiem()-s.tnNhanDien<20)return false;s.tnNhanDien+=20;}s.daHien.push(id);doi();return true;},
   hienThiB:n=>{ng(n);return String(n/10).replace('.',',');}});
 }
 /*
@@ -722,6 +732,229 @@ function HD_kiemThuV03({inBang=true}={}){
  if(inBang){console.table(ds);console.log('V0.3: '+ds.filter(x=>x.ketQua==='PASS').length+' PASS / '+ds.filter(x=>x.ketQua==='FAIL').length+' FAIL');}
  return {dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};
 }
+
+/*
+MÔ ĐUN THANH GHI CHIẾN ĐẤU V04 - duyệt 23/10/2026, mục 11 và 20.
+Bổ sung trên thanh ghi V03, giữ nguyên mã định danh và giao diện tương thích V03.
+Nhóm B gốc giữ bốn phần tử để bộ cũ không đổi; nhomBDayDu là sáu chỉ số.
+Chính xác, né tránh lưu 0..1000, mặc định 150; cùng hệ số tẩy tủy V03.
+Mọi cộng trang bị là đơn vị hiển thị; engine nhân mười khi ghép nhóm B.
+Bảng thương thế bên dưới là hằng cân bằng có thể điều chỉnh, không phải phần kể chuyện.
+Thuộc tính ẩn chỉ qua cửa riêng, không trả về trong mô tả vật phẩm công khai.
+Công khai: HD_v04Tra(loại,id), HD_v04An(id); trả bản sao, không sửa thanh ghi.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+const HD_V04_CB=Object.freeze({
+ HANH_DONG_GOC:2,THAN_PHAP_MOI_DIEM:250,TRUNG_GOC:60,NGUONG_TRUNG_MIN:6,NGUONG_TRUNG_MAX:96,
+ CHI_MANG_GOC:95,CHI_MANG:[3,2],TN_NHAN_DIEN:20,CHAY_MAU:100,LANH_THAN_PHAP:20,LANH_HIEP:2,
+ DOT_HIEP:2,DOT_KHI_HUYET:20,AN_THAN_NE:200,AN_THAN_HIEP:3,MOC_CONG:50,PHAN_CONG_CHINH_XAC:100,
+ // Chênh tổng công - thủ theo đơn vị hiển thị; sát thương là khí huyết lưu, mười đơn vị lưu = một điểm.
+ // Đã duyệt 23/10/2026: không xuyên 0; xước 20; nhẹ 50; nặng 120 và trừ một hành động; trọng thương 250.
+ BANG_THUONG:[{tran:0,ten:'Không xuyên',mat:0,nang:false},{tran:100,ten:'Xước',mat:20,nang:false},
+ {tran:250,ten:'Thương nhẹ',mat:50,nang:false},{tran:500,ten:'Thương nặng',mat:120,nang:true},
+ {tran:null,ten:'Trọng thương',mat:250,nang:false}],
+ THE_TRAN:[{id:'trong',ten:'Đất trống',cong:0,thu:0,chinhXac:0,ne:0,than:0,phanSo:{}},
+ {id:'rung',ten:'Rừng rậm',cong:0,thu:0,chinhXac:0,ne:100,than:0,phiKiem:-100,phanSo:{}},
+ {id:'song',ten:'Mặt sông',cong:0,thu:0,chinhXac:0,ne:0,than:-100,thuyMien:40,phanSo:{}},
+ {id:'dem',ten:'Đêm tối',cong:0,thu:0,chinhXac:-150,ne:0,than:0,phanSo:{}},
+ {id:'mua',ten:'Mưa lớn',cong:0,thu:0,chinhXac:0,ne:0,than:0,phanSo:{'Hỏa':[1,2],'Lôi':[3,2]}}]
+});
+const HD_V04_DU_LIEU={
+ vuKhi:HD_V03_DU_LIEU.vuKhi.map((v,i)=>({...structuredClone(v),...[
+ {cong:2,thu:1,chinhXac:1,chiMang:0,nguyenTo:{'Hỏa':4},phiKiem:false},
+ {cong:3,thu:0,chinhXac:0,chiMang:2,nguyenTo:{'Mộc':2},phiKiem:true},
+ {cong:6,thu:0,chinhXac:2,chiMang:0,nguyenTo:{'Băng':3},phiKiem:true},
+ {cong:12,thu:0,chinhXac:0,chiMang:5,nguyenTo:{'Lôi':6},phiKiem:true}][i],haoLLMoiLan:v.haoLLMoiCanh})),
+ congPhap:structuredClone(HD_V03_DU_LIEU.congPhap),
+ phuLuc:[{id:1,ten:'Hỏa Cầu Phù',he:'Hỏa',heSoSatThuong:[1,2],haoLL:30,chinhXac:0,hieuUng:'Thiêu đốt',thoiLuong:2,moTa:'Hỏa công bằng một nửa linh lực dùng; thiêu đốt hai hiệp.'},
+ {id:2,ten:'Tàng Hình Phù',he:'Khong',heSoSatThuong:[0,1],haoLL:20,chinhXac:0,hieuUng:'Né tránh cộng 20',thoiLuong:3,moTa:'Né tránh cộng 20 trong ba hiệp.'},
+ {id:3,ten:'Mộc Trận Phù',he:'Mộc',heSoSatThuong:[0,1],haoLL:40,chinhXac:0,hieuUng:'Trận Mộc',thoiLuong:null,moTa:'Trong trận Mộc hệ: Mộc công cộng 5 cho người dựng, tới khi trận đấu kết thúc.'}]
+};
+(function khoaV04(x){if(x&&typeof x==='object'){Object.values(x).forEach(khoaV04);Object.freeze(x);}})(HD_V04_DU_LIEU);
+function HD_v04Tra(loai,id){return structuredClone((HD_V04_DU_LIEU[loai]||[]).find(x=>x.id===id)||null);}
+function HD_v04An(id){return structuredClone(({1:{loai:'chayMau',moTa:'Răng kiếm khía, trúng đòn làm chảy máu không cầm'},3:{loai:'lanh',moTa:'Hàn khí thấu xương, trúng làm chậm thân pháp đối thủ hai hiệp'}})[id]||null);}
+/*
+MÔ ĐUN CHIẾN ĐẤU V04 - thiết kế duyệt 23/10/2026, đấu trường thử nghiệm.
+Đầu vào: CORE, hai gói đấu sĩ cùng hợp đồng; đầu ra: API xem/hành động/cầm máu.
+Tạo đấu sĩ từ dữ liệu công khai; không truy cập biến nội bộ của hệ khác.
+Điểm mỗi hiệp = bỏ dư((2 + thân pháp chia nguyên 25) nhân SL) - linh áp - thương nặng.
+Linh áp chỉ phạt bên thấp hơn theo chênh đại cảnh, không phạt chênh tầng LK.
+Hiệp đầu so điểm, hòa dùng một d100; luân phiên từng hành động, đổi bên mở hiệp sau.
+Trúng: d100 + chính xác - né >= 60; kẹp ngưỡng 6..96 để đúng xác suất 95..5 phần trăm.
+Chí mạng roll riêng, >= 95 - cộng vũ khí, nhân sát thương sau bảng với phân số 3/2.
+Công, thủ trung gian lưu đơn vị phần mười; chỉ chia sau khi nhân đủ phân số CORE.
+Hỏa Cầu dùng LL hiện tại trước khi trả phí làm cơ sở nhân 1/2; thiêu đốt mẫu hai hiệp mỗi hiệp 20 lưu.
+Vũ khí trả haoLLMoiLan, áp dụng x2 khi vượt cấp; hao theo canh vẫn do chỉ số V03 sở hữu.
+Máu bằng không kết thúc ở hấp hối, không gọi CORE.chet trong đấu trường.
+Móc quy tắc chết thật chỉ phát sự kiện để hệ thế giới tương lai nối vào, không xóa lưu ở đây.
+Hiệu ứng tính ở cuối hiệp, mới gây trong hiệp được giữ đủ hai hoặc ba hiệp tiếp theo.
+Chảy máu kéo dài tới cầm máu; trạng thái được ghép vào lưu chỉ số, trận đang chơi không tự phục hồi.
+Mọi roll dùng CORE.kiemDinh và mọi phép nhân chia dùng CORE.tinh; nhật ký gồm dữ liệu số có cấu trúc.
+Nhóm E được mang trong gói, chưa kích hoạt hệ độc/ma chiêu của mốc sau.
+Công khai HD_taoDauSiV04, HD_tuNhanVatV04, HD_taoChienDauV04, HD_tongV04.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+function HD_taoDauSiV04(core,p={}){
+ const C=HD_V03_CB,ng=core.nguyen,kep=core.chan,sao=structuredClone;
+ const b=p.nhomB||[200,150,150,100,150,150];if(b.length!==6)throw Error('Cần sáu chỉ số B');
+ const q={ten:String(p.ten||'Đối thủ thử nghiệm'),nhomB:b.map(x=>kep(x,0,1000)),tranKhiHuyet:kep(p.tranKhiHuyet??b[0],0,1000),
+ canhGioi:kep(p.canhGioi??0,0,4),tang:kep(p.tang??1,1,13),thanNiem:ng(p.thanNiem??35),tnDangChiem:ng(p.tnDangChiem??0),
+ linhLuc:ng(p.linhLuc??50),linhLucToiDa:ng(p.linhLucToiDa??50),SL:sao(p.SL||[1,1]),
+ nguyenTo:Object.fromEntries(C.NGUYEN_TO.map(he=>[he,kep(p.nguyenTo?.[he]??30,0,100)])),
+ congPhap:ng(p.congPhap??1),vuKhi:sao(p.vuKhi||[]),phuLuc:sao(p.phuLuc||[]),daHien:sao(p.daHien||[]),
+ trangBi:{cong:0,thu:0,khangPhep:0,chinhXac:0,ne:0,than:0,...sao(p.trangBi||{})},
+ theTran:{cong:0,thu:0,chinhXac:0,ne:0,than:0,phanSo:{},...sao(p.theTran||{})},nhomE:sao(p.nhomE||[]),
+ hieuUng:{chayMau:false,lanh:0,dot:0,anThan:0,mocTran:false,nang:false,...sao(p.hieuUng||{})},daKichHoat:[]};
+ if(!HD_v04Tra('congPhap',q.congPhap)||q.vuKhi.some(id=>!HD_v04Tra('vuKhi',id))||q.phuLuc.some(id=>!HD_v04Tra('phuLuc',id)))throw Error('Trang bị không hợp lệ');
+ if(new Set(q.vuKhi).size!==q.vuKhi.length)throw Error('Vũ khí trùng');
+ const chiem=q.vuKhi.reduce((n,id)=>n+HD_v04Tra('vuKhi',id).yeuCauTN,0);q.tnDangChiem=Math.max(q.tnDangChiem,chiem);
+ if(q.thanNiem<q.tnDangChiem||q.tnDangChiem<0||q.linhLuc<0||q.linhLuc>q.linhLucToiDa||q.tranKhiHuyet<q.nhomB[0]||q.SL.length!==2||!q.SL.every(Number.isSafeInteger)||q.SL[0]<0||q.SL[1]<=0)throw Error('Gói đấu sĩ ngoài phạm vi');
+ for(const v of Object.values(q.trangBi))ng(v);for(const k of ['cong','thu','chinhXac','ne','than'])ng(q.theTran[k]);return q;
+}
+function HD_tuNhanVatV04(w){const s=w.chiSo.xem(),t=w.tuLuyen.xem();return HD_taoDauSiV04(w.core,{ten:'Nhân vật',nhomB:s.nhomBDayDu,tranKhiHuyet:s.tranKhiHuyet,
+ canhGioi:t.canhGioi,tang:t.tang,thanNiem:s.thanNiem,tnDangChiem:s.tnDangChiem+s.tnNhanDien,linhLuc:s.linhLuc,linhLucToiDa:s.linhLucToiDa,SL:w.sinhLy.xem().SL,
+ nguyenTo:s.nguyenTo,congPhap:s.congPhap,vuKhi:s.dieuKhien,phuLuc:s.phuLuc,daHien:s.daHien,hieuUng:s.thuongV04});}
+function HD_tongV04(core,f,canh='trong',vuKhi=null){
+ const C=HD_V04_CB,t=structuredClone(C.THE_TRAN.find(x=>x.id===canh)||C.THE_TRAN[0]);
+ if(t.thuyMien&&f.nguyenTo['Thủy']>=t.thuyMien)t.than=0;
+ const ds=f.vuKhi.map(id=>HD_v04Tra('vuKhi',id)),v=HD_v04Tra('vuKhi',vuKhi),eq=f.trangBi,m=f.theTran,e=f.hieuUng;
+ const sum=k=>ds.reduce((n,x)=>n+(x[k]||0)*10,0),goc=f.nhomB;
+ const chinhXac=goc[4]+sum('chinhXac')+eq.chinhXac+m.chinhXac+t.chinhXac+(v?.phiKiem?(t.phiKiem||0):0);
+ const ne=goc[5]+eq.ne+m.ne+t.ne+(e.anThan?C.AN_THAN_NE:0);
+ return {chinhXac,ne,than:Math.max(0,goc[2]+eq.than+m.than+t.than-(e.lanh?C.LANH_THAN_PHAP:0)),
+ thu:goc[3]+sum('thu')+eq.thu+m.thu+t.thu,khangPhep:goc[3]+Math.max(0,f.thanNiem-f.tnDangChiem)*10+sum('thu')+eq.khangPhep,
+ cong:sum('cong')+eq.cong+m.cong+t.cong,phanSo:{...m.phanSo,...t.phanSo},mocCong:e.mocTran?C.MOC_CONG:0,
+ boDieuChinh:{nhomB:structuredClone(goc),trangBi:structuredClone(eq),theTran:structuredClone(m),diaHinh:t,hieuUng:structuredClone(e)}};
+}
+function HD_taoChienDauV04(core,trai,phai,canh='trong',moc={}){
+ const C=HD_V04_CB,sao=structuredClone,tinh=core.tinh;let ds=[HD_taoDauSiV04(core,trai),HD_taoDauSiV04(core,phai)],s={dang:false,hiep:0,luot:0,moDau:0,conLai:[0,0],ketQua:null},log=[];
+ function ghi(loai,d={}){const x=core.ghi('Chiến đấu',{moDun:'V04',hiep:s.hiep,luot:s.luot,...d,loai});log.push(x);core.phat('chienDauV04',x);return x;}
+ function tong(i,id=null){return HD_tongV04(core,ds[i],canh,id);}
+ function diem(i){const f=ds[i],o=ds[1-i],t=tong(i),goc=C.HANH_DONG_GOC+tinh(t.than,[[1,C.THAN_PHAP_MOI_DIEM]]),sauSL=tinh(goc,[f.SL]),linhAp=Math.max(0,o.canhGioi-f.canhGioi);return {goc,SL:f.SL,sauSL,linhAp,thuong:f.hieuUng.nang?1:0,tong:Math.max(0,sauSL-linhAp-(f.hieuUng.nang?1:0)),than:t.than};}
+ function ketThuc(lyDo,thua=null){if(!s.dang)return;s.dang=false;s.ketQua={lyDo,thua};ghi('ketThuc',s.ketQua);moc.ketThuc?.(xem());}
+ function xem(){return sao({...s,dauSi:ds,theTran:canh,nhatKy:log});}
+ function dongBo(){moc.dongBo?.(sao(ds[0]));}
+ function kiemTraSong(){for(let i=0;i<2;i++)if(ds[i].nhomB[0]===0){dongBo();ketThuc('Hấp hối',i);return false;}return true;}
+ function hiepMoi(){s.hiep++;const d=[diem(0),diem(1)];s.conLai=d.map(x=>x.tong);
+ if(s.hiep===1){s.moDau=d[0].tong===d[1].tong?(core.kiemDinh(50,'Chiến đấu: hòa tiên thủ').roll<=50?0:1):(d[0].tong>d[1].tong?0:1);}else s.moDau=1-s.moDau;
+ s.luot=s.conLai[s.moDau]>0?s.moDau:1-s.moDau;ghi('moHiep',{diem:d,moDau:s.moDau,donViB:10});
+ if(s.conLai.every(n=>n===0))ketThuc('Cả hai không còn điểm hành động');}
+ function batDau(){if(s.dang)throw Error('Trận đang diễn ra');s.dang=true;if(kiemTraSong())hiepMoi();return xem();}
+ function thuong(i,n,lyDo){const f=ds[i],cu=f.nhomB[0];f.nhomB[0]=Math.max(0,cu-n);ghi('matKhiHuyet',{ben:i,lyDo,truoc:cu,yeuCau:n,thucTe:cu-f.nhomB[0],sau:f.nhomB[0]});dongBo();}
+ function cuoiHiep(){for(let i=0;i<2;i++){const e=ds[i].hieuUng;if(e.chayMau)thuong(i,C.CHAY_MAU,'Chảy máu');if(e.dot>0&&!e.dotMoi)thuong(i,C.DOT_KHI_HUYET,'Thiêu đốt');for(const k of ['lanh','dot','anThan']){if(e[k+'Moi'])e[k+'Moi']=false;else if(e[k]>0)e[k]--;}}
+ dongBo();if(kiemTraSong())hiepMoi();}
+ function chuyen(){if(!s.dang)return;if(!s.conLai.some(n=>n>0)){cuoiHiep();return;}const kia=1-s.luot;if(s.conLai[kia]>0)s.luot=kia;}
+ function nguongTrung(cx,ne){return core.chan(C.TRUNG_GOC-Math.floor((cx-ne)/10),C.NGUONG_TRUNG_MIN,C.NGUONG_TRUNG_MAX);}
+ function hangThuong(chenh){return sao(C.BANG_THUONG.find(r=>r.tran===null||chenh<=r.tran));}
+ function tanCong(i,loai='vatLy',id=ds[i].vuKhi[0]??null,congThem=0,phu=null){
+ const f=ds[i],o=ds[1-i],v=id===null?null:HD_v04Tra('vuKhi',id),p=HD_v04Tra('congPhap',f.congPhap);
+ if(v&&!f.vuKhi.includes(id))throw Error('Chưa điều khiển vũ khí');if(!['vatLy','phep'].includes(loai))throw Error('Đòn không hợp lệ');
+ if(!phu&&((loai==='vatLy')!==(p.he==='Khong')))throw Error('Loại tấn công phải đúng hệ công pháp đang trang bị');
+ const vuot=v&&HD_V03_CB.CANH_GIOI_VU_KHI.indexOf(v.canhGioi)-1>f.canhGioi;
+ const hao=phu?phu.haoLL:(v?tinh(v.haoLLMoiLan,[vuot?HD_V03_CB.HAO_VUOT_CAP:[1,1]]):0);
+ if(f.linhLuc<hao)throw Error('Không đủ linh lực');
+ const he=phu?phu.he:p.he,t=tong(i,id),d=tong(1-i),coSo=phu?f.linhLuc*10:(loai==='vatLy'?f.nhomB[1]:f.linhLuc*10),heSo=phu?[phu.heSoSatThuong]:(loai==='vatLy'?[p.cong]:[p.cong,[50+f.nguyenTo[he],100]]);
+ const congGoc=tinh(coSo,heSo),congVuKhi=loai==='vatLy'?t.cong:((v?.nguyenTo[he]||0)*10+f.trangBi.cong+f.theTran.cong),mocCong=he==='Mộc'?t.mocCong:0;
+ const cong=tinh(congGoc+congVuKhi+mocCong,[vuot?HD_V03_CB.HIEU_VUOT_CAP:[1,1],t.phanSo[he]||[1,1]]);
+ f.linhLuc-=hao;dongBo();const cx=t.chinhXac+congThem+(phu?.chinhXac||0)*10,nguong=nguongTrung(cx,d.ne),roll=core.kiemDinh(101-nguong,'Chiến đấu: trúng né').roll,trung=roll>=nguong;
+ ghi('trungNe',{ben:i,loaiDon:loai,vuKhi:id,phu:phu?.id??null,roll,chinhXac:cx,ne:d.ne,nguong,trung,haoLL:hao,llSau:f.linhLuc,coSo,heSo,he,congGoc,congVuKhi,mocCong,vuot,cong,boDieuChinh:t.boDieuChinh,doiThu:d.boDieuChinh,donViB:10});
+ if(!trung)return {trung:false};
+ const rollChi=core.kiemDinh(50,'Chiến đấu: chí mạng').roll,nguongChi=C.CHI_MANG_GOC-(v?.chiMang||0),chiMang=rollChi>=nguongChi;
+ const phongThu=loai==='vatLy'?d.thu:d.khangPhep,chenh=cong-phongThu,row=hangThuong(chenh),satThuong=tinh(row.mat,[chiMang?C.CHI_MANG:[1,1]]);
+ ghi('thuongThe',{ben:i,rollChi,nguongChi,chiMang,cong,phongThu,chenh,hang:row,heSoChi:chiMang?C.CHI_MANG:[1,1],satThuong,donViB:10});
+ thuong(1-i,satThuong,row.ten);if(row.nang&&!o.hieuUng.nang){o.hieuUng.nang=true;s.conLai[1-i]=Math.max(0,s.conLai[1-i]-1);ghi('thuongNang',{ben:1-i,truDiem:1});}
+ const an=v&&HD_v04An(v.id);if(an&&!f.daKichHoat.includes(v.id)){f.daKichHoat.push(v.id);if(!f.daHien.includes(v.id))f.daHien.push(v.id);if(an.loai==='chayMau')o.hieuUng.chayMau=true;else {o.hieuUng.lanh=C.LANH_HIEP;o.hieuUng.lanhMoi=true;}ghi('thuocTinhAn',{ben:i,id:v.id,hieuUngAn:an.loai,moTa:an.moTa});moc.loAn?.(i,v.id);}
+ if(phu?.id===1){o.hieuUng.dot=C.DOT_HIEP;o.hieuUng.dotMoi=true;}dongBo();kiemTraSong();return {trung:true,chiMang,satThuong};
+ }
+ function hanhDong(ben,loai,id=null){if(!s.dang||ben!==s.luot||s.conLai[ben]<=0)throw Error('Không phải lượt hành động');const f=ds[ben],o=ds[1-ben];let r;
+ if(loai==='boChay'){s.conLai[ben]=0;const a=tong(ben).than+Math.max(0,f.thanNiem-f.tnDangChiem)*10,b=tong(1-ben).than+Math.max(0,o.thanNiem-o.tnDangChiem)*10;r={thanhCong:a>b,tongA:a,tongB:b};ghi('boChay',{ben,...r,donViB:10});if(r.thanhCong)ketThuc('Bỏ chạy',ben);else {ghi('phanCongMienPhi',{ben:1-ben,congChinhXac:C.PHAN_CONG_CHINH_XAC});try{tanCong(1-ben,HD_v04Tra('congPhap',o.congPhap).he==='Khong'?'vatLy':'phep',o.vuKhi[0]??null,C.PHAN_CONG_CHINH_XAC);}catch(e){ghi('phanCongKhongDuLL',{lyDo:e.message});}}}
+ else if(loai==='phu'){const p=HD_v04Tra('phuLuc',id),vitri=f.phuLuc.indexOf(id);if(!p||vitri<0)throw Error('Không mang phù này');if(f.linhLuc<p.haoLL)throw Error('Không đủ linh lực');if(id===1)r=tanCong(ben,'phep',null,0,p);else{f.linhLuc-=p.haoLL;if(id===2){f.hieuUng.anThan=C.AN_THAN_HIEP;f.hieuUng.anThanMoi=true;}if(id===3)f.hieuUng.mocTran=true;ghi('dungPhu',{ben,id,haoLL:p.haoLL,llSau:f.linhLuc,hieuUng:p.hieuUng,thoiLuong:p.thoiLuong});r={thanhCong:true};}f.phuLuc.splice(vitri,1);s.conLai[ben]--;}
+ else{r=tanCong(ben,loai,id??f.vuKhi[0]??null);s.conLai[ben]--;}
+ dongBo();if(s.dang)chuyen();return r;
+ }
+ function camMau(ben=0){ds[ben].hieuUng.chayMau=false;ghi('camMau',{ben});dongBo();}
+ return Object.freeze({xem,batDau,hanhDong,camMau,diem,tong,nguongTrung,hangThuong,capNhatNhanVat:p=>{const cu=ds[0].daKichHoat;ds[0]=HD_taoDauSiV04(core,p);ds[0].daKichHoat=cu;},
+ dung:()=>{ketThuc('Dừng đấu trường');dongBo();},mocChetThat:ben=>core.phat('yeuCauQuyTacChet',{nguon:'chienDauV04',ben,dauSi:sao(ds[ben])})});
+}
+
+
+/*
+MÔ ĐUN KIỂM THỬ CHIẾN ĐẤU V04 - duyệt 23/10/2026.
+Thế giới và CORE cô lập, hạt cố định 123456; không sửa lưu hay nhân vật đang chơi.
+Kiểm tra bằng kết quả thật, nhật ký CORE và vòng đời hành động, không thay RNG bằng hàm giả.
+Bộ V02 94 và V03 58 bài giữ nguyên văn; bộ V04 công bố riêng HD_V04.kiemThu().
+Ranh giới công thức, trạng thái, lưu tải, tích hợp UI và tính tất định đều có đối chiếu.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+function HD_kiemThuV04(){
+ const ds=[],eq=(a,b)=>{if(JSON.stringify(a)!==JSON.stringify(b))throw Error('Mong '+JSON.stringify(b)+'; nhận '+JSON.stringify(a));},kt=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}},sai=fn=>{let ok=false;try{fn();}catch(e){ok=true;}eq(ok,true);};
+ const tao=()=>HD_taoTheGioiV03(123456),C=HD_V04_CB;
+ const dau=(core,p={})=>HD_taoDauSiV04(core,{nhomB:[1000,150,150,100,1000,0],tranKhiHuyet:1000,...p});
+ const tran=(p={},o={},canh='trong',hat=123456)=>{const c=HD_taoCore(hat),a=dau(c,p),b=dau(c,o),t=HD_taoChienDauV04(c,a,b,canh);return {c,a,b,t};};
+ const dong=(t,loai)=>t.xem().nhatKy.filter(x=>x.loai===loai);
+ const danh=(z,ben=0,type='vatLy',id=null)=>{z.t.batDau();if(z.t.xem().luot!==ben){const r=z.t.xem();z.t.hanhDong(r.luot,'phu',2);}return z.t.hanhDong(ben,type,id);};
+ kt('Chính xác và né mặc định lưu 150',()=>{const s=tao().chiSo.xem();eq([s.chinhXac,s.neTranh],[150,150]);eq(s.nhomBDayDu,[200,150,150,100,150,150]);});
+ kt('Hai setter lưu phần mười và kẹp biên',()=>{const a=tao().chiSo;a.datB(4,157);a.datB(5,999);eq(a.xem().nhomBDayDu.slice(4),[157,999]);a.datB(4,-1);a.datB(5,1001);eq(a.xem().nhomBDayDu.slice(4),[0,1000]);});
+ kt('Hai setter từ chối số lẻ nội bộ',()=>{sai(()=>tao().chiSo.datB(4,1.5));sai(()=>tao().chiSo.datB(5,NaN));});
+ for(const [bac,n]of [[1,172],[2,180],[3,187],[4,195]])kt('Tẩy tủy cả hai chỉ số đại cảnh '+bac,()=>{const w=tao();w.core.phat('dotPhaDaiCanhThanhCong',{bac});eq(w.chiSo.xem().nhomBDayDu.slice(4),[n,n]);w.core.phat('dotPhaDaiCanhThanhCong',{bac});eq(w.chiSo.xem().nhomBDayDu.slice(4),[n,n]);});
+ kt('Lưu tải chỉ số mới, phù và công pháp',()=>{const w=tao();w.chiSo.datB(4,333);w.chiSo.datB(5,777);w.chiSo.cauHinhChienDau({congPhap:2,phuLuc:[3,1,1]});const save=w.xuat(),b=HD_taoTheGioiV03(0,JSON.parse(JSON.stringify(save)));eq(b.xuat(),save);eq(b.chiSo.xem().nhomBDayDu.slice(4),[333,777]);});
+ kt('Lưu V03 thiếu hai chỉ số nâng mặc định',()=>{const w=tao(),s=w.xuat();delete s.chiSoV03.chinhXac;delete s.chiSoV03.neTranh;const b=HD_taoTheGioiV03(0,s);eq(b.chiSo.xem().nhomBDayDu.slice(4),[150,150]);});
+ kt('Lưu hỏng chính xác bị từ chối',()=>{const s=tao().xuat();s.chiSoV03.chinhXac=0.1;sai(()=>HD_taoTheGioiV03(0,s));});
+ const specs=[[1,2,1,1,0,'Hỏa',4],[2,3,0,0,2,'Mộc',2],[3,6,0,2,0,'Băng',3],[4,12,0,0,5,'Lôi',6]];
+ for(const [id,cong,thu,cx,chi,he,nt]of specs)kt('Vũ khí mẫu giữ mã và cộng số '+id,()=>{const v=HD_v04Tra('vuKhi',id);eq([v.cong,v.thu,v.chinhXac,v.chiMang,v.nguyenTo[he]],[cong,thu,cx,chi,nt]);eq(v.yeuCauTN,HD_v03Tra('vuKhi',id).yeuCauTN);eq(v.haoLLMoiLan,HD_v03Tra('vuKhi',id).haoLLMoiCanh);});
+ kt('Mô tả công khai không chứa thuộc tính ẩn',()=>{eq(Object.keys(HD_v04Tra('vuKhi',1)).some(k=>['an','thuocTinhAn','thuộc tính ẩn'].includes(k)),false);eq(JSON.stringify(HD_v04Tra('vuKhi',1)).includes('chảy máu'),false);eq(HD_v04An(1).loai,'chayMau');eq(HD_v04An(3).loai,'lanh');});
+ kt('Thanh ghi phù có ba mẫu đúng chi phí',()=>{eq(HD_V04_DU_LIEU.phuLuc.map(x=>[x.id,x.he,x.haoLL,x.thoiLuong]),[[1,'Hỏa',30,2],[2,'Khong',20,3],[3,'Mộc',40,null]]);eq(HD_v04Tra('phuLuc',1).heSoSatThuong,[1,2]);});
+ kt('Thanh ghi trả bản sao không đổi nguồn',()=>{const v=HD_v04Tra('vuKhi',1);v.cong=999;eq(HD_v04Tra('vuKhi',1).cong,2);});
+ for(const [cx,ne,nguong]of [[0,300,90],[300,300,60],[600,300,30],[1000,0,6],[0,1000,96],[151,150,60],[149,150,61]])kt('Ngưỡng trúng CX '+cx+' né '+ne,()=>eq(tran().t.nguongTrung(cx,ne),nguong));
+ for(const [chenh,mat,nang]of [[-1,0,false],[0,0,false],[1,20,false],[100,20,false],[101,50,false],[250,50,false],[251,120,true],[500,120,true],[501,250,false]])kt('Bảng thương chênh lưu '+chenh,()=>{const row=tran().t.hangThuong(chenh);eq([row.mat,row.nang],[mat,nang]);});
+ kt('Điểm hành động cơ bản và chia nguyên thân pháp',()=>{const z=tran({nhomB:[1000,150,499,100,150,0]});eq(z.t.diem(0).goc,3);});
+ kt('Điểm hành động nhân SL rồi bỏ dư',()=>{const z=tran({nhomB:[1000,150,500,100,150,0],SL:[3,4]});eq(z.t.diem(0).tong,3);});
+ kt('Linh áp trừ mỗi đại cảnh một điểm',()=>{const z=tran({canhGioi:0},{canhGioi:2});eq(z.t.diem(0).linhAp,2);eq(z.t.diem(0).tong,0);eq(z.t.diem(1).linhAp,0);});
+ kt('Chênh tầng trong LK không phạt linh áp',()=>{const z=tran({tang:1},{tang:13});eq(z.t.diem(0).linhAp,0);});
+ kt('Thương nặng trừ một điểm khi chưa trị',()=>{const z=tran({hieuUng:{nang:true}});eq(z.t.diem(0).tong,1);});
+ kt('Tiên thủ thuộc bên nhiều điểm',()=>{const z=tran({nhomB:[1000,150,500,100,150,0]});z.t.batDau();eq(z.t.xem().luot,0);eq(z.c.nhatKy().filter(x=>x.ten==='Chiến đấu: hòa tiên thủ').length,0);});
+ kt('Hòa tiên thủ chỉ một d100',()=>{const z=tran();z.t.batDau();eq(z.c.nhatKy().filter(x=>x.ten==='Chiến đấu: hòa tiên thủ').length,1);});
+ kt('Luân phiên hành động và hiệp',()=>{const z=tran({phuLuc:[2,2,2,2]},{phuLuc:[2,2,2,2]});z.t.batDau();const first=z.t.xem().luot;for(let i=0;i<4;i++){const s=z.t.xem();z.t.hanhDong(s.luot,'phu',2);if(i===0)eq(z.t.xem().luot,1-first);}eq(z.t.xem().hiep,2);eq(z.t.xem().moDau,1-first);});
+ kt('Rừng rậm cộng né và giảm chính xác phi kiếm',()=>{const z=tran({thanNiem:100,vuKhi:[2]});const t=HD_tongV04(z.c,z.a,'rung',2);eq(t.ne,100);eq(t.chinhXac,900);});
+ kt('Đêm tối trừ chính xác 15',()=>{const z=tran();eq(HD_tongV04(z.c,z.a,'dem').chinhXac,850);});
+ kt('Mặt sông thân pháp bị giảm dưới Thủy 40',()=>{const z=tran();eq(HD_tongV04(z.c,z.a,'song').than,50);});
+ kt('Mặt sông miễn phạt đúng Thủy 40',()=>{const z=tran({nguyenTo:{'Thủy':40}});eq(HD_tongV04(z.c,z.a,'song').than,150);});
+ kt('Mưa lớn phân số Hỏa và Lôi',()=>{const z=tran(),p=HD_tongV04(z.c,z.a,'mua').phanSo;eq([p['Hỏa'],p['Lôi']],[[1,2],[3,2]]);});
+ kt('Trang bị và thế trận cộng vào CX né thủ',()=>{const z=tran({trangBi:{chinhXac:30,ne:20,thu:40},theTran:{chinhXac:10,ne:15,thu:20}}),t=z.t.tong(0);eq([t.chinhXac,t.ne,t.thu],[1040,35,160]);});
+ kt('Kháng phép có TN trống và trang bị',()=>{const z=tran({thanNiem:80,tnDangChiem:20,trangBi:{khangPhep:40}});eq(z.t.tong(0).khangPhep,740);});
+ kt('Bỏ chạy thành công tiêu toàn bộ điểm và kết thúc',()=>{const z=tran({nhomB:[1000,150,500,100,1000,0],thanNiem:100});z.t.batDau();eq(z.t.hanhDong(0,'boChay').thanhCong,true);eq(z.t.xem().conLai[0],0);eq(z.t.xem().dang,false);});
+ kt('Bỏ chạy bằng tổng là thất bại và có đòn miễn phí cộng 10',()=>{const z=tran();z.t.batDau();const ben=z.t.xem().luot;eq(z.t.hanhDong(ben,'boChay').thanhCong,false);eq(dong(z.t,'phanCongMienPhi').length,1);eq(dong(z.t,'trungNe').at(-1).chinhXac,1100);});
+ kt('Thiếu LL không trừ điểm hay tài nguyên',()=>{const z=tran({thanNiem:100,vuKhi:[2],linhLuc:0,nhomB:[1000,150,500,100,1000,0]});z.t.batDau();const before=z.t.xem();sai(()=>z.t.hanhDong(0,'vatLy',2));eq(z.t.xem(),before);});
+ kt('Phù tấn công dùng LL hiện tại nhân một nửa và trừ phí',()=>{const z=tran({phuLuc:[1],linhLuc:50,nhomB:[1000,150,500,100,1000,0]});z.t.batDau();z.t.hanhDong(0,'phu',1);const x=dong(z.t,'trungNe')[0];eq([x.coSo,x.congGoc,x.haoLL],[500,250,30]);eq(z.t.xem().dauSi[0].linhLuc,20);eq(z.t.xem().dauSi[0].phuLuc,[]);});
+ kt('Mộc trận chỉ cộng Mộc công cho người dựng',()=>{const z=tran({phuLuc:[3],nhomB:[1000,150,500,100,1000,0]});z.t.batDau();z.t.hanhDong(0,'phu',3);eq(z.t.tong(0).mocCong,50);eq(z.t.tong(1).mocCong,0);});
+ kt('Tàng hình cộng né đúng ba hiệp',()=>{const z=tran({phuLuc:[2,2,2,2],linhLuc:100,linhLucToiDa:100},{phuLuc:[2,2,2,2],linhLuc:100,linhLucToiDa:100});z.t.batDau();const ben=z.t.xem().luot;z.t.hanhDong(ben,'phu',2);eq(z.t.tong(ben).ne,200);eq(z.t.xem().dauSi[ben].hieuUng.anThan,3);});
+ kt('Thuộc tính ẩn bộc phát lần trúng đầu và chỉ một lần',()=>{const z=tran({vuKhi:[1],nhomB:[1000,150,500,100,1000,0]});z.t.batDau();z.t.hanhDong(0,'vatLy',1);eq(dong(z.t,'thuocTinhAn').length,1);eq(z.t.xem().dauSi[1].hieuUng.chayMau,true);eq(z.t.xem().dauSi[0].daHien,[1]);});
+ kt('Chảy máu mất 100 lưu mỗi hiệp và cầm máu dừng',()=>{const z=tran({hieuUng:{chayMau:true},phuLuc:[2,2],linhLuc:100,linhLucToiDa:100},{phuLuc:[2,2],linhLuc:100,linhLucToiDa:100});z.t.batDau();for(let i=0;i<4;i++)z.t.hanhDong(z.t.xem().luot,'phu',2);eq(z.t.xem().dauSi[0].nhomB[0],900);z.t.camMau(0);eq(z.t.xem().dauSi[0].hieuUng.chayMau,false);});
+ kt('Hàn băng trúng làm chậm hai hiệp và lộ ẩn',()=>{const z=tran({thanNiem:100,vuKhi:[3],linhLuc:200,linhLucToiDa:200,canhGioi:1,nhomB:[1000,150,500,100,1000,0]},{canhGioi:1});z.t.batDau();z.t.hanhDong(0,'vatLy',3);eq(z.t.xem().dauSi[1].hieuUng.lanh,2);eq(z.t.tong(1).than,130);eq(dong(z.t,'thuocTinhAn')[0].loai,'thuocTinhAn');});
+ kt('Lạnh hết sau đủ hai hiệp, không giảm vĩnh viễn',()=>{const z=tran({hieuUng:{lanh:2}},{hieuUng:{lanh:2}});z.t.batDau();for(let i=0;i<8;i++){const r=z.t.xem();if(!r.dang)break;z.t.hanhDong(r.luot,'vatLy');}eq(z.t.xem().hiep,3);eq(z.t.xem().dauSi[0].hieuUng.lanh,0);eq(z.t.tong(0).than,150);});
+ kt('Nhận diện cần 20 TN trống và chiếm chú ý',()=>{const a=tao().chiSo;eq(a.nhanDien(1),true);eq(a.xem().tnNhanDien,20);eq(a.nhanDien(1),false);eq(a.nhanDien(3),false);});
+ kt('Tự lộ không tiêu thêm TN',()=>{const a=tao().chiSo;a.datTN(0);eq(a.nhanDien(3,true),true);eq(a.xem().tnNhanDien,0);});
+ kt('Đấu sĩ nhân vật dùng trạng thái sống và SL thật',()=>{const w=tao();w.chiSo.datB(4,444);w.chiSo.datLL(20);const f=HD_tuNhanVatV04(w);eq(f.nhomB[4],444);eq(f.linhLuc,20);eq(f.SL,w.sinhLy.xem().SL);});
+ kt('Không hồi LL khi chiến đấu, vẫn hao theo canh',()=>{const w=tao();w.chiSo.datTN(100);w.chiSo.datLL(50);w.chiSo.dieuKhien(2);w.chiSo.chienDau(true);w.core.tien(120);eq(w.chiSo.xem().linhLuc,30);});
+ kt('Hấp hối kết thúc nhưng không gọi chết hoặc mất lưu',()=>{const z=tran({nhomB:[1000,1000,500,100,1000,0]},{nhomB:[1,100,100,0,0,0],thanNiem:0});z.t.batDau();z.t.hanhDong(0,'vatLy');eq(z.t.xem().dang,false);eq(z.t.xem().dauSi[1].nhomB[0],0);eq(z.c.xem().daChet,false);});
+ kt('Tất định cùng hạt cùng chuỗi và nhật ký có số',()=>{function go(){const z=tran();z.t.batDau();z.t.hanhDong(z.t.xem().luot,'vatLy');return z.c.xuat();}eq(go(),go());const x=go().nhatKy.filter(x=>x.loai==='trungNe')[0];eq(Number.isInteger(x.roll),true);eq(Number.isInteger(x.nguong),true);});
+ kt('Chí mạng ngưỡng theo cộng vũ khí, nhân sau bảng',()=>{let found=false;for(let hat=1;hat<=200;hat++){const z=tran({thanNiem:200,linhLuc:500,linhLucToiDa:500,vuKhi:[4],canhGioi:2,nhomB:[1000,500,500,100,1000,0]},{canhGioi:2},'trong',hat);z.t.batDau();z.t.hanhDong(0,'vatLy',4);const x=dong(z.t,'thuongThe')[0];if(x?.chiMang){eq(x.nguongChi,90);eq(x.satThuong,z.c.tinh(x.hang.mat,[[3,2]]));found=true;break;}}eq(found,true);});
+ kt('Đòn phép dùng LL nhân hệ công và hệ nguyên tố',()=>{const z=tran({congPhap:2,linhLuc:50,nguyenTo:{'Mộc':70},nhomB:[1000,150,500,100,1000,0]});z.t.batDau();z.t.hanhDong(0,'phep');const x=dong(z.t,'trungNe')[0];eq(x.congGoc,720);eq(x.heSo,[[6,5],[120,100]]);});
+ kt('Móc chết thật chỉ phát sự kiện, không tự xóa',()=>{const z=tran();let n=0;z.c.nghe('yeuCauQuyTacChet',()=>n++);z.t.mocChetThat(1);eq(n,1);eq(z.c.xem().daChet,false);});
+
+ kt('Cộng chí mạng các vũ khí cho ngưỡng chính xác',()=>{for(const [id,nguong]of [[1,95],[2,93],[3,95],[4,90]]){const z=tran({vuKhi:[id],thanNiem:200,linhLuc:500,linhLucToiDa:500,nhomB:[1000,150,500,100,1000,0]});z.t.batDau();z.t.hanhDong(0,'vatLy',id);eq(dong(z.t,'thuongThe')[0].nguongChi,nguong);}});
+ kt('Mưa áp dụng vào sát thương Hỏa thực tế',()=>{const z=tran({phuLuc:[1],nhomB:[1000,150,500,100,1000,0]}, {},'mua');z.t.batDau();z.t.hanhDong(0,'phu',1);eq(dong(z.t,'trungNe')[0].cong,125);});
+ kt('Thiêu đốt đủ hai hiệp rồi hết',()=>{const z=tran({hieuUng:{dot:2}},{hieuUng:{dot:2}});z.t.batDau();for(let i=0;i<8;i++)z.t.hanhDong(z.t.xem().luot,'vatLy');eq(z.t.xem().dauSi[0].hieuUng.dot,0);eq(dong(z.t,'matKhiHuyet').filter(x=>x.lyDo==='Thiêu đốt').length,4);});
+ kt('Tàng hình hết đúng ba hiệp không lưu tăng vĩnh viễn',()=>{const z=tran({hieuUng:{anThan:3}},{hieuUng:{anThan:3}});z.t.batDau();for(let i=0;i<12;i++)z.t.hanhDong(z.t.xem().luot,'vatLy');eq(z.t.xem().dauSi[0].hieuUng.anThan,0);eq(z.t.tong(0).ne,0);});
+ kt('Ẩn chỉ bộc phát một lần qua hai đòn trúng',()=>{const z=tran({vuKhi:[1],nhomB:[1000,150,500,100,1000,0]},{phuLuc:[2]});z.t.batDau();z.t.hanhDong(0,'vatLy',1);z.t.hanhDong(1,'phu',2);z.t.hanhDong(0,'vatLy',1);eq(dong(z.t,'thuocTinhAn').length,1);});
+ kt('LL dùng vũ khí trừ mỗi lần đúng phí vượt cấp',()=>{const z=tran({vuKhi:[3],thanNiem:100,linhLuc:200,linhLucToiDa:200,nhomB:[1000,150,500,100,1000,0]});z.t.batDau();z.t.hanhDong(0,'vatLy',3);eq(z.t.xem().dauSi[0].linhLuc,80);});
+ kt('NPC từ chối thiếu TN và giữ nhóm E công khai',()=>{const c=HD_taoCore(123456);sai(()=>HD_taoDauSiV04(c,{thanNiem:10,vuKhi:[2]}));eq(HD_taoDauSiV04(c,{nhomE:['Bẫy thử']}).nhomE,['Bẫy thử']);});
+ kt('Chú ý nhận diện không được tái dùng điều khiển vũ khí',()=>{const a=tao().chiSo;a.datTN(60);a.nhanDien(1);eq(a.dieuKhien(2),false);});
+
+ if(typeof document!=='undefined'&&document.getElementById('hd-v04-arena'))kt('UI đủ đấu trường, gỡ lỗi, sáu trang cũ',()=>{for(const id of ['hd-v04-arena','hd-v04-fighters','hd-v04-npc-b5','hd-v04-npc-e7','hd-v04-start','hd-v04-reset','hd-v04-stop-bleed','hd-v04-reveal','hd-v04-derived'])eq(!!document.getElementById(id),true);eq(document.querySelectorAll('main > section').length,6);});
+ return {dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};
+}
+
 /*
 MÔ ĐUN GIAO DIỆN V02 - thiết kế duyệt 22/10/2026, giấy dó, ưu tiên 414 x 896.
 Chỉ nối bảng chơi mới vào thẻ Tu luyện và lịch vào Thời gian; nội dung khung cũ
@@ -838,6 +1071,76 @@ Dữ liệu vũ khí là dữ liệu mẫu, không giả lập vòng chiến đ�
  window.HD_V03=Object.freeze({theGioi:w,taoTheGioi:HD_taoTheGioiV03,kiemThu:HD_kiemThuV03,tra:HD_v03Tra,luu,debug:a});hien();
 })();
 
+
+/*
+MÔ ĐUN GIAO DIỆN CHIẾN ĐẤU V04 - duyệt 23/10/2026, giấy dó, 414 x 896.
+Không có thẻ Chiến Đấu trong khung sáu trang: đấu trường đặt trong Tu luyện,
+không xóa trang, bảng hoặc chức năng V02/V03. Gỡ lỗi nối vào bảng hiện hữu.
+Đấu sĩ trái xây từ nhân vật thật, máu và LL đồng bộ qua hàm công khai và lưu V03.
+Đối thủ dựng đủ sáu chỉ số, TN chiếm, LL, SL, cảnh, tầng, tám hệ, công pháp,
+vũ khí, phù, cộng trang bị, cộng thế trận, nhóm E. NPC không được cộng chỉ số ẩn.
+Hành động NPC tất định theo công pháp và cùng API; không sinh RNG ngoài CORE.
+Tự động chạy lượt NPC tới lượt người chơi; không cho thay gói giữa trận.
+Đặt lại chỉ kết thúc trận, không hồi máu nhân vật hoặc xóa lưu.
+Móc luyện hóa công bố chưa xây; nhận diện giữ 20 TN chú ý cho mỗi lần mở một thuộc tính.
+Công khai HD_V04: kiemThu, taoDauSi, taoChienDau, từ nhân vật, thanh ghi và móc gỡ lỗi.
+Tính năng đã qua kiểm thử - KHÔNG XÓA.
+*/
+(function HD_giaoDienV04(){
+ const w=window.HD_V03.theGioi,a=w.chiSo,C=HD_V04_CB,el=id=>document.getElementById(id),sao=structuredClone;
+ const tao=(tag,p={})=>Object.assign(document.createElement(tag),p);let tran=null,dangDongBo=false;a.chienDau(false);
+ document.head.append(tao('style',{textContent:'.hd-v04{overflow-wrap:anywhere}.hd-v04 .dau-si{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hd-v04 .dau-si article{min-width:0;border:1px solid var(--line);padding:9px}.hd-v04 progress{width:100%;display:block;accent-color:var(--red)}.hd-v04 label{display:block;margin:8px 0}.hd-v04 input,.hd-v04 select,.hd-v04 textarea{width:100%;min-height:44px;font:inherit;background:#f6ecd4;color:var(--ink);border:1px solid var(--line);padding:7px;box-sizing:border-box}.hd-v04 input[type=checkbox]{width:auto;min-height:24px}.hd-v04 .lenh{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.hd-v04 pre{max-height:260px;overflow:auto;white-space:pre-wrap;font:inherit;font-size:.78rem;border-top:1px dashed var(--line)}.hd-v04 small{display:block}.hd-v04 details>summary{min-height:44px;padding:8px;cursor:pointer}.hd-v04 .nhom-o{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hd-v04 button{max-width:100%}'}));
+ const them=tao('div',{id:'hd-v04-sheet',className:'hd-v04'});them.innerHTML='<h3>Chỉ số chiến đấu V0.4</h3><p id="hd-v04-b"></p><div id="hd-v04-derived" aria-label="Chỉ số suy ra chỉ đọc"></div>';el('hd-v03-sheet').append(them);
+ const arena=tao('article',{id:'hd-v04-arena',className:'card hd-v04'});arena.innerHTML='<p class="eyebrow">Đấu trường thử nghiệm V0.4</p><h2>CHIẾN ĐẤU</h2><p>Khí huyết về không: hấp hối, không xóa hành trình. Đặt lại không hồi máu.</p><p id="hd-v04-turn" role="status">Chưa bắt đầu</p><div class="dau-si" id="hd-v04-fighters"></div><label>Thế trận<select id="hd-v04-terrain"></select></label><label>Vũ khí dùng cho đòn đánh<select id="hd-v04-weapon"></select></label><label>Phù mang theo<select id="hd-v04-phu"></select></label><div class="lenh"><button id="hd-v04-physical">Tấn công vật lý</button><button id="hd-v04-magic">Tấn công phép</button><button id="hd-v04-cast">Dùng phù</button><button id="hd-v04-flee">Bỏ chạy</button></div><p id="hd-v04-message" role="status"></p><h3>Nhật ký chiến đấu</h3><pre id="hd-v04-log" tabindex="0" aria-label="Nhật ký chiến đấu"></pre><small>Toàn bộ dữ liệu số nằm trong nhật ký CORE, moDun V04; đơn vị B chia mười khi hiển thị.</small>';el('page-training').prepend(arena);
+ C.THE_TRAN.forEach(x=>el('hd-v04-terrain').append(new Option(x.ten,x.id)));
+ const dbg=tao('div',{id:'hd-v04-debug',className:'hd-v04'});dbg.innerHTML='<h3>Gỡ lỗi chiến đấu V0.4</h3><p>Nhóm B nhập đơn vị hiển thị 0 đến 100, bước 0,1. Phần cộng trang bị và thế trận cũng nhập đơn vị hiển thị.</p><label>Chính xác nhân vật<input id="hd-v04-set-cx" type="number" min="0" max="100" step="0.1" value="15"></label><button id="hd-v04-save-cx">Đặt chính xác</button><label>Né tránh nhân vật<input id="hd-v04-set-ne" type="number" min="0" max="100" step="0.1" value="15"></label><button id="hd-v04-save-ne">Đặt né tránh</button><label>Công pháp nhân vật<select id="hd-v04-player-cp"></select></label><button id="hd-v04-equip">Trang bị công pháp</button><label>Vật phẩm để nhận diện<select id="hd-v04-reveal-item"></select></label><button id="hd-v04-reveal">Nhận diện bằng TN dư</button><p>Tiêu dùng 20 TN chú ý nếu còn trống ít nhất 20. Luyện hóa chưa xây.</p><p id="hd-v04-hidden-status"></p><button id="hd-v04-stop-bleed">Cầm máu nhân vật</button><button id="hd-v04-stop-npc-bleed">Cầm máu đối thủ</button><button id="hd-v04-give">Bổ sung ba phù mẫu cho nhân vật</button><details><summary>Dựng đối thủ thử nghiệm</summary><div id="hd-v04-npc-fields" class="nhom-o"></div><h3>Vũ khí đối thủ</h3><div id="hd-v04-npc-weapons"></div><h3>Phù đối thủ</h3><div id="hd-v04-npc-spells"></div></details><div class="lenh"><button id="hd-v04-start">Bắt đầu đấu trường</button><button id="hd-v04-reset">Đặt lại đấu trường</button></div><button id="hd-v04-tests">Kiểm thử cả ba phiên bản</button><pre id="hd-v04-tests-out" role="status"></pre>';el('hd-debug').append(dbg);
+ const tenB=['Khí huyết','Sức mạnh','Thân pháp','Kháng ngũ cảm','Chính xác','Né tránh'];
+ function field(id,label,v,min=0,max=100000,step='1'){const l=tao('label',{textContent:label}),i=tao('input',{id:'hd-v04-npc-'+id,type:'number',value:String(v),min:String(min),max:String(max),step});l.append(i);el('hd-v04-npc-fields').append(l);}
+ const name=tao('label',{textContent:'Tên đối thủ'});name.append(tao('input',{id:'hd-v04-npc-name',value:'Đối thủ thử nghiệm'}));el('hd-v04-npc-fields').append(name);
+ tenB.forEach((x,i)=>field('b'+i,x,[20,15,15,10,15,15][i],0,100,'0.1'));
+ for(const [k,t,v,max] of [['realm','Đại cảnh: LK 0 tới Hóa Thần 4',0,4],['level','Tầng LK',1,13],['tn','Thần niệm',35,100000],['occupied','TN chiếm tổng',0,100000],['ll','LL hiện tại',50,100000],['llmax','LL tối đa',50,100000],['sl-n','SL tử số',1,100],['sl-d','SL mẫu số',1,100]])field(k,t,v,k==='level'||k==='sl-d'?1:0,max);
+ HD_V03_CB.NGUYEN_TO.forEach((he,i)=>field('e'+i,'Nguyên tố '+he,30,0,100));
+ for(const [k,t]of [['cong','Công'],['thu','Thủ'],['khangPhep','Kháng phép'],['chinhXac','Chính xác'],['ne','Né'],['than','Thân pháp']])field('eq-'+k,'Trang bị '+t,0,-1000,1000,'0.1');
+ for(const [k,t]of [['cong','Công'],['thu','Thủ'],['chinhXac','Chính xác'],['ne','Né'],['than','Thân pháp']])field('mod-'+k,'Thế trận riêng '+t,0,-1000,1000,'0.1');
+ const lab=tao('label',{textContent:'Công pháp đối thủ'});lab.append(tao('select',{id:'hd-v04-npc-cp'}));el('hd-v04-npc-fields').append(lab);
+ const eLab=tao('label',{textContent:'Nhóm E: tên công cụ, cách nhau bởi dấu chấm phẩy; chưa kích hoạt'});eLab.append(tao('textarea',{id:'hd-v04-npc-e'}));el('hd-v04-npc-fields').append(eLab);
+ for(const p of HD_V04_DU_LIEU.congPhap){el('hd-v04-npc-cp').append(new Option(p.ten,p.id));el('hd-v04-player-cp').append(new Option(p.ten,p.id));}
+ for(const v of HD_V04_DU_LIEU.vuKhi){el('hd-v04-reveal-item').append(new Option(v.ten,v.id));const l=tao('label',{textContent:v.ten+'; TN '+v.yeuCauTN});l.prepend(tao('input',{type:'checkbox',value:String(v.id),className:'hd-v04-npc-vk'}));el('hd-v04-npc-weapons').append(l);}
+ for(const p of HD_V04_DU_LIEU.phuLuc){const l=tao('label',{textContent:p.ten});l.prepend(tao('input',{type:'checkbox',value:String(p.id),className:'hd-v04-npc-phu'}));el('hd-v04-npc-spells').append(l);}
+ function so(id){const n=Number(el(id).value);if(el(id).value==='')throw Error('Cần nhập đủ các ô số');return w.core.nguyen(n);}
+ function bSo(id){const v=el(id).value,m=/^(-?)(\d+)(?:[.,](\d))?$/.exec(v);if(!m)throw Error('Cần số bước 0,1');return (m[1]?-1:1)*(Number(m[2])*10+Number(m[3]||0));}
+ function npc(){const get=k=>so('hd-v04-npc-'+k),mods=prefix=>Object.fromEntries([...el('hd-v04-npc-fields').querySelectorAll('input[id*="-'+prefix+'-"]')].map(x=>[x.id.split('-').at(-1),bSo(x.id)]));return HD_taoDauSiV04(w.core,{ten:el('hd-v04-npc-name').value,nhomB:tenB.map((_,i)=>bSo('hd-v04-npc-b'+i)),canhGioi:get('realm'),tang:get('level'),thanNiem:get('tn'),tnDangChiem:get('occupied'),linhLuc:get('ll'),linhLucToiDa:get('llmax'),SL:[get('sl-n'),get('sl-d')],nguyenTo:Object.fromEntries(HD_V03_CB.NGUYEN_TO.map((he,i)=>[he,get('e'+i)])),congPhap:so('hd-v04-npc-cp'),vuKhi:[...document.querySelectorAll('.hd-v04-npc-vk:checked')].map(x=>Number(x.value)),phuLuc:[...document.querySelectorAll('.hd-v04-npc-phu:checked')].map(x=>Number(x.value)),trangBi:mods('eq'),theTran:mods('mod'),nhomE:el('hd-v04-npc-e').value.split(';').map(x=>x.trim()).filter(Boolean)});}
+ function dongBo(f){dangDongBo=true;try{a.datB(0,f.nhomB[0]);a.datLL(f.linhLuc);a.cauHinhChienDau({phuLuc:f.phuLuc,thuongV04:f.hieuUng});window.HD_V03.luu();}finally{dangDongBo=false;}}
+ function tuDong(){let n=0;while(tran?.xem().dang&&tran.xem().luot===1&&n++<50){const z=tran.xem().dauSi[1],loai=HD_v04Tra('congPhap',z.congPhap).he==='Khong'?'vatLy':'phep';try{tran.hanhDong(1,loai);}catch(e){tran.hanhDong(1,'boChay');}}}
+ function lenh(fn){try{fn();el('hd-v04-message').textContent='';}catch(e){el('hd-v04-message').textContent=e.message;}hien();}
+ function khoaSua(){if(tran?.xem().dang)throw Error('Dừng trận trước khi đổi gói đấu sĩ');}
+ el('hd-v04-start').onclick=()=>lenh(()=>{khoaSua();const p=HD_tuNhanVatV04(w),n=npc();if(p.nhomB[0]===0||n.nhomB[0]===0)throw Error('Đấu sĩ hấp hối không thể bắt đầu');w.tuLuyen.dung('Bắt đầu đấu trường');a.chienDau(true);tran=HD_taoChienDauV04(w.core,p,n,el('hd-v04-terrain').value,{dongBo,ketThuc:()=>{a.chienDau(false);window.HD_V03.luu();},loAn:(ben,id)=>{if(ben===0)a.nhanDien(id,true);}});tran.batDau();tuDong();});
+ el('hd-v04-reset').onclick=()=>lenh(()=>{tran?.dung();tran=null;a.chienDau(false);window.HD_V03.luu();});
+ for(const [id,type]of [['physical','vatLy'],['magic','phep'],['cast','phu'],['flee','boChay']])el('hd-v04-'+id).onclick=()=>lenh(()=>{if(!tran)throw Error('Chưa bắt đầu');tran.capNhatNhanVat(HD_tuNhanVatV04(w));const item=type==='phu'?Number(el('hd-v04-phu').value):Number(el('hd-v04-weapon').value)||null;tran.hanhDong(0,type,item);tuDong();});
+ el('hd-v04-save-cx').onclick=()=>lenh(()=>{khoaSua();a.datB(4,bSo('hd-v04-set-cx'));window.HD_V03.luu();});el('hd-v04-save-ne').onclick=()=>lenh(()=>{khoaSua();a.datB(5,bSo('hd-v04-set-ne'));window.HD_V03.luu();});
+ el('hd-v04-equip').onclick=()=>lenh(()=>{khoaSua();a.cauHinhChienDau({congPhap:Number(el('hd-v04-player-cp').value)});window.HD_V03.luu();});
+ el('hd-v04-give').onclick=()=>lenh(()=>{khoaSua();a.cauHinhChienDau({phuLuc:[1,2,3]});window.HD_V03.luu();});
+ el('hd-v04-reveal').onclick=()=>lenh(()=>{khoaSua();const id=Number(el('hd-v04-reveal-item').value),h=HD_v04An(id);if(!h)throw Error('Không có thuộc tính ẩn');if(!a.nhanDien(id))throw Error('Đã nhận diện hoặc TN còn trống dưới 20');w.core.ghi('Nhận diện thuộc tính ẩn',{moDun:'V04',id,chiemTN:20,...h});window.HD_V03.luu();});
+ el('hd-v04-stop-bleed').onclick=()=>lenh(()=>{if(tran)tran.camMau(0);else{const e=a.xem().thuongV04;e.chayMau=false;a.cauHinhChienDau({thuongV04:e});window.HD_V03.luu();}});el('hd-v04-stop-npc-bleed').onclick=()=>lenh(()=>{if(!tran)throw Error('Chưa có đối thủ');tran.camMau(1);});
+ el('hd-v04-tests').onclick=()=>{const ds=[['V0.2',window.HD_V02.kiemThu({inBang:false})],['V0.3',window.HD_V03.kiemThu({inBang:false})],['V0.4',HD_kiemThuV04()]];el('hd-v04-tests-out').textContent=ds.map(([v,r])=>v+': '+r.dat+' đạt / '+r.truot+' lỗi\n'+r.danhSach.filter(x=>x.ketQua==='FAIL').map(x=>x.ten+': '+x.loi).join('\n')).join('\n');};
+ function chon(id,list){const sel=el(id),cu=sel.value;sel.replaceChildren(...list.map(([ten,val])=>new Option(ten,val)));if(list.some(x=>String(x[1])===cu))sel.value=cu;}
+ function hien(){if(tran?.xem().dang&&!dangDongBo)tran.capNhatNhanVat(HD_tuNhanVatV04(w));const st=a.xem(),f=HD_tuNhanVatV04(w),t=HD_tongV04(w.core,f,el('hd-v04-terrain').value,f.vuKhi[0]??null),cp=HD_v04Tra('congPhap',f.congPhap),v=HD_v04Tra('vuKhi',f.vuKhi[0]),fmt=a.hienThiB;
+ el('hd-v04-b').textContent='Chính xác '+fmt(st.chinhXac)+' / 100; Né tránh '+fmt(st.neTranh)+' / 100';
+ const vl=w.core.tinh(f.nhomB[1],[cp.cong])+t.cong,he=cp.he,phep=w.core.tinh(w.core.tinh(f.linhLuc*10,[cp.cong,he==='Khong'?[1,1]:[50+f.nguyenTo[he],100]])+(v?.nguyenTo[he]||0)*10+(he==='Mộc'?t.mocCong:0),[t.phanSo[he]||[1,1]]);
+ el('hd-v04-derived').textContent='Tấn công vật lý: '+fmt(vl)+'; Tấn công phép ('+(cp.he==='Khong'?'Không hệ':he)+'): '+fmt(phep)+'; Phòng thủ: '+fmt(t.thu)+'; Kháng phép: '+fmt(t.khangPhep)+'. Chỉ đọc, theo công pháp, trang bị và thế trận hiện tại.';
+ el('hd-v04-hidden-status').textContent='TN chú ý nhận diện đang dùng: '+st.tnNhanDien+'. '+st.daHien.map(id=>{const h=HD_v04An(id);return h?HD_v04Tra('vuKhi',id).ten+': '+h.moTa:'';}).join('; ');
+ const z=tran?.xem(),active=!!z?.dang;el('hd-v04-terrain').disabled=active;el('hd-v04-start').disabled=active;
+ el('hd-v04-turn').textContent=z?'Hiệp '+z.hiep+'; lượt '+z.dauSi[z.luot].ten+'; hành động còn '+z.conLai.join(' / ')+(active?'':'; kết thúc: '+z.ketQua?.lyDo):'Chưa bắt đầu';
+ const fs=z?.dauSi||[f];el('hd-v04-fighters').replaceChildren(...fs.map(x=>{const ar=tao('article'),name=tao('h3',{textContent:x.ten});ar.append(name);for(const [label,cur,max,kind]of [['Khí huyết',x.nhomB[0],x.tranKhiHuyet,'b'],['Linh lực',x.linhLuc,x.linhLucToiDa,'so']])ar.append(tao('small',{textContent:label+': '+(kind==='b'?fmt(cur)+' / '+fmt(max):cur+' / '+max)}),tao('progress',{value:cur,max:Math.max(1,max),'ariaLabel':label}));ar.append(tao('small',{textContent:'TN '+x.thanNiem+'; chiếm '+x.tnDangChiem}),tao('small',{textContent:'Vũ khí: '+(x.vuKhi.map(id=>HD_v04Tra('vuKhi',id).ten).join(', ')||'Không')}),tao('small',{textContent:'Hiệu ứng: '+Object.entries(x.hieuUng).filter(([k,v])=>v&&!k.endsWith('Moi')).map(([k,v])=>({chayMau:'Chảy máu',lanh:'Lạnh',dot:'Thiêu đốt',anThan:'Ẩn thân',mocTran:'Trận Mộc',nang:'Thương nặng'})[k]+(typeof v==='number'?' '+v+' hiệp':'')).join('; ')}));return ar;}));
+ const player=z?.dauSi[0]||f;chon('hd-v04-weapon',player.vuKhi.length?player.vuKhi.map(id=>[HD_v04Tra('vuKhi',id).ten,id]):[['Tay không',0]]);chon('hd-v04-phu',player.phuLuc.map(id=>[HD_v04Tra('phuLuc',id).ten,id]));
+ const own=active&&z.luot===0;el('hd-v04-physical').disabled=!own||HD_v04Tra('congPhap',player.congPhap).he!=='Khong';el('hd-v04-magic').disabled=!own||HD_v04Tra('congPhap',player.congPhap).he==='Khong';el('hd-v04-cast').disabled=!own||!player.phuLuc.length;el('hd-v04-flee').disabled=!own;
+ const labels={moHiep:'Mở hiệp',trungNe:'Trúng hoặc né',thuongThe:'Bảng thương thế',matKhiHuyet:'Mất khí huyết',thuocTinhAn:'Thuộc tính ẩn bộc phát',boChay:'Bỏ chạy',phanCongMienPhi:'Phản công miễn phí',dungPhu:'Dùng phù',camMau:'Cầm máu',ketThuc:'Kết thúc'};
+ el('hd-v04-log').textContent=(z?.nhatKy||[]).slice(-60).map(x=>'Hiệp '+x.hiep+': '+(labels[x.loai]||x.loai)+(x.roll!==undefined?' d100='+x.roll+', chính xác='+fmt(x.chinhXac)+', né='+fmt(x.ne)+', ngưỡng='+x.nguong+', '+(x.trung?'trúng':'né'):'')+(x.hang?' công='+fmt(x.cong)+', thủ='+fmt(x.phongThu)+', chênh='+fmt(x.chenh)+', '+x.hang.ten+', chí mạng d100='+x.rollChi+'/'+x.nguongChi+', sát thương='+fmt(x.satThuong):'')+(x.lyDo?' '+x.lyDo:'')+(x.moTa?' '+x.moTa:'')+(x.haoLL!==undefined?' LL trừ '+x.haoLL:'')+(x.thucTe!==undefined?' '+fmt(x.thucTe):'')).join('\n');
+ }
+ w.core.nghe('chiSoThayDoi',()=>{if(!hien.dang){hien.dang=true;try{hien();}finally{hien.dang=false;}}});w.core.nghe('capNhat',hien);
+ window.HD_V04=Object.freeze({kiemThu:HD_kiemThuV04,taoDauSi:HD_taoDauSiV04,taoChienDau:HD_taoChienDauV04,tuNhanVat:HD_tuNhanVatV04,tong:HD_tongV04,tra:HD_v04Tra,canBang:C,theGioi:w,debug:{npc,tran:()=>tran,nhanDien:id=>a.nhanDien(id),luyenHoa:()=>({hopLe:false,lyDo:'Luyện hóa chưa xây'})}});hien();
+})();
+
 </script>
 </body>
 </html>
@@ -852,4 +1155,9 @@ Giữ nguyên nguồn khung V0.1; thay đúng ký tự trang trí không hợp l
 <!--
 LỊCH SỬ THAY ĐỔI V0.3
 22/10/2026 - V0.3: nối chỉ số nhóm B, thần niệm, linh lực, tám nguyên tố; thanh ghi mẫu vũ khí, công pháp, phù lục; điều khiển vũ khí theo tổng TN và luật vượt cấp. Nối thương sinh lý V0.2 đúng một lần, tẩy tủy theo sự kiện thành công, lưu mở rộng phiên bản 3 trong vỏ V0.2. Bổ sung bảng Nhân vật và gỡ lỗi, kiểm thử hồi quy cô lập. Không sửa KINH-THANH-GAME.md, không thay bộ kiểm thử V0.2.
+-->
+
+<!--
+LỊCH SỬ THAY ĐỔI V0.4
+23/10/2026 - V0.4: bổ sung chính xác, né tránh và dòng chỉ số suy ra; nâng thanh ghi vũ khí, phù lục; động cơ chiến đấu tất định qua CORE, điểm hành động, tiên thủ, trúng né, chí mạng, bảng thương thế, bỏ chạy, thế trận, bộc phát và nhận diện thuộc tính ẩn. Thêm đấu trường, dựng NPC, cầm máu và kiểm thử cô lập. Giữ nguyên sáu trang, mọi công cụ V02/V03 và hai bộ hồi quy. Đấu trường không xóa lưu khi hấp hối. Chỉ sửa index.html; không đổi tài liệu thiết kế.
 -->
