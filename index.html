@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MODULE V0.7
+MỤC LỤC MODULE V0.7.1
+MÔ ĐUN VÁ TRÌNH BÀY V071 (script thứ tám, CSS hd-v071-style): bìa sách JPEG qua HD_V07, viền mực hở góc không tua cuốn, năm nút giấy dó giữ nguyên trạng thái tự diễn; kiểm thử HD_V071.kiemThu. Bốn script đầu giữ nguyên từng ký tự.
 MÔ ĐUN KHO CHÂN DUNG VÀ KHO CẢNH V07 (script thứ bảy): registry art/, fallback onerror, cấu hình loại/ngoại hình, bìa JPEG và kiểm thử V07.
 VÁ TRÌNH BÀY V06: timestamp theo vị trí log (CORE không có stt); hình SVG đổi JPEG; giữ đủ 40 kiểm thử V06. CSS V07: select giấy dó, ảnh multiply, bìa cuộn dọc.
 TINH CHỈNH CONCEPT V06: giấy xuyến chỉ loang, viền cọ SVG, chân dung nhiều lớp kiếm sĩ/giáp vàng, tranh trận trúc và gợn sóng, nút dọc và nhật ký timestamp UI. Bổ sung trong script V06, không thay script V02-V05.
@@ -92,6 +93,27 @@ Một tệp HTML UTF-8 cùng thư viện JPEG art/ trong kho; không CDN.
 html body button{min-width:48px!important;min-height:48px!important}
 #hd-v06-combat{overflow-y:auto;overflow-x:hidden}.v06-dialog{max-width:100%;overflow-wrap:anywhere}
 @media(max-width:480px){#hd-v06-cover>article{min-height:800px;padding-bottom:440px}.v06-dialog{width:100%}#hd-v06-combat{padding:8px}#hd-v05-scene .v05-actions{min-width:0}}
+</style>
+<style id="hd-v071-style">
+/* V0.7.1: giấy trắng ngà, tranh multiply; chữ HTML ở khoảng trời trên tranh.
+Không thêm animation, không đổi reduced-motion, nhịp, API hay trạng thái nút. */
+#hd-v06-book .v06-title-page{display:block;position:relative;padding:0;min-width:0;overflow:hidden;background:#f4ecd9;text-align:center}
+#hd-v06-book .v071-book-art{position:relative;width:100%;height:auto;max-width:100%;display:block;mix-blend-mode:multiply}
+#hd-v06-book .v06-title-page>.eyebrow,#hd-v06-book .v06-title-page>h2,#hd-v06-book .v06-title-page>.v06-seal{position:absolute;left:12px;right:12px;z-index:1;margin:0}
+#hd-v06-book .v06-title-page>.eyebrow{top:22px;letter-spacing:.08em;font-size:.7rem}
+#hd-v06-book .v06-title-page>h2{top:54px;font-size:clamp(1.6rem,6vw,2rem);line-height:1.25;letter-spacing:1px}
+#hd-v06-book .v06-title-page>.v06-seal{top:146px;left:50%;right:auto;transform:translateX(-50%) rotate(-4deg);white-space:nowrap;font-size:.72rem}
+#hd-v06-cover>article{background:#f4ecd9;max-width:100%;min-width:0}
+#hd-v06-cover .v07-cover-art{mix-blend-mode:multiply}
+#hd-v06-cover,#hd-v06-combat{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+#hd-v05-scene .v05-actions{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;min-width:0}
+#hd-v05-scene .v05-actions button{min-width:48px;min-height:108px;border:0;border-radius:9px 4px 8px 3px;background:radial-gradient(ellipse at 40% 20%,#fff9e3aa,transparent 80%),#e9dbb9;box-shadow:inset 1px 2px 8px #775d2420;color:#312a20;isolation:isolate}
+#hd-v05-scene .v05-actions button>.v071-ink-frame{position:absolute;inset:0;width:100%;height:100%;max-height:none;margin:0;z-index:0;opacity:.9}
+#hd-v05-scene .v05-actions button>svg:not(.v071-ink-frame),#hd-v05-scene .v05-actions button>b,#hd-v05-scene .v05-actions button>small{position:relative;z-index:1}
+#hd-v05-scene .v05-actions button svg:not(.v071-ink-frame){width:30px;height:38px;opacity:.88;mix-blend-mode:multiply}
+#hd-v05-scene .v05-actions button:last-child{width:100%;height:74px;min-height:74px;border:3px double #eedeb8;border-radius:48% 52% 49% 51%;outline:1px solid #7c3d2a;outline-offset:1px;background:radial-gradient(ellipse at 38% 30%,#b26145,#923c2e 70%,#713022);color:#fff0cf;box-shadow:inset 0 0 0 1px #d0a071,1px 2px 4px #57382035}
+#hd-v05-scene .v05-actions button:last-child>small{position:absolute;top:calc(100% + 9px);left:-4px;width:calc(100% + 8px)}
+#hd-v05-scene .v05-actions .v05-lit{background-color:#dec18e;color:#7e2f24}
 </style>
 </head>
 <body data-layout="1">
@@ -1398,7 +1420,8 @@ Cài Đặt=system/Hệ Thống. Bảy mục khóa chỉ trang trí. Giữ mọi
 FX đọc trungNe.he/loaiDon/phu, dungPhu, boChay, thuongThe.chiMang, matKhiHuyet.thucTe.
 Không suy đoán roll/số/hệ. CSS/SVG transform/opacity 280-650ms, không đổi nhịp 1150ms. */
 const d=document,$=id=>d.getElementById(id),V=window.HD_V04,F=window.HD_V05;
-const art=`<svg class="v06-art" viewBox="0 0 300 270" role="img" aria-label="Núi mây, chim, tùng và đình thủy mặc"><defs><linearGradient id="v06-mist" x2="0" y2="1"><stop stop-color="#34332c" stop-opacity=".7"/><stop offset="1" stop-color="#72694e" stop-opacity=".05"/></linearGradient></defs><path d="M5 195 32 133 47 144 82 36 113 100 132 95 175 206ZM90 220 142 147 162 160 191 75 208 113 221 110 294 230" fill="url(#v06-mist)"/><path d="M47 144 82 36 91 108 107 104M162 160 191 75 194 147" fill="none" stroke="#34332c" stroke-width="2" opacity=".7"/><path d="M0 238 Q60 201 120 225 T300 234 M15 250 Q100 225 155 246 T298 250" fill="none" stroke="#665c45" opacity=".25" stroke-width="9"/><path d="M42 247 Q56 214 51 172 M51 188 26 170 M52 209 80 185" fill="none" stroke="#302e24" stroke-width="5"/><path d="M7 170 Q28 143 51 169 Q70 140 93 167 Q63 187 43 174 Q24 183 7 170 M58 192 Q80 168 102 186 Q89 202 58 192" fill="#37392a" opacity=".8"/><path d="M178 236 178 202 235 202 235 236 M168 201 Q198 188 206 177 Q219 193 246 201ZM185 197 185 183 226 183 226 197M198 203V231M217 203V231" fill="#333027" stroke="#333027" stroke-width="2"/><path d="m188 45 6-4 7 3m28-14 6-4 7 3m-116 21 6-4 7 3" fill="none" stroke="#3e3a30" stroke-width="1.5"/></svg>`;
+// V0.7.1: vị trí tranh được kho cảnh HD_V07 lắp JPEG, không còn SVG núi cũ.
+const art='<span class="v06-art" aria-hidden="true"></span>';
 const enso=`<svg class="v06-enso" viewBox="0 0 100 100" aria-hidden="true"><path d="M73 18 C36-8 5 35 19 66 C34 100 83 88 88 54 C92 30 78 13 62 12" fill="none" stroke="#3d392c" stroke-width="6" stroke-linecap="round"/><path d="M72 15 C35-4 10 35 22 64 C37 94 79 84 85 53" fill="none" stroke="#4a422e" opacity=".4" stroke-width="2"/></svg>`;
 const map=[['character','Nhân Vật','Nhân vật'],['training','Công Pháp','Tu luyện'],['time','Thời Gian','Thời gian'],['economy','Pháp Bảo','Kinh tế · tham khảo'],['story','Kỳ Ngộ','Cốt truyện'],['system','Cài Đặt','Hệ Thống']];
 const book=d.createElement('div');book.id='hd-v06-book';book.className='v06-book';book.innerHTML=`<section class="v06-page v06-title-page"><p class="eyebrow">Một đời cầu đạo · V0.6</p><h2>HỒNG ĐỨC<br>TU TIÊN LỘ V1</h2><span class="v06-seal">HỒNG ĐỨC<br>TIÊN LỘ</span>${art}</section><section class="v06-page v06-preface">${enso}<h3>Lời tựa</h3><p>Tu tiên chi đạo,<br>cốt tại nội tâm,<br>thuận đường tích đức,<br>thuận thiên mà hành.</p><hr class="v06-rule"><p>Đạo hữu hành lộ gian nan,<br>giữ chí kiên định,<br>ắt có ngày đắc đạo thành tiên.</p><span class="v06-seal">V1 · V0.6</span></section><section class="v06-page v06-toc"><h2>MỤC LỤC</h2><nav aria-label="Mục lục sách"></nav></section>`;
@@ -1415,7 +1438,9 @@ const openAgain=d.createElement('button');openAgain.id='hd-v06-review';openAgain
 
 /* V06 concept plate: layered SVG brush drawings. Art is decorative, never a combat stat. */
 let plateSerial=0;
-function brushFrame(){return '<svg class="v06-brush-frame" viewBox="0 0 200 300" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="#29251a" stroke-linecap="round"><path d="M6 12Q75 8 193 11L195 287Q90 293 7 289Z" stroke-width="2.2"/><path d="M9 8L87 12 190 8M198 20L194 103 198 280M189 293L109 290 8 294M4 283L8 168 5 17" stroke-width="1"/><path d="M12 15L5 11 14 5M187 5L197 10 190 20M199 282L190 293 181 288M11 280L3 290 17 296" stroke-width="3"/></g><g fill="#29251a" opacity=".84"><path d="M3 9l9-6 7 7-12 11zM186 6l11 2 2 17-8-9zM191 280l7 8-12 8-6-4zM5 279l8 13-11 3z"/><circle cx="18" cy="9" r="2"/><circle cx="194" cy="25" r="1.5"/><circle cx="183" cy="292" r="2"/></g></svg>';}
+/* V0.7.1: viền hai nét mực tay, ngắt mềm ở góc; bỏ mọi mảng nơ/tua cuốn.
+Dùng chung thẻ, nút và nhật ký để tranh JPEG hòa giấy; không liên quan chỉ số. */
+function brushFrame(){return '<svg class="v06-brush-frame v071-ink-frame" viewBox="0 0 200 300" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="#393326" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13Q74 8 190 12M194 22Q191 160 195 280M187 290Q91 294 12 289M6 278Q9 140 6 23" stroke-width="1.7" opacity=".8"/><path d="M18 9Q90 13 178 9M198 36L195 130 198 263M174 294L105 291 24 295M3 263L6 164 3 39" stroke-width=".65" opacity=".4"/></g></svg>';}
 function figure(enemy=false,full=false){const id='v06-plate-'+(++plateSerial),ink='#272921',gold='#b19451';let marks='';for(let i=0;i<30;i++){const x=12+(i*37)%176,y=113+(i*19)%133;marks+='<path d="M'+x+' '+y+'l'+(4+i%9)+' -'+(2+i%7)+' -2 8z" fill="'+(enemy?'#806a38':'#343b32')+'" opacity="'+(.09+(i%4)*.035)+'"/>';}
 const swordsman='<g stroke="#292e28" stroke-linejoin="round"><path d="M88 108Q48 124 29 167L10 181 52 174 35 214 86 208 117 228 140 211 107 167 128 146 109 116Z" fill="url(#'+id+'-cloth)" stroke-width="2"/><path d="M84 120L67 155 81 185 62 213 104 205 118 219 114 177 101 141Z" fill="#43493e"/><path d="M63 139L42 158 33 174M70 133L53 164 63 179M84 141L81 174 96 190M106 147L96 166 109 193M64 187L48 205M100 198L113 214" fill="none" stroke="#c0baa0" stroke-width="2" opacity=".7"/><path d="M67 184L34 223 22 254 37 257 65 226 89 218 106 250 137 262 146 254 124 237 115 205Z" fill="#33382f" stroke-width="2"/><path d="M40 222L55 225 32 250M107 217L115 240 135 253" fill="none" stroke="#a8a58e" stroke-width="3"/><path d="M20 251L12 264 38 263 41 253M132 253L140 265 160 265 145 253" fill="#252a24"/><path d="M102 123Q119 130 125 147L145 141 153 146 143 153 118 158 103 143Z" fill="#70776a" stroke-width="2"/><path d="M144 140L153 130 157 131 154 139 164 133 167 136 158 145 150 148Z" fill="#b3ad92"/><path d="M74 103L72 120 90 135 101 118 96 99" fill="#a4a18a"/><path d="M85 64Q105 59 111 76L110 85 120 89 112 96 111 106 98 116 84 106 77 86Z" fill="#c1bba2" stroke-width="1.5"/><path d="M104 85l7 1M108 98l-8 3M99 70Q78 85 80 102" fill="none" stroke-width="2"/><path d="M80 102Q63 101 68 79 61 71 73 59L84 54Q72 40 87 35 105 31 102 49 119 54 116 76L105 69 90 80 80 99Z" fill="#222821" stroke-width="2"/><path d="M81 56Q46 35 36 62 52 51 59 70 55 95 23 115 48 111 68 85 76 70 81 56Z" fill="#2c322a"/><path d="M79 59Q43 48 37 75 33 90 5 101M78 65Q54 74 55 93L32 127M81 50Q53 40 50 27M84 51L107 48" fill="none" stroke="#454a3f" stroke-width="2"/><path d="M78 49L98 52M77 52L66 46" stroke="#161e18" stroke-width="4"/><path d="M75 165L69 177 80 182 87 171" fill="#bbb39b"/><path d="M80 178L31 236 26 247 37 241 87 183Z" fill="#bcc1b0" stroke-width="1.2"/><path d="M76 176L88 185M83 171L91 162" stroke-width="4"/><path d="M55 184L70 178 101 186 96 194 61 192Z" fill="#262d24"/><path d="M50 157Q30 177 4 196L37 185 22 211 52 194" fill="#7d8271" opacity=".7"/></g>';
 let scales='';for(let row=0;row<5;row++)for(let col=0;col<5;col++){const x=72+col*10+row%2*3,y=133+row*10;scales+='<path d="M'+x+' '+y+'l9 -1 -1 8 -6 3 -3 -6z" fill="'+(['#9b8245','#756237','#b89d5e'][(row+col)%3])+'" stroke="#3c3926" stroke-width=".8"/><path d="M'+(x+2)+' '+(y+2)+'l5 -1" stroke="#dbc78a" stroke-width=".8"/>';}
@@ -1557,6 +1582,12 @@ function apply(root,fs){
 const cover=d.getElementById('hd-v06-cover'),article=cover.querySelector('article');
 article.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v07-cover-art'));
 article.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.7';
+// V0.7.1: dùng cùng public kho cảnh và onerror cho trang bìa trong sách.
+const titlePage=d.querySelector('#hd-v06-book .v06-title-page');
+titlePage.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v071-book-art'));
+titlePage.querySelector('.eyebrow').textContent='Một đời cầu đạo · V0.7';
+titlePage.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.7';
+d.querySelector('.v06-preface .v06-seal').textContent='V1 · V0.7';
 const preload=d.createElement('div');preload.hidden=true;preload.id='hd-v07-kho';preload.setAttribute('aria-hidden','true');
 for(const [key,path]of Object.entries(chanDung))if(key!=='mac-dinh'){
  const img=taoAnh(path,'Kho chân dung '+key);img.dataset.v07Portrait=key;preload.append(img);
@@ -1580,6 +1611,54 @@ function kiemThu({inBang=true}={}){
  const result={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};if(inBang)console.table(ds);return result;
 }
 window.HD_V07=Object.freeze({chanDung,canh,biDanh,macDinh,khoa,lookup,resolve,taoAnh,anhCanh,apply,kiemThu});
+})();
+</script>
+<script>
+(function HD_vaTrinhBayV071(){
+'use strict';
+/* MÔ ĐUN V0.7.1: chỉ vá trình bày. JPEG do public HD_V07.anhCanh tạo,
+viền mực hở góc do V06.polish dùng; không thêm listener chiến đấu hay bus mới.
+Giữ public API/event bus cũ, RNG, save và nhịp 1150ms. Năm nút tự diễn vẫn
+khóa theo nghiệm thu; bốn lệnh tay vẫn do V05 gọi API V04, không bịa Phòng Thủ.
+Thiết kế: bỏ các mảng góc đen, dùng hai nét cọ mảnh không khép ở góc; nền nút
+cùng giấy dó ngà và sắc triện đỏ với Tự Đánh, giữ nguyên icon/nhãn/thứ tự.
+Không có hằng số cân bằng mới; 48px là ngưỡng vùng chạm, không phải chỉ số game. */
+async function kiemThu({inBang=true}={}){
+ const d=document,$=id=>d.getElementById(id),ds=[];
+ const ok=(x,msg='Không đạt')=>{if(!x)throw Error(msg);};
+ const test=async(ten,fn)=>{try{await fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
+ const cover=$('hd-v06-cover'),modal=$('hd-v06-combat'),oldCover=cover.hidden,oldModal=modal.classList.contains('is-open');
+ try{
+ await test('Bìa trong sách và màn bìa dùng JPEG, không SVG cũ',()=>{
+  for(const root of [d.querySelector('#hd-v06-book .v06-title-page'),cover]){
+   const img=root.querySelector('img[data-v07-scene="bia"]');ok(img);ok(img.dataset.v07Path==='art/bia.jpg');ok(!root.querySelector('svg.v06-art,.v06-art'));
+  }
+ });
+ await test('Hai ảnh bìa tải thật, không phải onerror fallback',async()=>{
+  for(const img of d.querySelectorAll('img[data-v07-scene="bia"]')){await img.decode();ok(img.naturalWidth>0);ok(!img.dataset.v07Fallback);ok(img.getAttribute('src')==='art/bia.jpg');}
+ });
+ await test('Nhãn bìa V0.7, giữ chữ HTML và hai nút mở',()=>{
+  const title=d.querySelector('#hd-v06-book .v06-title-page');ok(title.querySelector('h2').textContent.includes('TU TIÊN LỘ V1'));ok(title.querySelector('.eyebrow').textContent.includes('V0.7'));ok(title.querySelector('.v06-seal').textContent.includes('V0.7'));ok(cover.querySelector('h1'));ok($('hd-v06-open'));ok($('hd-v06-skip'));
+ });
+ await test('Khung thẻ chỉ hai nét mực hở, không tua cuốn góc',()=>{
+  const frames=d.querySelectorAll('#hd-v05-scene .v05-fighter>.v06-brush-frame');ok(frames.length===2);frames.forEach(f=>{ok(f.classList.contains('v071-ink-frame'));ok(f.querySelectorAll('path').length===2);ok(!f.querySelector('circle,polygon,[fill]:not([fill="none"])'));ok([...f.querySelectorAll('path')].every(p=>!/[zZ]/.test(p.getAttribute('d'))));});
+ });
+ await test('Năm nút giữ thứ tự và hành vi tự diễn không ghi CORE',()=>{
+  const bs=[...d.querySelectorAll('#hd-v05-scene .v05-actions button')],before=JSON.stringify(window.HD_V04.theGioi.core.xuat());ok(bs.length===5);
+  ['Tấn Công','Phòng Thủ','Pháp Bảo','Chạy Trốn','TỰĐÁNH'].forEach((name,i)=>ok(bs[i].textContent.replace(/\s/g,'').includes(name.replace(/\s/g,''))));bs.forEach(b=>{ok(b.disabled);b.click();});ok(JSON.stringify(window.HD_V04.theGioi.core.xuat())===before);
+ });
+ window.HD_V06.debug.openModal();
+ await test('Vùng chạm năm nút ít nhất 48px mỗi chiều',()=>{const bs=[...d.querySelectorAll('#hd-v05-scene .v05-actions button')];ok(bs.length===5);bs.forEach(b=>{const r=b.getBoundingClientRect();ok(r.width>=48&&r.height>=48,JSON.stringify({width:r.width,height:r.height}));});});
+ await test('Viền mực bốn nút phủ toàn ô, không còn ô vuông nhỏ quanh icon',()=>{const bs=[...d.querySelectorAll('#hd-v05-scene .v05-actions button')].slice(0,4);bs.forEach(b=>{const f=b.querySelector('.v071-ink-frame'),r=b.getBoundingClientRect(),s=f.getBoundingClientRect();ok(Math.abs(r.width-s.width)<2&&Math.abs(r.height-s.height)<2);});});
+ await test('Bốn lệnh tay vẫn gọi đúng API V04',()=>{const r=window.HD_V05.kiemThu({inBang:false}),actions=r.danhSach.filter(x=>x.ten.startsWith('Nút tay gọi đúng API V04:'));ok(actions.length===4);ok(actions.every(x=>x.ketQua==='PASS'));});
+ await test('Modal cuộn dọc, không tràn ngang khung hiện tại',()=>{const css=getComputedStyle(modal);ok(css.overflowY==='auto');ok(modal.scrollWidth<=modal.clientWidth+1);ok(d.documentElement.scrollWidth<=innerWidth+1);ok(modal.scrollHeight>=modal.clientHeight);});
+ cover.hidden=false;
+ await test('Màn bìa cuộn dọc và không tràn ngang',()=>{ok(getComputedStyle(cover).overflowY==='auto');ok(cover.scrollWidth<=cover.clientWidth+1);ok(cover.querySelector('article').getBoundingClientRect().width<=cover.clientWidth);});
+ await test('Ảnh bìa co theo rộng và hòa giấy multiply',()=>{const img=d.querySelector('.v071-book-art'),r=img.getBoundingClientRect(),p=img.parentElement.getBoundingClientRect();ok(r.width>0&&r.width<=p.width+1);ok(getComputedStyle(img).mixBlendMode==='multiply');});
+ }finally{cover.hidden=oldCover;modal.classList.toggle('is-open',oldModal);}
+ const result={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds,khung:{rong:innerWidth,cao:innerHeight}};if(inBang)console.table(ds);return result;
+}
+window.HD_V071=Object.freeze({kiemThu});
 })();
 </script>
 </body>
@@ -1622,4 +1701,8 @@ LỊCH SỬ THAY ĐỔI V0.6
 <!--
 LỊCH SỬ THAY ĐỔI V0.7
 23/10/2026 - Thư viện tám JPEG nguyên trạng trong art/; kho chân dung và kho cảnh độc lập, alias loại/ngoại hình, bóng mực onerror. Bìa tranh núi am tùng giữ chữ và nút HTML; triện HỒNG ĐỨC · V0.7. Hai chân dung và tranh đối đầu thay SVG, giữ thanh số/VS/Hồi/FX. Vá timestamp: CORE không có stt, dùng vị trí log riêng từng trận và giây thực performance.now. Select Thế trận vẫn native iOS, nét mực giấy dó. CSS co giãn, modal/bìa cuộn dọc, vùng chạm 48px. Bốn script V02-V05 nguyên từng ký tự; không đổi RNG, save/load, nhịp 1150ms hay reduced-motion. Bổ sung HD_V07.kiemThu; ba ca hình ảnh V06 cập nhật sang JPEG, giữ đủ 40 ca. Không sửa main hay tài liệu thiết kế.
+-->
+
+<!-- LỊCH SỬ THAY ĐỔI V0.7.1
+23/10/2026 - Bìa trong sách dùng lại art/bia.jpg qua kho cảnh HD_V07 và onerror; bỏ SVG núi cũ, giữ chữ HTML trên khoảng trời, nhãn V0.7. Hai nét mực hở góc thay hoàn toàn tua cuốn; năm nút giấy dó/triện đỏ đồng bộ, giữ icon, thứ tự, kích thước và hành vi tự diễn bị khóa. Bốn lệnh tay giữ API V04; không thêm cơ chế Phòng Thủ. CSS đáp ứng, cuộn dọc, vùng chạm 48px. Thêm HD_V071.kiemThu cho ảnh tải thật, góc khung, năm nút, bốn API tay và bố cục. Bốn script đầu nguyên từng ký tự; không đổi RNG, seed, nhịp 1150ms, save/load, bus hay reduced-motion. Chỉ index.html trên v05-thu; chưa nghiệm thu iPhone thật.
 -->
