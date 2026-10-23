@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MODULE V0.7.2
+MỤC LỤC MODULE V0.8
+MÔ ĐUN CẢNH HOẠT ĐỘNG V08 (script thứ mười, CSS hd-v08-style): registry mười cảnh, onerror bóng mực V07, overlay 2000ms có reduced-motion, HD_V08.hienCanh/ganCore/kiemThu. Dùng phù là dung-phu; ve-phu chỉ luyện chế phù chưa dựng. Engine giữ nguyên trừ một dòng phát bus đầu hiệp một có Trận Mộc.
 MÔ ĐUN NĂM NÚT MỰC V072 (script thứ chín, CSS hd-v072-style): viền mực vẽ tay, vết hoe sau bốn icon, triện đỏ son phẳng chữ kem Latin có dấu hai dòng; public HD_V072.apply/kiemThu. Không đổi public API/event bus, nhịp hay hành vi.
 MÔ ĐUN VÁ TRÌNH BÀY V071 (script thứ tám, CSS hd-v071-style): bìa sách JPEG qua HD_V07, viền mực hở góc không tua cuốn, năm nút giấy dó giữ nguyên trạng thái tự diễn; kiểm thử HD_V071.kiemThu. Bốn script đầu giữ nguyên từng ký tự.
 MÔ ĐUN KHO CHÂN DUNG VÀ KHO CẢNH V07 (script thứ bảy): registry art/, fallback onerror, cấu hình loại/ngoại hình, bìa JPEG và kiểm thử V07.
@@ -131,6 +132,17 @@ Font serif he thong ho tro dau Viet; khong tai font trang tri thieu glyph iOS. *
 #hd-v05-scene .v05-actions .v072-auto>small{position:absolute;top:calc(100% + 9px);left:-4px;width:calc(100% + 8px);font-size:clamp(.43rem,1.7vw,.62rem);line-height:1.25;color:#59452c;transform:none}
 #hd-v05-scene .v05-actions .v072-auto.v05-lit{background:#963b29;color:#f8e8bf;box-shadow:none;filter:none}
 @media(min-width:650px){#hd-v05-scene .v05-actions button.v072-card{min-height:135px}#hd-v05-scene .v05-actions .v072-card>.v072-icon{width:51px;height:66px}}
+</style>
+
+<style id="hd-v08-style">
+/* V08: tranh mực loang chỉ trình bày; nền giấy dó mờ, ưu tiên 414x896. */
+.v08-canh{position:fixed;inset:0;z-index:1100;display:grid;place-items:center;padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));background:radial-gradient(ellipse,#f4ead9c9,#d6bf98de);overflow:auto;overscroll-behavior:contain;-webkit-tap-highlight-color:transparent;cursor:pointer}
+.v08-canh[hidden]{display:none!important}.v08-khung{width:min(100%,780px);max-width:100%;margin:auto;min-width:0;text-align:center;padding:8px;background:repeating-linear-gradient(5deg,#775c2410 0 1px,transparent 1px 7px),#eee0be70;border:2px solid #77634899;border-radius:2px 7px 3px 5px;box-shadow:0 4px 22px #3a291e33}
+.v08-khung .v08-tranh{display:block;width:100%;height:auto;max-height:calc(100dvh - 96px);object-fit:contain;mix-blend-mode:multiply;animation:v08-muc-loang 2000ms ease-out both;mask-image:radial-gradient(ellipse,#000 56%,#000a 76%,transparent 100%)}
+.v08-chu{font:bold italic .88rem/1.4 Georgia,'Times New Roman',serif;color:#563b25;margin-top:6px;overflow-wrap:anywhere}
+@keyframes v08-muc-loang{0%{opacity:0;filter:blur(12px);transform:scale(.94)}22%{opacity:1;filter:blur(0);transform:scale(1)}78%{opacity:1;filter:blur(0)}100%{opacity:0;filter:blur(5px);transform:scale(1.02)}}
+.v08-canh[data-v08-reduce="true"] .v08-tranh{animation:none!important;filter:none!important;transform:none!important;opacity:1!important}
+@media(prefers-reduced-motion:reduce){.v08-khung .v08-tranh{animation:none!important;filter:none!important;transform:none!important;opacity:1!important}}
 </style>
 </head>
 <body data-layout="1">
@@ -949,6 +961,7 @@ function HD_taoChienDauV04(core,trai,phai,canh='trong',moc={}){
  function dongBo(){moc.dongBo?.(sao(ds[0]));}
  function kiemTraSong(){for(let i=0;i<2;i++)if(ds[i].nhomB[0]===0){dongBo();ketThuc('Hấp hối',i);return false;}return true;}
  function hiepMoi(){s.hiep++;const d=[diem(0),diem(1)];s.conLai=d.map(x=>x.tong);
+ if(s.hiep===1&&ds.some(f=>f.hieuUng.mocTran))core.phat('canhHoatDongV08',{khoa:'tran-ky'}); // V08: bắt đầu chiến đấu có Trận Mộc.
  if(s.hiep===1){s.moDau=d[0].tong===d[1].tong?(core.kiemDinh(50,'Chiến đấu: hòa tiên thủ').roll<=50?0:1):(d[0].tong>d[1].tong?0:1);}else s.moDau=1-s.moDau;
  s.luot=s.conLai[s.moDau]>0?s.moDau:1-s.moDau;ghi('moHiep',{diem:d,moDau:s.moDau,donViB:10});
  if(s.conLai.every(n=>n===0))ketThuc('Cả hai không còn điểm hành động');}
@@ -1730,6 +1743,88 @@ async function kiemThu({inBang=true,nguon=null}={}){
 window.HD_V072=Object.freeze({apply,kiemThu});apply();
 })();
 </script>
+
+<script id="hd-v08-script">
+(function HD_canhHoatDongV08(){
+'use strict';
+/*
+MÔ ĐUN CẢNH HOẠT ĐỘNG V0.8 - thiết kế 23/10/2026.
+Registry mở rộng độc lập: giữ nguyên mọi khóa V07; mười cảnh mới có đường dẫn
+ASCII, tạo ảnh bằng HD_V07.taoAnh nên onerror về đúng bóng mực V07, không giáp vàng.
+Cảnh chỉ là lớp trình bày: không giữ khóa CORE, không sửa save, không tiêu RNG,
+không dừng nhịp 1150ms hoặc vòng chiến đấu. Một overlay, sự kiện mới thay ảnh
+và hủy đồng hồ cũ rồi tính lại 2000ms. Chạm màn tắt sớm; không bẫy focus.
+Reduced-motion bỏ chuyển động, KHÔNG rút ngắn thời lượng. Giấy dó/mực tàu,
+khung mobile 414x896 co trong viewport, không chặn cuộn modal phía dưới khi đã tắt.
+Public: HD_V08.hienCanh(khoa), tatCanh(), canh, canhMoi, taoAnh(khoa), ganCore(core).
+Các bus CORE có thật: Bắt đầu chu thiên -> toa-thien, roll Đột phá Trúc Cơ ->
+do-loi-kiep, trungNe có phu/dungPhu -> dung-phu. Chung đường hành động engine
+nên bao cả lệnh tay và tự diễn, kể cả phù tấn công trượt. Một dòng V04 ở hiepMoi
+phát canhHoatDongV08 khi bắt đầu với hieuUng.mocTran; không bịa địa hình mới.
+ve-phu là LUYỆN CHẾ phù, CHƯA có hệ nên chỉ registry/API, không hook dùng phù.
+Các hệ chưa dựng: trồng trọt/hái dược liệu, luyện đan, luyện khí, luyện chế phù,
+ngự kiếm, đọc kinh và độ kiếp tương lai. Khi dựng chỉ cần một dòng tương ứng:
+HD_V08.hienCanh('duoc-vien'); HD_V08.hienCanh('luyen-dan');
+HD_V08.hienCanh('luyen-khi'); HD_V08.hienCanh('ve-phu');
+HD_V08.hienCanh('ngu-kiem'); HD_V08.hienCanh('tang-thu-cac');
+HD_V08.hienCanh('do-loi-kiep'); HD_V08.hienCanh('tran-ky');
+Không thêm gameplay hoặc giả hệ chưa có. ganCore cho thế giới mới qua API công khai.
+Kiểm thử cô lập factory màn và thế giới; không sửa lưu hay seed người chơi.
+*/
+const d=document,V=window.HD_V07;
+const canhMoi=Object.freeze(Object.fromEntries(['ngu-kiem','duoc-vien','ve-phu','dung-phu','luyen-khi','tran-ky','toa-thien','luyen-dan','do-loi-kiep','tang-thu-cac'].map(k=>[k,'art/'+k+'.jpg'])));
+const canh=Object.freeze({...V.canh,...canhMoi});
+const nhan=Object.freeze({'ngu-kiem':'Ngự kiếm trên mây','duoc-vien':'Chăm sóc dược viên','ve-phu':'Luyện chế phù tại bàn','dung-phu':'Sử dụng phù trong chiến đấu','luyen-khi':'Luyện khí bên lò','tran-ky':'Bày trận kỳ','toa-thien':'Tọa thiền hút linh khí','luyen-dan':'Luyện đan','do-loi-kiep':'Độ lôi kiếp','tang-thu-cac':'Đọc kinh trong tàng thư các'});
+function taoAnh(khoa){if(!Object.hasOwn(canh,khoa))return null;const img=V.taoAnh(canh[khoa],nhan[khoa]||khoa,'v08-tranh');img.dataset.v08Scene=khoa;return img;}
+function taoMan({root=d.body,hen=setTimeout,huy=clearTimeout,giam=()=>matchMedia('(prefers-reduced-motion: reduce)').matches}={}){
+ const man=d.createElement('div');man.className='v08-canh';man.hidden=true;man.setAttribute('aria-label','Cảnh hoạt động, chạm để đóng');
+ const khung=d.createElement('figure'),chu=d.createElement('figcaption');khung.className='v08-khung';chu.className='v08-chu';khung.append(chu);man.append(khung);root.append(man);
+ let dongHo=null,khoaHien=null,soLan=0;
+ function tat(){if(dongHo!==null)huy(dongHo);dongHo=null;man.hidden=true;khoaHien=null;}
+ function hien(khoa){const img=taoAnh(khoa);if(!img)return false;if(dongHo!==null)huy(dongHo);soLan++;
+  khung.querySelector('img')?.remove();khung.prepend(img);chu.textContent=nhan[khoa]||khoa;khoaHien=khoa;
+  man.dataset.v08Reduce=String(giam());man.dataset.v08Key=khoa;man.hidden=false;
+  dongHo=hen(tat,2000);return true;
+ }
+ man.addEventListener('click',tat);
+ return Object.freeze({hien,tat,man,xem:()=>({khoa:khoaHien,soLan,dangHien:!man.hidden}),huy:()=>{tat();man.remove();}});
+}
+const man=taoMan(),daGan=new WeakMap();
+function ganCore(core,goi=man.hien){
+ if(daGan.has(core))return daGan.get(core);
+ const huy=[core.nghe('nhatKy',x=>{if(x.ten==='Bắt đầu chu thiên')goi('toa-thien');else if(x.ten==='Đột phá Trúc Cơ'&&Number.isInteger(x.roll))goi('do-loi-kiep');}),
+ core.nghe('chienDauV04',x=>{if(x.loai==='dungPhu'||(x.loai==='trungNe'&&Number.isInteger(x.phu)))goi('dung-phu');}),
+ core.nghe('canhHoatDongV08',x=>{if(Object.hasOwn(canh,x.khoa))goi(x.khoa);})];
+ const thao=()=>{huy.forEach(fn=>fn());daGan.delete(core);};daGan.set(core,thao);return thao;
+}
+for(const api of [window.HD_V02,window.HD_V03,window.HD_V04])if(api?.theGioi?.core)ganCore(api.theGioi.core);
+window.HD_V08=Object.freeze({canh,canhMoi,taoAnh,hienCanh:man.hien,tatCanh:man.tat,ganCore,kiemThu,debug:Object.freeze({taoMan,xem:man.xem})});
+async function kiemThu({inBang=true,nguon=null}={}){
+ const ds=[],ok=(v,m='Không đạt')=>{if(!v)throw Error(m);},eq=(a,b)=>ok(JSON.stringify(a)===JSON.stringify(b),'Không bằng: '+JSON.stringify(a)+' / '+JSON.stringify(b));
+ const test=async(ten,fn)=>{try{await fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
+ const taoW=(seed=123456)=>window.HD_V03.taoTheGioi(seed);
+ function thuMan(giam=false){let time=0,id=0;const jobs=new Map(),root=d.createElement('div');d.body.append(root);const m=taoMan({root,giam:()=>giam,hen:(f,ms)=>{jobs.set(++id,{f,den:time+ms});return id;},huy:i=>jobs.delete(i)});return {m,root,jobs,tien:n=>{time+=n;for(const [i,j]of [...jobs])if(j.den<=time){jobs.delete(i);j.f();}},huy:()=>{m.huy();root.remove();}};}
+ for(const [k,p]of Object.entries(canhMoi))await test('Registry và onerror bóng mực: '+k,()=>{eq(p,'art/'+k+'.jpg');const img=taoAnh(k);eq(img.getAttribute('src'),p);ok(typeof img.onerror==='function');img.dispatchEvent(new Event('error'));ok(img.getAttribute('src').startsWith('data:image/svg+xml'));ok(!img.src.includes('giap-vang'));eq(img.onerror,null);});
+ await test('Giữ nguyên bia, tran-dau và registry chân dung V07',()=>{eq(canh.bia,V.canh.bia);eq(canh['tran-dau'],V.canh['tran-dau']);eq(Object.keys(V.canh),['bia','tran-dau']);ok(Object.hasOwn(V.chanDung,'kiem-si'));});
+ await test('Bắt đầu phiên thật hiện toa-thien đúng một lần, không mỗi tick',()=>{const w=taoW(),goi=[],h=ganCore(w.core,k=>goi.push(k));try{ok(w.tuLuyen.batDau());w.core.tien(10);eq(w.tuLuyen.batDau(),false);eq(goi,['toa-thien']);}finally{h();}});
+ await test('Đột phá thật chỉ hiện tại roll CORE, thiếu điều kiện không hiện',()=>{const w=taoW(),goi=[],h=ganCore(w.core,k=>goi.push(k));try{eq(w.tuLuyen.dotPha().hopLe,false);eq(goi,[]);w.tuLuyen.cauHinhDebug({linhCan:0,tang:13});w.tuLuyen.themEXP(300000*10000,true);w.tuLuyen.batDau();w.core.tien(1440);goi.length=0;ok(w.tuLuyen.dotPha().hopLe);eq(goi,['do-loi-kiep']);eq(w.core.nhatKy().filter(x=>x.ten==='Đột phá Trúc Cơ').length,1);}finally{h();}});
+ function dau(core,patch={}){return window.HD_V04.taoDauSi(core,{nhomB:[1000,150,500,100,1000,0],linhLuc:200,linhLucToiDa:200,phuLuc:[1,2,3],...patch});}
+ for(const id of [1,2,3])await test('Dùng phù thật '+id+' hiện dung-phu, không ve-phu',()=>{const w=taoW(),goi=[],h=ganCore(w.core,k=>goi.push(k));try{const f=window.HD_V04.taoChienDau(w.core,dau(w.core),dau(w.core,{nhomB:[1000,150,150,100,150,0]}));f.batDau();eq(f.xem().luot,0);goi.length=0;f.hanhDong(0,'phu',id);eq(goi,['dung-phu']);ok(!goi.includes('ve-phu'));}finally{h();}});
+ await test('Bắt đầu trận thật có Trận Mộc hiện tran-ky',()=>{const w=taoW(),goi=[],h=ganCore(w.core,k=>goi.push(k));try{const f=window.HD_V04.taoChienDau(w.core,dau(w.core,{hieuUng:{mocTran:true}}),dau(w.core));f.batDau();eq(goi,['tran-ky']);}finally{h();}});
+ await test('Trận thường không hiện tran-ky và nền vẫn tran-dau',()=>{const w=taoW(),goi=[],h=ganCore(w.core,k=>goi.push(k));try{window.HD_V04.taoChienDau(w.core,dau(w.core),dau(w.core)).batDau();eq(goi,[]);ok(d.querySelector('.v07-battle[data-v07-scene="tran-dau"]'));}finally{h();}});
+ await test('2000ms, sự kiện mới thay tranh và reset chỉ một đồng hồ',()=>{const z=thuMan();try{z.m.hien('toa-thien');z.tien(1999);ok(z.m.xem().dangHien);z.m.hien('dung-phu');eq(z.root.querySelectorAll('.v08-canh').length,1);eq(z.root.querySelectorAll('img').length,1);eq(z.jobs.size,1);z.tien(1999);eq(z.m.xem().khoa,'dung-phu');z.tien(1);ok(!z.m.xem().dangHien);}finally{z.huy();}});
+ await test('Chạm đóng sớm, xóa timer, khóa lạ không mở',()=>{const z=thuMan();try{eq(z.m.hien('khong-co'),false);z.m.hien('toa-thien');z.m.man.click();ok(!z.m.xem().dangHien);eq(z.jobs.size,0);}finally{z.huy();}});
+ await test('Reduced-motion không animation, vẫn đủ 2000ms',()=>{const z=thuMan(true);try{z.m.hien('toa-thien');eq(getComputedStyle(z.m.man.querySelector('img')).animationName,'none');z.tien(1999);ok(z.m.xem().dangHien);z.tien(1);ok(!z.m.xem().dangHien);}finally{z.huy();}});
+ await test('API gọi đủ mười khóa; ve-phu chỉ API/registry',()=>{eq(Object.keys(canhMoi).length,10);const z=thuMan();try{for(const k of Object.keys(canhMoi)){ok(z.m.hien(k));eq(z.m.man.querySelector('img').dataset.v08Scene,k);}}finally{z.huy();}});
+ await test('Không chặn tick, save/load, bus, chiến đấu; cùng seed cùng kết quả',()=>{const a=taoW(76543),b=taoW(76543),z=thuMan(),h=ganCore(a.core,z.m.hien);try{let n=0;a.core.nghe('thuV08',()=>n++);a.tuLuyen.batDau();b.tuLuyen.batDau();a.core.phat('thuV08');eq(n,1);a.core.tien(100);b.core.tien(100);eq(a.xuat(),b.xuat());const load=window.HD_V03.taoTheGioi(0,JSON.parse(JSON.stringify(a.xuat())));eq(load.xuat(),a.xuat());const fa=window.HD_V04.taoChienDau(a.core,dau(a.core),dau(a.core)),fb=window.HD_V04.taoChienDau(b.core,dau(b.core),dau(b.core));fa.batDau();fb.batDau();for(let i=0;i<4&&fa.xem().dang;i++){const x=fa.xem();fa.hanhDong(x.luot,'vatLy',null);fb.hanhDong(x.luot,'vatLy',null);}eq(fa.xem(),fb.xem());eq(a.core.xuat(),b.core.xuat());ok(z.m.xem().dangHien);}finally{h();z.huy();}});
+ await test('Cảnh thực tự tắt theo timer và không sớm trước 2000ms',()=>new Promise((resolve,reject)=>{const z=taoMan(),start=performance.now();z.hien('toa-thien');const guard=setTimeout(()=>{ob.disconnect();z.huy();reject(Error('Không tự tắt'));},3500);const ob=new MutationObserver(()=>{if(z.man.hidden){clearTimeout(guard);ob.disconnect();const elapsed=performance.now()-start;z.huy();try{ok(elapsed>=1950&&elapsed<3500,'Thời lượng '+elapsed);resolve();}catch(e){reject(e);}}});ob.observe(z.man,{attributes:true,attributeFilter:['hidden']});}));
+ await test('Năm nút CÁCH 1, thứ tự và >=48px, modal cuộn dọc',()=>{const modal=d.getElementById('hd-v06-combat'),was=modal.classList.contains('is-open');modal.classList.add('is-open');try{const bs=[...d.querySelectorAll('#hd-v05-scene .v05-actions button')];eq(bs.length,5);['Tấn Công','Phòng Thủ','Pháp Bảo','Chạy Trốn','Tự'].forEach((t,i)=>ok(bs[i].textContent.toLocaleLowerCase('vi').includes(t.toLocaleLowerCase('vi'))));ok(bs.every(b=>b.disabled&&b.getBoundingClientRect().width>=48&&b.getBoundingClientRect().height>=48));ok(modal.scrollHeight>=modal.clientHeight);ok(d.documentElement.scrollWidth<=innerWidth+1);}finally{modal.classList.toggle('is-open',was);}});
+ await test('Bốn API lệnh tay vẫn gọi đúng V04',()=>{const r=window.HD_V05.kiemThu({inBang:false}),a=r.danhSach.filter(x=>x.ten.startsWith('Nút tay gọi đúng API V04:'));eq(a.length,4);ok(a.every(x=>x.ketQua==='PASS'));});
+ await test('Quét nguồn không CJK Cyrillic emoji, CSS reduced-motion có thật',()=>{const s=nguon===null?d.documentElement.outerHTML:nguon;ok(!/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Cyrillic}\p{Extended_Pictographic}]/u.test(s));ok(d.getElementById('hd-v08-style').textContent.includes('prefers-reduced-motion'));});
+ const r={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds,khung:{rong:innerWidth,cao:innerHeight}};if(inBang)console.table(ds);return r;
+}
+})();
+</script>
 </body>
 </html>
 
@@ -1778,4 +1873,8 @@ LỊCH SỬ THAY ĐỔI V0.7
 
 <!--
 LỊCH SỬ THAY ĐỔI V0.7.2 23/10/2026 - Chỉ module trình bày năm nút: viền thẻ mực vẽ tay lệch/đứt, mực khô góc, hoe mực sau icon. Kiếm chéo hướng lên phải có vàng mực; khiên hình thoi có vạch dọc; phù đứng chữ Latin đỏ nâu, khói miệng trên; bàn chân đen có nét chuyển động. Giữ nhãn đậm và phụ đề. Triện tròn đỏ son trầm phẳng, không vòng kép; chữ kem Tự/ĐÁNH xếp dọc, CSS viết hoa, serif hệ thống đậm nghiêng và bóng mực nhỏ để giữ dấu Việt, không dùng font ngoài thiếu glyph. Không tái tạo oval đánh dấu trong ảnh chụp. Giữ năm nút disabled CÁCH 1, thứ tự, vùng chạm 48px, bốn API tay và không thêm Phòng Thủ. Bổ sung HD_V072.apply/kiemThu độc lập; bốn script V02-V05 nguyên từng ký tự; toàn bộ V06/V07/V071, kho JPEG/fallback, bìa, góc khung, RNG, seed, nhịp 1150ms, save/load, public bus và reduced-motion giữ nguyên. Chỉ index.html trên v05-thu; chưa nghiệm thu iPhone/iOS Safari thật.
+-->
+
+<!--
+LỊCH SỬ THAY ĐỔI V0.8 23/10/2026 - Thêm mười JPEG cảnh vào art/; module HD_V08 độc lập, registry mở rộng giữ nguyên V07, onerror bóng mực qua taoAnh V07. Overlay giấy dó toàn màn 2000ms, mực loang/phai CSS, chạm tắt, cảnh mới thay và reset timer, reduced-motion vẫn đủ thời lượng. Bus công khai nối bắt đầu phiên tu luyện, roll CORE đại cảnh, dùng phù tay/tự diễn và đầu chiến đấu có Trận Mộc; chỉ thêm một dòng V04 phát bus đầu hiepMoi, không đổi luật. Dùng phù hiện dung-phu; ve-phu là luyện chế phù chỉ registry/API. Các hệ chưa dựng có ví dụ gọi một dòng, không tạo gameplay mới. Giữ nhịp 1150ms, cùng seed cùng kết quả, save/load, bốn API tay, năm nút disabled CÁCH 1 >=48px, bìa/góc mực/kho ảnh và nền tran-dau V07. Bổ sung kiểm thử V08; chỉ art/ và index.html trên v05-thu. Chưa nghiệm thu iPhone thật.
 -->
