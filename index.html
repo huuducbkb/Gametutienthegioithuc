@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MODULE V0.8.2
+MỤC LỤC MODULE V0.9
+MÔ ĐUN ĐAN DƯỢC HD_V09: trước HD_giaoDien, registry hai trục, facade public snapshot/bus; giao diện và kiểm thử V09 ở script cuối. Engine V02-V05/V08/V082 giữ nguyên.
 MÔ ĐUN XEM THỬ CẢNH V082 (script cuối, CSS hd-v082-style): nút trực tiếp ở Tu Luyện, public V08, mười cảnh theo nhịp 2600ms, toggle dừng và kiểm thử cô lập.
 VÁ GIAO DIỆN V081: nhãn bìa V0.8.1 trong V07/V071; chọn Trận Mộc trực tiếp ở giao diện V04 và bộ dựng NPC, ánh xạ hieuUng.mocTran sẵn có, không sửa engine. Module kiểm thử V081 ở script cuối. Nút tải V0.1 là khung cố ý khóa; V02/V03 đã tự tải khi mở trang, giữ nguyên hardcore.
 MÔ ĐUN CẢNH HOẠT ĐỘNG V08 (script thứ mười, CSS hd-v08-style): registry mười cảnh, onerror bóng mực V07, overlay 2000ms có reduced-motion, HD_V08.hienCanh/ganCore/kiemThu. Dùng phù là dung-phu; ve-phu chỉ luyện chế phù chưa dựng. Engine giữ nguyên trừ một dòng phát bus đầu hiệp một có Trận Mộc.
@@ -1113,11 +1114,181 @@ Lưu theo phiên bản, tốc độ khởi động luôn tạm dừng để khô
 Công khai HD_V02 gồm theGioi, kiemThu, luu, debug.tichCoc, debug.thuDotPha.
 Tính năng đã qua kiểm thử - KHÔNG XÓA.
 */
+
+/*
+MÔ ĐUN ĐAN DƯỢC V09 - thiết kế 24/10/2026.
+Hai trục độc lập: bậc 0..3 và phẩm 0..3. Chỉ lưu 30 bản gốc; 102 mã sinh theo phẩm.
+Số nguyên: D nội bộ phần mười (0..1000), hiệu lực/độc per-100, tiền quy về hạ.
+Độc theo phẩm là ngoại lệ có chủ ý của quy tắc nhân trước chia sau rồi bỏ dư:
+nhân D gốc với hệ số phẩm, làm tròn đến điểm D nguyên gần nhất, sau đó nhân 10 để lưu.
+Tụ Linh D15 theo bốn phẩm: 15/11/8/4; nội bộ tương ứng 150/110/80/40.
+Mọi phép tính khác vẫn nhân trước chia sau và bỏ dư ở đơn vị nội bộ.
+Kháng dùng số viên TRƯỚC lần dùng hiện tại; viên đầu n=0; sau dùng n tăng 1.
+Xả kháng từng khoảng 43200 phút không dùng liên tục. Không có kinh tế/luyện đan.
+Cầu nối chỉ dùng public constructor/xuat/API/bus. Để áp hiệu ứng giữa phiên mà
+không sửa engine: khôi phục snapshot qua constructor công khai; scope bus giữ
+đúng vị trí đăng ký và hủy handler cũ. Không truy cập closure engine, không RNG mới.
+DL của phiên được ghép vào snapshot và gỡ đúng phần hệ số của V09 khi lưu.
+Ba ngưỡng: 30 suy yếu tạm -50 B; 60 thêm thương tạng mỗi 1440 phút;
+90 nguy kịch tạm thêm -50 B, chặn bắt đầu tĩnh tọa. Các mức phạt bổ sung này là
+quy ước V09, không thay số gốc V02. 100: tự cứu bằng 1 Hoàn Sinh mang theo,
+nếu dùng được ngoài trận; không có đan/hồi chưa xong thì đạo tiêu ngay. Mọi cột
+chạm 100 được cứu về đúng 600; mỗi lần cứu ghi một di chứng -50 B vĩnh viễn. Cực phẩm Vạn Giải
+xóa di chứng là đặc quyền, không nhân phẩm/kháng. Không hồi sinh người đã chết.
+Các hiệu ứng cùng nhóm không cộng dồn: mạnh nhất, còn thời hạn riêng theo loại.
+Hồi thương làm ngắn den/lietDen/thuongDoi, không hồi bồi thêm chỉ số B cũ.
+ĐỊNH HƯỚNG THẦN NIỆM TƯƠNG LAI: tài nguyên dùng chung, tự hồi theo thời gian;
+tiêu hao khi luyện đan, luyện khí, chế phù, bố trận, tìm kiếm, cảm nhận, quét đối thủ
+và điều khiển vũ khí. V0.9 chỉ ghi chú thiết kế này, không dựng engine tiêu hao.
+TN V04 là dung lượng và phần chú ý, chưa có thanh hao TN chiến đấu; V09 chỉ hồi
+phần thiếu của thanh TN bổ sung, không biến chú ý nhận diện thành tài nguyên hao.
+Các đan đột phá dùng duy nhất ở lần thử hợp lệ, giảm đúng 10 (không nhân kháng).
+PHẠM VI 2A: Trúc Cơ tích hợp đầy đủ với engine đột phá hiện tại.
+Kim Đan/Nguyên Anh/Hóa Thần chỉ đăng ký API chờ engine tương lai; V0.9 không xây engine mới.
+Kim Đan/Nguyên Anh/Hóa Thần chưa có engine/độ khó gốc trong V02: chỉ có adapter
+nhận doKhoGoc từ hệ tương lai; tuyệt đối không đặt độ khó giả hay giả kết quả.
+Trưởng Sinh chỉ registry; không cấp, không hiện danh sách debug hay nút gameplay.
+Tẩy tủy/linh tuyền/đan xả kháng để hệ sau; không tự kích hoạt trong V09.
+*/
+window.HD_V09=(function(){
+'use strict';
+const copy=structuredClone, N=1440, REST=30*N;
+const pham=Object.freeze([{ten:'Hạ phẩm',hieu:100,doc:100,gia:1},{ten:'Trung phẩm',hieu:125,doc:75,gia:5},{ten:'Thượng phẩm',hieu:150,doc:50,gia:20},{ten:'Cực phẩm',hieu:200,doc:25,gia:100}].map(Object.freeze));
+const duLieu=[
+['tu-linh','Tụ Linh Đan',0,'ll',40,15,4,8,0],
+['hoi-nguyen','Hồi Nguyên Đan',0,'kh',30,20,6,10,0],
+['lieu-thuong','Liễu Thương Đan',0,'thuong',2*N,12,5,10,0],
+['thanh-doc','Thanh Độc Đan',0,'docMot',250,10,8,12,0],
+['an-than','An Thần Đan',0,'tn',40,8,3,6,0],
+['duong-tam','Dưỡng Tâm Đan',0,'tam',50,18,10,20,N],
+['cuong-the','Cường Thể Đan',0,'B',10,25,8,25,120],
+['ngung-khi','Ngưng Khí Đan',0,'exp',20,22,8,30,480],
+['tu-nguyen','Tụ Nguyên Đan',1,'ll',80,25,5,200,0],
+['phuc-nguyen','Phục Nguyên Đan',1,'kh',60,30,6,200,0],
+['sinh-co','Sinh Cơ Đan',1,'thuong',5*N,20,6,300,0],
+['tay-doc','Tẩy Độc Đan',1,'docTat',500,15,8,300,0],
+['dinh-than','Định Thần Đan',1,'tnGiai',100,18,5,250,0],
+['tu-khi','Tụ Khí Đan',1,'exp',50,28,10,400,720],
+['trang-cot','Tráng Cốt Đan',1,'B',20,30,10,500,240],
+['tinh-tam','Tĩnh Tâm Đan',1,'tam',80,20,12,300,N],
+['tinh-nguyen','Tinh Nguyên Đan',2,'ll',100,30,6,1500,0],
+['dai-phuc-nguyen','Đại Phục Nguyên Đan',2,'kh',80,35,8,1500,0],
+['doan-tuc','Đoạn Tục Đan',2,'thuongHet',100,25,8,2000,0],
+['van-giai','Vạn Giải Đan',2,'docHet',100,20,10,2500,0],
+['linh-nguyen','Linh Nguyên Đan',2,'exp',80,32,12,3000,960],
+['hon-nguyen','Hỗn Nguyên Đan',3,'hoiTat',100,40,12,20000,0],
+['hoan-sinh','Hoàn Sinh Đan',3,'cuu',100,25,12,30000,0],
+['thai-thanh','Thái Thanh Đan',3,'exp',150,45,15,50000,1440],
+['tich-coc','Tích Cốc Đan',null,'tichCoc',10*N,0,0,1,10*N],
+['truc-co','Trúc Cơ Đan',null,'dotPha',10,30,0,200,0],
+['ngung-kim','Ngưng Kim Đan',null,'dotPha',10,35,0,3000,0],
+['tu-anh','Tụ Anh Đan',null,'dotPha',10,40,0,8000,0],
+['hoa-than','Hóa Thần Đan',null,'dotPha',10,45,0,null,0],
+['truong-sinh','Trưởng Sinh Đan',null,'registry',100,50,0,null,0]
+];
+const registry=Object.freeze(duLieu.map(([id,ten,bac,loai,muc,D,canh,gia,phut])=>Object.freeze({id,ten,bac,loai,muc,D,hoi:canh*120,giaHa:gia,phut,coPham:bac!==null,chiRegistry:id==='truong-sinh',giaChu:id==='hoa-than'?'Truyền thuyết':id==='truong-sinh'?'Chỉ registry':id==='truc-co'?'Tham khảo':'',dacQuyen:id==='van-giai'?'Cực phẩm xóa di chứng ngoài công thức phẩm.':''})));
+const tra=id=>registry.find(x=>x.id===id), kep=(n,a,b)=>Math.max(a,Math.min(b,n));
+function ng(n){if(!Number.isSafeInteger(n))throw Error('Cần số nguyên an toàn');return n;}
+function tinh(n,tu=1,mau=1){ng(n);ng(tu);ng(mau);if(mau<=0)throw Error('Mẫu không hợp lệ');return ng(Number(BigInt(n)*BigInt(tu)/BigInt(mau)));}
+function bienThe(id,q=0){const r=tra(id);if(!r)throw Error('Không có bản gốc');if(!r.coPham)q=0;if(!Number.isInteger(q)||q<0||q>3)throw Error('Phẩm không hợp lệ');const p=pham[q];return {...r,pham:q,tenPham:r.coPham?p.ten:'Đơn phẩm',ma:id+':'+q,hieu:r.coPham?p.hieu:100,doc10:Math.round(r.D*(r.coPham?p.doc:100)/100)*10,Dnhan:Math.round(r.D*(r.coPham?p.doc:100)/100),giaHa:r.giaHa===null?null:tinh(r.giaHa,r.coPham?p.gia:1)};}
+const tatCa=()=>registry.flatMap(r=>(r.coPham?[0,1,2,3]:[0]).map(q=>bienThe(r.id,q)));
+function rong(){return {tui:{},cot:Object.fromEntries(registry.map(r=>[r.id,0])),khang:Object.fromEntries(registry.map(r=>[r.id,0])),hoi:{},nghi:{},hieuUng:[],diChung:0,nhatKyCuu:[],bDelta:[0,0,0,0,0,0],tamDelta:0,tranDelta:0,dl:[1,1],tnThieu:0};}
+function nhapDan(raw){const s={...rong(),...copy(raw||{})};for(const r of registry){s.cot[r.id]=kep(ng(s.cot[r.id]||0),0,1000);s.khang[r.id]=Math.max(0,ng(s.khang[r.id]||0));}for(const [ma,n]of Object.entries(s.tui)){const [id,q]=ma.split(':');const b=bienThe(id,Number(q));if(b.chiRegistry)throw Error('Trưởng Sinh không thuộc gameplay');ng(n);if(n<0)throw Error('Túi không hợp lệ');}for(const f of s.hieuUng){ng(f.den);ng(f.muc);}ng(s.diChung);return s;}
+/* Scope bảo toàn thứ tự bus khi snapshot được khôi phục qua public constructor. */
+function scope(core){const handlers=new Map(),offs=new Map(),hook={};return {hook,api:Object.freeze({...core,nghe:(ten,fn)=>{if(!handlers.has(ten)){handlers.set(ten,[]);offs.set(ten,core.nghe(ten,data=>{hook.truoc?.(ten,data);for(const f of [...handlers.get(ten)])f(copy(data));hook.sau?.(ten,data);}));}handlers.get(ten).push(fn);return ()=>{handlers.set(ten,handlers.get(ten).filter(f=>f!==fn));};}}),clear:()=>{for(const k of handlers.keys())handlers.set(k,[]);}};}
+function taoTheGioi(hat=20261022,save){
+ if(save&&save.phienBan!==2)throw Error('Phiên lưu không tương thích');
+ const core=HD_taoCore(hat,save?.core),thoiGian=HD_taoThoiGian(core),s=nhapDan(save?.danV09),ss=scope(core),ts=scope(core),cs=scope(core);
+ let sl,tl,a,w,gan=false,syncing=false;const now=()=>core.xem().phut;
+ const makeSL=x=>{ss.clear();sl=HD_taoSinhLy(ss.api,x);};makeSL(save?.sinhLy);
+ const sinhLy={};for(const k of Object.keys(sl))sinhLy[k]=(...args)=>sl[k](...args);
+ const makeTL=x=>{ts.clear();tl=HD_taoTuLuyen(ts.api,thoiGian,sinhLy,x);};makeTL(save?.tuLuyen);
+ const tuLuyen={};for(const k of Object.keys(tl))tuLuyen[k]=(...args)=>tl[k](...args);
+ const cu={core,thoiGian,sinhLy,tuLuyen};const makeA=x=>{cs.clear();a=HD_taoChiSoV03({...cu,core:cs.api},x);};makeA(save?.chiSoV03);const chiSo={};for(const k of Object.keys(a))chiSo[k]=(...args)=>a[k](...args);const aPatch=fn=>{const x=a.xuat();fn(x);makeA(x);};
+ const alive=()=>!core.xem().daChet, trongTran=()=>a.xem().chienDau;
+ function slPatch(fn){const x=sl.xuat();fn(x);makeSL(x);}
+ function tlPatch(fn){const x=tl.xuat();fn(x);makeTL(x);}
+ function xuat(){return {phienBan:2,core:core.xuat(),sinhLy:sl.xuat(),tuLuyen:tl.xuat(),phienBanMoRong:3,chiSoV03:a.xuat(),danV09:copy(s)};}
+ function dang(loai){return s.hieuUng.filter(f=>f.loai===loai&&f.den>now());}
+ function manh(loai){return Math.max(0,...dang(loai).map(f=>f.muc));}
+ function mucDoc(d){return d>=1000?'Tử vong':d>=900?'Nguy kịch':d>=600?'Thương tạng':d>=300?'Suy yếu':'Ổn định';}
+ function sync(){if(syncing||!alive())return;syncing=true;try{
+  const m=Math.max(...Object.values(s.cot)),weak=m>=900?100:m>=300?50:0,buff=manh('B');
+  const st=a.xem(),current=st.nhomBDayDu,baseCap=kep(st.tranKhiHuyet-s.tranDelta,0,1000),newCap=kep(baseCap+tinh(baseCap,buff,10000)-s.diChung-weak,0,1000);for(let i=0;i<6;i++){const base=kep(current[i]-s.bDelta[i],0,1000),d=tinh(base,buff,10000)-s.diChung-weak,newVal=kep(base+d,0,1000);s.bDelta[i]=newVal-base;if(newVal!==current[i])a.datB(i,newVal);}
+  if(newCap!==st.tranKhiHuyet){aPatch(x=>{x.tranKhiHuyet=Math.max(x.nhomB[0],newCap);});}s.tranDelta=a.xem().tranKhiHuyet-baseCap;
+  const t=tl.xuat(),tam=manh('tam'),tamBase=kep(t.tamCanh-s.tamDelta,0,t.tranTC),tamNew=kep(tamBase+tam,0,t.tranTC),td=tamNew-tamBase;
+  const bonus=manh('exp'),newDL=[10000+bonus,10000];
+  if(t.doc[0]!==m||td!==s.tamDelta||newDL[0]*s.dl[1]!==s.dl[0]*newDL[1]){tlPatch(x=>{x.doc=x.doc.map((_,i)=>i===0?m:0);x.tamCanh=tamNew;x.DL=[t.DL[0]*s.dl[1]*newDL[0],t.DL[1]*s.dl[0]*newDL[1]];const g=core.phanSo(...x.DL);x.DL=g.map(Number);});s.tamDelta=td;s.dl=newDL;}
+ }finally{syncing=false;}}
+ function cap(id,q,n){if(!alive())throw Error('Đã đạo tiêu');const b=bienThe(id,q);ng(n);if(b.chiRegistry)throw Error('Trưởng Sinh chỉ registry');if(n<1||n>100000)throw Error('Cần 1..100000 viên');s.tui[b.ma]=ng((s.tui[b.ma]||0)+n);core.phat('danV09ThayDoi');return s.tui[b.ma];}
+ function du(id,q){return s.tui[bienThe(id,q).ma]||0;}
+ function tinhDung(id,q=0){const b=bienThe(id,q),n=s.khang[id],bac=Math.min(3,tl.xem().canhGioi),chenh=b.coPham?bac-b.bac:0;return {...b,n,doc10:b.doc10*2**Math.max(0,-chenh),heTu:b.hieu*100,heMau:(100+2*n)*100*2**Math.max(0,chenh)};}
+ function lieu(b,n){return tinh(n,b.heTu,b.heMau);}
+ function thuong(b,het=false){slPatch(x=>{x.thuong=x.thuong.map(t=>({...t,den:Math.max(now(),t.den-lieu(b,het?Math.max(0,t.den-now()):b.muc))})).filter(t=>t.den>now());x.thuongDoi=Math.max(0,x.thuongDoi-lieu(b,het?x.thuongDoi:b.muc));x.lietDen=Math.max(now(),x.lietDen-lieu(b,het?Math.max(0,x.lietDen-now()):b.muc));x.matKhiHuyet=Math.max(0,x.matKhiHuyet-lieu(b,het?x.matKhiHuyet:tinh(b.muc,500,N)));});}
+ function hoiLL(b){const x=a.xem();a.datLL(Math.min(x.linhLucToiDa,x.linhLuc+tinh(x.linhLucToiDa,b.muc*b.heTu,100*b.heMau)));}
+ function hoiKH(b){const x=a.xem();a.datB(0,Math.min(x.tranKhiHuyet,x.khiHuyet+tinh(x.tranKhiHuyet,b.muc*b.heTu,100*b.heMau)));}
+ function hoiTN(b){const x=a.xem();s.tnThieu=Math.max(0,s.tnThieu-tinh(x.thanNiem,b.muc*b.heTu,100*b.heMau));}
+ function ketQua(b,chonCot){
+  if(['ll','hoiTat'].includes(b.loai))hoiLL(b);
+  if(['kh','hoiTat'].includes(b.loai))hoiKH(b);
+  if(['tn','tnGiai','hoiTat'].includes(b.loai))hoiTN(b);
+  if(b.loai==='tnGiai')slPatch(x=>{x.taVong=false;x.thuc=0;});
+  if(b.loai==='thuong')thuong(b);
+  if(['thuongHet','cuu'].includes(b.loai))thuong(b,true);
+  if(b.loai==='docMot')s.cot[chonCot]=Math.max(0,s.cot[chonCot]-lieu(b,b.muc));
+  if(b.loai==='docTat')for(const id of Object.keys(s.cot))s.cot[id]=Math.max(0,s.cot[id]-lieu(b,b.muc));
+  if(b.loai==='docHet'){for(const id of Object.keys(s.cot))s.cot[id]=Math.max(0,s.cot[id]-lieu(b,s.cot[id]));if(b.pham===3){s.diChung=0;core.ghi('Vạn Giải Cực phẩm xóa di chứng');}}
+  if(b.phut){s.hieuUng=s.hieuUng.filter(f=>f.id!==b.id);s.hieuUng.push({id:b.id,loai:b.loai,muc:b.loai==='tichCoc'?b.muc:lieu(b,b.muc*(['B','exp'].includes(b.loai)?100:1)),den:now()+b.phut});if(b.loai==='tichCoc')slPatch(x=>{x.tichCocDen=now()+b.phut;});}
+  if(b.loai==='cuu'){const cotCuu=Object.keys(s.cot).filter(id=>s.cot[id]>=1000);if(cotCuu.length){for(const id of cotCuu)s.cot[id]=600;s.diChung+=50;s.nhatKyCuu.push({phut:now(),cot:cotCuu,diChung:50});core.ghi('Hoàn Sinh cứu độc 100',{cot:cotCuu,doc10:600,diChung:50});}} 
+ }
+ function dung(id,q=0,chonCot=null,noiBo=false){
+  if(!alive()||trongTran())return {hopLe:false,lyDo:'Chỉ dùng khi sống, ngoài trận'};
+  const b=tinhDung(id,q);if(b.chiRegistry||(!noiBo&&b.loai==='dotPha'))return {hopLe:false,lyDo:'Chỉ dùng ở lần thử đột phá tương ứng'};
+  if(du(id,q)<1)return {hopLe:false,lyDo:'Không có đan'};
+  if((s.hoi[id]||0)>now())return {hopLe:false,lyDo:'Chưa hết thời gian hồi'};
+  if(b.loai==='docMot'&&!tra(chonCot))return {hopLe:false,lyDo:'Cần chọn cột độc'};
+  s.tui[b.ma]--;s.khang[id]++;s.nghi[id]=now()+REST;s.hoi[id]=now()+b.hoi;
+  // Độc của chính đan được cộng SAU công dụng giải độc; không tự miễn độc.
+  if(b.loai==='cuu'){s.cot[id]=Math.min(1000,s.cot[id]+b.doc10);ketQua(b,chonCot);}else{ketQua(b,chonCot);s.cot[id]=Math.min(1000,s.cot[id]+b.doc10);}
+  core.ghi('Dùng đan dược',{id,pham:b.pham,doc10:b.doc10,khangTruoc:b.n});
+  if(Object.values(s.cot).some(d=>d>=1000)){
+   let cuu=null;if(id!=='hoan-sinh')for(let p=3;p>=0;p--)if(du('hoan-sinh',p)>0&&(s.hoi['hoan-sinh']||0)<=now()){cuu=dung('hoan-sinh',p,null,true);break;}
+   if(!cuu?.hopLe&&Object.values(s.cot).some(d=>d>=1000))core.chet('Độc đan đạt 100');
+  }
+  sync();core.phat('danV09ThayDoi');core.phat('capNhat');return {hopLe:true,...b};
+ }
+ function dotPha(){const t=tl.xem();if(!alive()||trongTran()||t.canhGioi!==0||t.tang!==13||t.expDotPha<HD_CAN_BANG.EXP_TRUC_CO*10000||!t.duPhien||!sl.onDinh()||!a.coTheHanhDong())return {hopLe:false,lyDo:'Chưa đủ điều kiện đột phá Trúc Cơ'};
+  const co=du('truc-co',0)>0; if(co){const r=dung('truc-co',0,null,true);if(!r.hopLe||!alive())return {hopLe:false,lyDo:r.lyDo||'Đạo tiêu vì độc đan'};}
+  const truoc=tl.xuat().danHoTro;tlPatch(x=>{x.danHoTro=co;});const r=tl.dotPha();if(!r.hopLe)tlPatch(x=>{x.danHoTro=truoc;});return {...r,danDaDung:co?1:0,giamKho:co?10:0};
+ }
+ /* Adapter cho engine đại cảnh tương lai: bắt buộc truyền đúng số gốc và callback. */
+ function thuDaiCanh({bac,doKhoGoc,hopLe,thu}){if(![1,2,3,4].includes(bac)||typeof thu!=='function')throw Error('Cần engine đại cảnh');ng(doKhoGoc);if(!hopLe||!alive()||trongTran())return {hopLe:false};const id=['','truc-co','ngung-kim','tu-anh','hoa-than'][bac],co=du(id,0)>0;if(co){const r=dung(id,0,null,true);if(!r.hopLe||!alive())return {hopLe:false};}return {hopLe:true,doKhoGoc,doKho:doKhoGoc-(co?10:0),danDaDung:co?1:0,ketQua:thu(doKhoGoc-(co?10:0))};}
+ const batDauGoc=tuLuyen.batDau;tuLuyen.batDau=()=>Math.max(...Object.values(s.cot))>=900?false:!trongTran()&&a.coTheHanhDong()&&batDauGoc();tuLuyen.dotPha=dotPha;
+ const tcStart=tuLuyen.cauHinhDebug;tuLuyen.cauHinhDebug=p=>{tcStart(p);if(p.DL)s.dl=[1,1];if(p.tamCanh!==undefined)s.tamDelta=0;sync();};
+ // Scope sinh lý chặn hao No/Khát trước khi engine tính: dùng bậc 2 tạm thời
+ // chỉ trong handler phut của sinh lý; trả lại ngay, không phát canhGioi giả.
+ let bacTam=null;
+ ss.hook.truoc=(ten,{phut})=>{if(ten==='phut'&&s.hieuUng.some(f=>f.loai==='tichCoc'&&phut<=f.den)){bacTam=sl.xem().canhGioi;slPatch(x=>{x.canhGioi=2;});}};
+ ss.hook.sau=ten=>{if(ten==='phut'&&bacTam!==null){const bac=bacTam;bacTam=null;slPatch(x=>{x.canhGioi=bac;});}};
+ core.nghe('phut',({phut})=>{
+  if(!alive())return;
+  const cu=s.hieuUng.length;s.hieuUng=s.hieuUng.filter(f=>f.den>phut);let doi=cu!==s.hieuUng.length;
+  for(const r of registry){const den=s.nghi[r.id];if(den!==undefined&&phut>=den){const n=Math.floor((phut-den)/REST)+1;s.khang[r.id]=Math.max(0,s.khang[r.id]-n);s.nghi[r.id]=den+n*REST;doi=true;}}
+  if(phut%N===0)for(const [id,d]of Object.entries(s.cot))if(d>=600){slPatch(x=>{x.thuong.push({ten:'Độc đan '+tra(id).ten,phat:3000,den:phut+30*N});});core.ghi('Độc đan thương tạng định kỳ',{id});doi=true;}
+  if(doi){sync();core.phat('danV09ThayDoi');}
+ });
+ core.nghe('chiSoThayDoi',()=>{if(!syncing)sync();});
+ const dan=Object.freeze({cap,dung,du,tinhDung,mucDoc,thuDaiCanh,xem:()=>copy(s),xuat:()=>copy(s),thanNiem:()=>Math.max(0,a.xem().thanNiem-s.tnThieu),debug:Object.freeze({datCot:(id,d)=>{if(!tra(id))throw Error('Sai cột');s.cot[id]=kep(ng(d),0,1000);sync();},datKhang:(id,n)=>{s.khang[id]=Math.max(0,ng(n));s.nghi[id]=now()+REST;},datThieuTN:n=>{s.tnThieu=Math.max(0,ng(n));},dongBo:sync})});
+ w=Object.freeze({core,thoiGian,sinhLy:Object.freeze(sinhLy),tuLuyen:Object.freeze(tuLuyen),chiSo:Object.freeze(chiSo),dan,xuat});sync();return w;
+}
+return {pham,registry,bienThe,tatCa,taoTheGioi,tinh};
+})();
+
 (function HD_giaoDien(){
  const C=HD_CAN_BANG;
  let duLieu=null,canhBao='';
  try{const raw=localStorage.getItem(C.KHOA_LUU);if(raw)duLieu=JSON.parse(raw);if(localStorage.getItem(C.KHOA_CHET))canhBao='Hành trình trước đã đạo tiêu và bị xóa. Đây là hành trình mới.';}catch(e){canhBao='Không đọc được lưu cục bộ; đang chơi trong phiên.';}
- let w;try{w=HD_taoTheGioiV03(C.HAT_GIONG,duLieu);}catch(e){w=HD_taoTheGioiV03();canhBao='Lưu không tương thích; không tự ghi đè. '+e.message;}
+ let w;try{w=HD_V09.taoTheGioi(C.HAT_GIONG,duLieu);}catch(e){w=HD_V09.taoTheGioi();canhBao='Lưu không tương thích; không tự ghi đè. '+e.message;}
  let tocDo=0,choDung=false,choHanhDong=null;
  const el=id=>document.getElementById(id),tao=(tag,attrs={})=>{const e=document.createElement(tag);Object.assign(e,attrs);return e;};
  const css=tao('style',{textContent:'.hd-v02{overflow-wrap:anywhere}.hd-v02 p{margin-bottom:8px}.hd-v02 .hd-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.hd-v02 .hd-row button{flex:1;min-width:95px}.hd-v02 label{display:block;font-size:.85rem;margin:8px 0}.hd-v02 select,.hd-v02 input{width:100%;min-height:44px;font:inherit;background:#f6ecd4;color:var(--ink);border:1px solid var(--line);padding:7px}.hd-v02 progress{display:block;width:100%;height:12px;accent-color:var(--red)}.hd-v02 .hd-bar{margin:9px 0}.hd-v02 .hd-bar span{display:flex;justify-content:space-between;font-size:.85rem}.hd-v02 pre{white-space:pre-wrap;font:inherit;font-size:.76rem;max-height:230px;overflow:auto;border-top:1px dashed var(--line);padding-top:8px}.hd-v02 details{margin:12px 0}.hd-v02 summary{cursor:pointer;min-height:44px;padding:8px}.hd-v02 [hidden]{display:none!important}.hd-v02 .hd-small{font-size:.78rem;color:#695b48}.hd-v02 .hd-danger{border:2px solid var(--red);padding:10px}.hd-v02 .hd-clock{font-size:.82rem}.hd-v02 output{font-variant-numeric:tabular-nums}'});document.head.append(css);
@@ -1621,21 +1792,21 @@ function apply(root,fs){
 }
 const cover=d.getElementById('hd-v06-cover'),article=cover.querySelector('article');
 article.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v07-cover-art'));
-// V0.8.2: nhãn bản phát hành trên cả hai bìa và lời tựa; không đổi kho tranh.
-article.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.8.2';
+// V0.9: nhãn bản phát hành trên cả hai bìa và lời tựa; không đổi kho tranh.
+article.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.9';
 // V0.7.1: dùng cùng public kho cảnh và onerror cho trang bìa trong sách.
 const titlePage=d.querySelector('#hd-v06-book .v06-title-page');
 titlePage.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v071-book-art'));
-titlePage.querySelector('.eyebrow').textContent='Một đời cầu đạo · V0.8.2';
-titlePage.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.8.2';
-d.querySelector('.v06-preface .v06-seal').textContent='V1 · V0.8.2';
+titlePage.querySelector('.eyebrow').textContent='Một đời cầu đạo · V0.9';
+titlePage.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.9';
+d.querySelector('.v06-preface .v06-seal').textContent='V1 · V0.9';
 const preload=d.createElement('div');preload.hidden=true;preload.id='hd-v07-kho';preload.setAttribute('aria-hidden','true');
 for(const [key,path]of Object.entries(chanDung))if(key!=='mac-dinh'){
  const img=taoAnh(path,'Kho chân dung '+key);img.dataset.v07Portrait=key;preload.append(img);
 }
 d.getElementById('hd-v06-combat').append(preload);
 apply(d.getElementById('hd-v05-scene'),window.HD_V05.debug.tran()?.xem().dauSi);
-d.querySelector('footer').textContent='V0.8.2 · Kho tranh art/ · Engine V0.2–V0.5 giữ nguyên';
+d.querySelector('footer').textContent='V0.9 · Kho tranh art/ · Engine V0.2–V0.5 giữ nguyên';
 function kiemThu({inBang=true}={}){
  const ds=[],eq=(a,b)=>{if(a!==b)throw Error(String(a)+' khác '+String(b));},ok=x=>{if(!x)throw Error('Không đạt');},test=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
  for(const [key,path]of Object.entries(chanDung))test('Lookup chân dung '+key,()=>eq(lookup(key),path));
@@ -1646,7 +1817,7 @@ function kiemThu({inBang=true}={}){
  test('onerror chuyển bóng mực đúng một lần',()=>{const img=taoAnh('art/chua-co.jpg','Thử');img.dispatchEvent(new Event('error'));eq(img.getAttribute('src'),bongMuc);eq(img.onerror,null);eq(img.dataset.v07Fallback,'true');});
  test('Tất cả tám tranh có trong DOM, dùng đường tương đối',()=>{for(const path of [...Object.values(canh),...Object.entries(chanDung).filter(([k])=>k!=='mac-dinh').map(([,p])=>p)])ok([...d.querySelectorAll('img.v07-ink')].some(n=>n.dataset.v07Path===path));});
  test('Hai thẻ và tranh giữa không còn tranh SVG cũ',()=>{const root=d.getElementById('hd-v05-scene');eq(root.querySelectorAll('img.v05-face').length,2);eq(root.querySelectorAll('img.v07-battle').length,1);eq(root.querySelectorAll('.v06-stage-person').length,2);});
- test('Bìa giữ chữ và hai nút HTML',()=>{ok(article.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));ok(article.textContent.includes('Một trang giấy dó, một đời cầu đạo.'));ok(d.getElementById('hd-v06-open'));ok(d.getElementById('hd-v06-skip'));eq(article.querySelector('.v06-seal').textContent,'HỒNG ĐỨC · V0.8.2');});
+ test('Bìa giữ chữ và hai nút HTML',()=>{ok(article.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));ok(article.textContent.includes('Một trang giấy dó, một đời cầu đạo.'));ok(d.getElementById('hd-v06-open'));ok(d.getElementById('hd-v06-skip'));eq(article.querySelector('.v06-seal').textContent,'HỒNG ĐỨC · V0.9');});
  test('Select Thế trận vẫn là select gốc',()=>eq(d.getElementById('hd-v04-terrain').tagName,'SELECT'));
  test('Không có ký tự cấm trong DOM nguồn',()=>ok(!/[\p{Script=Han}\p{Script=Cyrillic}\p{Extended_Pictographic}]/u.test(d.documentElement.outerHTML)));
  const result={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};if(inBang)console.table(ds);return result;
@@ -1678,8 +1849,8 @@ async function kiemThu({inBang=true}={}){
  await test('Hai ảnh bìa tải thật, không phải onerror fallback',async()=>{
   for(const img of d.querySelectorAll('img[data-v07-scene="bia"]')){await img.decode();ok(img.naturalWidth>0);ok(!img.dataset.v07Fallback);ok(img.getAttribute('src')==='art/bia.jpg');}
  });
- await test('Nhãn bìa V0.8.2, giữ chữ HTML và hai nút mở',()=>{
-  const title=d.querySelector('#hd-v06-book .v06-title-page');ok(title.querySelector('h2').textContent.includes('TU TIÊN LỘ V1'));ok(title.querySelector('.eyebrow').textContent.includes('V0.8.2'));ok(title.querySelector('.v06-seal').textContent.includes('V0.8.2'));ok(cover.querySelector('h1'));ok($('hd-v06-open'));ok($('hd-v06-skip'));
+ await test('Nhãn bìa V0.9, giữ chữ HTML và hai nút mở',()=>{
+  const title=d.querySelector('#hd-v06-book .v06-title-page');ok(title.querySelector('h2').textContent.includes('TU TIÊN LỘ V1'));ok(title.querySelector('.eyebrow').textContent.includes('V0.9'));ok(title.querySelector('.v06-seal').textContent.includes('V0.9'));ok(cover.querySelector('h1'));ok($('hd-v06-open'));ok($('hd-v06-skip'));
  });
  await test('Khung thẻ chỉ hai nét mực hở, không tua cuốn góc',()=>{
   const frames=d.querySelectorAll('#hd-v05-scene .v05-fighter>.v06-brush-frame');ok(frames.length===2);frames.forEach(f=>{ok(f.classList.contains('v071-ink-frame'));ok(f.querySelectorAll('path').length===2);ok(!f.querySelector('circle,polygon,[fill]:not([fill="none"])'));ok([...f.querySelectorAll('path')].every(p=>!/[zZ]/.test(p.getAttribute('d'))));});
@@ -1839,7 +2010,7 @@ async function kiemThu({inBang=true,nguon=null}={}){
 <script id="hd-v081-tests">
 (function HD_kiemThuGiaoDienV081(){
 'use strict';
-/* V0.8.2: hồi quy giao diện, fixture cô lập; không ghi localStorage hay đổi seed nhân vật thật.
+/* V0.9: hồi quy giao diện, fixture cô lập; không ghi localStorage hay đổi seed nhân vật thật.
 Nút Tải hành trình là khung V0.1 cố ý khóa; tải thật diễn ra tự động ở HD_giaoDien.
 Không thêm loader, không phục sinh nhân vật đạo tiêu và không thay đổi cơ chế xóa save. */
 function kiemThu({inBang=true}={}){
@@ -1851,7 +2022,7 @@ function kiemThu({inBang=true}={}){
  const dau=(c,patch={})=>V.taoDauSi(c,{nhomB:[1000,150,500,100,1000,0],linhLuc:200,linhLucToiDa:200,phuLuc:[1,2,3],...patch});
  const thu=(p,n)=>{const w=W.taoTheGioi(123456),events=[];window.HD_V08.ganCore(w.core,k=>events.push(k));const t=V.taoChienDau(w.core,p(w.core),n(w.core),'trong');t.batDau();return {w,t,events};};
  try{
- test('Hai bìa, lời tựa và footer đều ghi V0.8.2',()=>{for(const el of [d.querySelector('#hd-v06-cover .v06-seal'),d.querySelector('.v06-title-page .eyebrow'),d.querySelector('.v06-title-page .v06-seal'),d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer')])ok(el.textContent.includes('V0.8.2'));});
+ test('Hai bìa, lời tựa và footer đều ghi V0.9',()=>{for(const el of [d.querySelector('#hd-v06-cover .v06-seal'),d.querySelector('.v06-title-page .eyebrow'),d.querySelector('.v06-title-page .v06-seal'),d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer')])ok(el.textContent.includes('V0.9'));});
  test('Select gốc có đúng một lựa chọn Trận Mộc',()=>{eq(sel.tagName,'SELECT');eq([...sel.options].filter(x=>x.value==='mocTran').map(x=>x.text),['Trận Mộc']);});
  test('Chọn Trận Mộc chỉ đổi cờ, không trừ phù hay linh lực',()=>{sel.value='mocTran';const c=W.taoTheGioi(123456).core,p=dau(c),before=structuredClone(p);V.debug.chonTranMoc(p);before.hieuUng.mocTran=true;eq(p,before);});
  test('Trận Mộc trực tiếp phát đúng một tran-ky ở hiệp một',()=>{sel.value='mocTran';const r=thu(c=>V.debug.chonTranMoc(dau(c)),c=>dau(c,{nhomB:[1000,150,150,100,150,0]}));eq(r.t.xem().hiep,1);eq(r.events,['tran-ky']);r.t.hanhDong(0,'vatLy');eq(r.events,['tran-ky']);});
@@ -1929,6 +2100,81 @@ function kiemThu({inBang=true}={}){
 window.HD_V082=Object.freeze({khoa,ten,kiemThu,debug:Object.freeze({taoChuoi,xem:chuoi.xem})});
 })();
 </script>
+<script>
+
+HD_V09.kiemThu=function({inBang=true}={}){
+ const V=HD_V09,ds=[],eq=(a,b)=>{if(JSON.stringify(a)!==JSON.stringify(b))throw Error(JSON.stringify(a)+' khác '+JSON.stringify(b));},ok=x=>{if(!x)throw Error('Không đạt');},test=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}},tao=(save)=>V.taoTheGioi(123456,save),cap=(w,id,q=0,n=1)=>w.dan.cap(id,q,n),use=(w,id,q=0,cot)=>{cap(w,id,q);const r=w.dan.dung(id,q,cot);ok(r.hopLe);return r;},bac=(w,n)=>w.tuLuyen.cauHinhDebug({canhGioi:n}),tui=w=>w.dan.xem();
+ test('Registry đúng 30 bản gốc, 24 có phẩm, 6 đơn phẩm, 102 mã',()=>{eq(V.registry.length,30);eq(V.registry.filter(r=>r.coPham).length,24);eq(V.tatCa().length,102);eq(new Set(V.tatCa().map(r=>r.ma)).size,102);});
+ test('Bảng gốc đủ tên, bậc, công dụng, D, hồi, giá và thời hạn',()=>{eq(V.registry.map(r=>[r.bac,r.D,r.hoi,r.giaHa,r.phut]),[[0,15,480,8,0],[0,20,720,10,0],[0,12,600,10,0],[0,10,960,12,0],[0,8,360,6,0],[0,18,1200,20,1440],[0,25,960,25,120],[0,22,960,30,480],[1,25,600,200,0],[1,30,720,200,0],[1,20,720,300,0],[1,15,960,300,0],[1,18,600,250,0],[1,28,1200,400,720],[1,30,1200,500,240],[1,20,1440,300,1440],[2,30,720,1500,0],[2,35,960,1500,0],[2,25,960,2000,0],[2,20,1200,2500,0],[2,32,1440,3000,960],[3,40,1440,20000,0],[3,25,1440,30000,0],[3,45,1800,50000,1440],[null,0,0,1,14400],[null,30,0,200,0],[null,35,0,3000,0],[null,40,0,8000,0],[null,45,0,null,0],[null,50,0,null,0]]);eq(V.registry.map(r=>r.muc),[40,30,2880,250,40,50,10,20,80,60,7200,500,100,50,20,80,100,80,100,100,80,100,100,150,14400,10,10,10,10,100]);ok(V.registry.every(r=>r.ten.endsWith('Đan')));});
+ test('Tụ Linh bốn phẩm 40/50/60/80, nhãn D15/11/8/4, giá 8/40/160/800',()=>{eq([0,1,2,3].map(q=>{const b=V.bienThe('tu-linh',q);return [V.tinh(b.muc,b.hieu,100),b.Dnhan,b.giaHa];}),[[40,15,8],[50,11,40],[60,8,160],[80,4,800]]);eq([0,1,2,3].map(q=>V.bienThe('tu-linh',q).doc10),[150,110,80,40]);});
+ test('Đơn phẩm không chia phẩm và Trưởng Sinh chỉ registry',()=>{eq(V.bienThe('truc-co',3).ma,'truc-co:0');const w=tao();let loi=false;try{cap(w,'truong-sinh');}catch(e){loi=true;}ok(loi);eq(Object.keys(tui(w).tui).length,0);});
+ test('Hồi Linh lực đúng các phẩm, đúng bậc, kẹp trần',()=>{for(const [q,gain]of [[0,20],[1,25],[2,30],[3,40]]){const w=tao();w.chiSo.datLL(0);use(w,'tu-linh',q);eq(w.chiSo.xem().linhLuc,gain);}});
+ test('Độc tích lũy theo đúng bản gốc, các cột khác không đổi',()=>{const w=tao();use(w,'tu-linh',0);use(w,'an-than',0);eq(tui(w).cot['tu-linh'],150);eq(tui(w).cot['an-than'],80);eq(Object.values(tui(w).cot).filter(x=>x!==0).length,2);});
+ test('Kháng chung mọi phẩm, n=50 nhân 1/2 và tăng đúng 1 viên',()=>{const w=tao();w.dan.debug.datKhang('tu-linh',50);w.chiSo.datLL(0);use(w,'tu-linh',2);eq(w.chiSo.xem().linhLuc,15);eq(tui(w).khang['tu-linh'],51);});
+ test('Hồi theo loại chặn phẩm khác, không trừ túi hay tăng kháng',()=>{const w=tao();use(w,'tu-linh');cap(w,'tu-linh',3);const before=tui(w);ok(!w.dan.dung('tu-linh',3).hopLe);eq(tui(w),before);});
+ test('Hết hồi đúng phút cho phép dùng phẩm khác',()=>{const w=tao();use(w,'tu-linh');cap(w,'tu-linh',3);w.core.tien(479);ok(!w.dan.dung('tu-linh',3).hopLe);w.core.tien(1);ok(w.dan.dung('tu-linh',3).hopLe);eq(tui(w).khang['tu-linh'],2);});
+ test('Ngưỡng 29,9 không suy yếu, 30 suy yếu đúng 50 B',()=>{const w=tao(),b=w.chiSo.xem().nhomBDayDu;w.dan.debug.datCot('tu-linh',299);eq(w.chiSo.xem().nhomBDayDu,b);w.dan.debug.datCot('tu-linh',300);eq(w.chiSo.xem().nhomBDayDu,b.map(x=>Math.max(0,x-50)));eq(w.dan.mucDoc(300),'Suy yếu');});
+ test('Ngưỡng 60 thương tạng định kỳ theo phút CORE',()=>{const w=tao();bac(w,2);w.dan.debug.datCot('tu-linh',600);w.core.tien(1440);ok(w.sinhLy.xem().thuong.some(t=>t.ten.includes('Độc đan')));eq(w.dan.mucDoc(600),'Thương tạng');});
+ test('Ngưỡng 90 nguy kịch, không bắt đầu phiên mới',()=>{const w=tao();w.dan.debug.datCot('tu-linh',900);ok(!w.tuLuyen.batDau());eq(w.dan.mucDoc(900),'Nguy kịch');});
+ test('Ngưỡng 100 đạo tiêu khi không có Hoàn Sinh',()=>{const w=tao();w.dan.debug.datCot('tu-linh',850);use(w,'tu-linh');ok(w.core.xem().daChet);eq(w.dan.mucDoc(1000),'Tử vong');ok(!w.dan.dung('an-than').hopLe);});
+ test('Hoàn Sinh tự cứu D100 về600, ghi di chứng50 ngoài suy yếu tạm',()=>{const w=tao();bac(w,3);cap(w,'hoan-sinh',3);w.dan.debug.datCot('thai-thanh',550);use(w,'thai-thanh');ok(!w.core.xem().daChet);eq(tui(w).cot['thai-thanh'],600);eq(tui(w).diChung,50);eq(tui(w).nhatKyCuu.length,1);eq(w.dan.du('hoan-sinh',3),0);});
+ test('Vạn Giải Cực xóa di chứng, không tự miễn độc của chính viên',()=>{const w=tao();bac(w,3);cap(w,'hoan-sinh',3);w.dan.debug.datCot('thai-thanh',550);use(w,'thai-thanh');use(w,'van-giai',3);eq(tui(w).diChung,0);eq(tui(w).cot['thai-thanh'],0);eq(tui(w).cot['van-giai'],50);});
+ test('Chênh bậc độc x2/x4/x8, phẩm nhân trước cộng đúng cột',()=>{for(const [id,d]of [['tu-nguyen',500],['tinh-nguyen',1200],['hon-nguyen',3200]]){const w=tao();cap(w,id);eq(w.dan.tinhDung(id).doc10,d);}});
+ test('Dùng đan bậc thấp hiệu quả giảm nửa mỗi bậc',()=>{for(let n=0;n<=3;n++){const w=tao();bac(w,n);const x=w.chiSo.xem();w.chiSo.datLL(0);use(w,'tu-linh');eq(w.chiSo.xem().linhLuc,V.tinh(x.linhLucToiDa,40,100*2**n));}});
+ test('Đơn phẩm không chịu luật chênh bậc',()=>{const w=tao();bac(w,3);eq(w.dan.tinhDung('truc-co').doc10,300);eq(w.dan.tinhDung('tich-coc').heTu,w.dan.tinhDung('tich-coc').heMau);});
+ test('Thanh Độc chọn đúng một cột, không tự bỏ độc của chính đan',()=>{const w=tao();w.dan.debug.datCot('an-than',290);use(w,'thanh-doc',0,'an-than');eq(tui(w).cot['an-than'],40);eq(tui(w).cot['thanh-doc'],100);});
+ test('Tẩy Độc giảm mọi cột rồi cộng độc riêng',()=>{const w=tao();bac(w,1);w.dan.debug.datCot('an-than',550);w.dan.debug.datCot('tu-linh',450);use(w,'tay-doc');eq(tui(w).cot['an-than'],50);eq(tui(w).cot['tu-linh'],0);eq(tui(w).cot['tay-doc'],150);});
+ test('Không chọn cột Thanh Độc không mất viên hay kháng',()=>{const w=tao();cap(w,'thanh-doc');const x=tui(w);ok(!w.dan.dung('thanh-doc').hopLe);eq(tui(w),x);});
+ test('Xả kháng mỗi30 ngày liên tục không dùng, không xuống dưới0',()=>{const w=tao();bac(w,2);w.dan.debug.datKhang('an-than',2);w.core.tien(43199);eq(tui(w).khang['an-than'],2);w.core.tien(1);eq(tui(w).khang['an-than'],1);w.core.tien(86400);eq(tui(w).khang['an-than'],0);});
+ test('Dùng lại đặt lại mốc30 ngày nghỉ',()=>{const w=tao();bac(w,2);w.dan.debug.datKhang('an-than',2);w.core.tien(100);use(w,'an-than');w.core.tien(43100);eq(tui(w).khang['an-than'],3);w.core.tien(100);eq(tui(w).khang['an-than'],2);});
+ test('Tích Cốc đóng băng đúng No/Khát14400 phút rồi hao trở lại',()=>{const w=tao();w.sinhLy.cauHinhDebug({no:70000,khat:60000});use(w,'tich-coc');w.core.tien(14400);eq([w.sinhLy.xem().no,w.sinhLy.xem().khat],[70000,60000]);eq(tui(w).hieuUng.length,0);w.core.tien(1);eq([w.sinhLy.xem().no,w.sinhLy.xem().khat],[69975,59960]);});
+ test('Cường Thể nhóm B có hiệu lực120 phút rồi tự gỡ',()=>{const w=tao(),base=w.chiSo.xem().nhomBDayDu;use(w,'cuong-the',3);const boosted=w.chiSo.xem().nhomBDayDu;ok(boosted[1]>100);w.core.tien(119);ok(tui(w).hieuUng.some(f=>f.id==='cuong-the'));w.core.tien(1);ok(!tui(w).hieuUng.some(f=>f.id==='cuong-the'));eq(w.chiSo.xem().nhomBDayDu[1],base[1]);});
+ test('Dưỡng Tâm hiệu lực1440 phút, không cắt phiên đang chạy',()=>{const w=tao();w.tuLuyen.cauHinhDebug({linhCan:0});w.tuLuyen.batDau();use(w,'duong-tam');eq(w.tuLuyen.xem().tamCanh,750);ok(w.tuLuyen.xem().phien);w.core.tien(1440);eq(w.tuLuyen.xem().tamCanh,700);});
+ test('Ngưng Khí nhân đúng tốc độ và tích EXP phiên đang chạy, không tiêu RNG',()=>{const w=tao();w.tuLuyen.cauHinhDebug({linhCan:0});w.tuLuyen.batDau();const rate=w.tuLuyen.tocDo(),seed=w.core.xem().seed;use(w,'ngung-khi');eq(w.tuLuyen.tocDo(),V.tinh(rate,120,100));w.core.tien(1);const f=w.tuLuyen.xuat().phien;eq(String(BigInt(f.tich[0])/BigInt(f.tich[1])),String(BigInt(w.tuLuyen.tocDo())/1440n));eq(w.core.xem().seed,seed);w.core.tien(479);eq(w.tuLuyen.tocDo(),rate);ok(w.tuLuyen.xem().phien);});
+ test('Trúc Cơ tự trừ1, giảm đúng10 so với số gốc engine, không sửa hằng',()=>{const w=tao();w.tuLuyen.cauHinhDebug({linhCan:0,tang:13});w.tuLuyen.themEXP(300000*10000,true);w.tuLuyen.batDau();w.core.tien(1440);cap(w,'truc-co',0,2);const khoGoc=HD_CAN_BANG.KHO_TRUC_CO,p=w.tuLuyen.xacSuat();const r=w.tuLuyen.dotPha();ok(r.hopLe);eq(r.P,p+10);eq(w.dan.du('truc-co'),1);eq(tui(w).cot['truc-co'],300);eq(tui(w).khang['truc-co'],1);eq(HD_CAN_BANG.KHO_TRUC_CO,khoGoc);});
+ test('Lần thử Trúc Cơ không hợp lệ không tiêu đan/kháng/RNG',()=>{const w=tao();cap(w,'truc-co',0,2);const x=w.xuat();ok(!w.tuLuyen.dotPha().hopLe);eq(w.xuat(),x);});
+ test('Adapter ba đại cảnh nhận đúng độ khó thật từ caller, trừ1 và10',()=>{for(const [bac,id]of [[2,'ngung-kim'],[3,'tu-anh'],[4,'hoa-than']]){const w=tao();cap(w,id,0,2);let kho;const r=w.dan.thuDaiCanh({bac,doKhoGoc:57,hopLe:true,thu:k=>{kho=k;return true;}});eq(kho,47);eq(r.doKhoGoc,57);eq(w.dan.du(id),1);eq(tui(w).khang[id],1);}});
+ test('Save/load khứ hồi túi, độc, kháng, hồi, hiệu ứng, di chứng',()=>{const w=tao();use(w,'tich-coc');use(w,'ngung-khi',2);w.core.tien(15);const save=w.xuat(),v=tao(save);eq(v.xuat(),save);eq(v.dan.xem(),tui(w));});
+ test('Save cũ V02/V03 không có đan nạp túi rỗng,30 cột0',()=>{const old=HD_taoTheGioiV03(123456).xuat(),w=tao(old);eq(tui(w).tui,{});ok(Object.values(tui(w).cot).every(x=>x===0));eq(tui(w).diChung,0);});
+ test('Same seed same inputs same snapshot và RNG',()=>{const a=tao(),b=tao();for(const w of [a,b]){use(w,'ngung-khi',1);use(w,'tich-coc');w.tuLuyen.batDau();w.core.tien(120);}eq(a.xuat(),b.xuat());});
+ test('Trong trận khóa dùng và không mất túi',()=>{const w=tao();cap(w,'an-than');w.chiSo.chienDau(true);const x=tui(w);ok(!w.dan.dung('an-than').hopLe);eq(tui(w),x);});
+ test('Định Thần giải tà vọng qua public snapshot',()=>{const w=tao();bac(w,1);w.core.tien(2881);ok(w.sinhLy.xem().taVong);use(w,'dinh-than');ok(!w.sinhLy.xem().taVong);});
+ test('TN bổ sung được hồi, không đổi dung lượng TN gốc V04',()=>{const w=tao(),max=w.chiSo.xem().thanNiem;w.dan.debug.datThieuTN(max);use(w,'an-than');eq(w.dan.thanNiem(),V.tinh(max,40,100));eq(w.chiSo.xem().thanNiem,max);});
+ test('Liễu Thương rút đúng2 ngày thương tích',()=>{const save=HD_taoTheGioiV03(123456).xuat();save.sinhLy.thuong=[{ten:'Thử',den:10000,phat:3000}];const w=tao(save);use(w,'lieu-thuong');eq(w.sinhLy.xem().thuong[0].den,7120);});
+ test('Trần túi số nguyên, dữ liệu phẩm không hợp lệ bị từ chối',()=>{const w=tao();for(const fn of [()=>cap(w,'tu-linh',0,0),()=>cap(w,'tu-linh',0,1.5),()=>cap(w,'tu-linh',4,1)]){let loi=false;try{fn();}catch(e){loi=true;}ok(loi);}});
+ test('Một lần cứu nhiều cột chỉ nhận một di chứng50',()=>{const w=tao();bac(w,3);w.dan.debug.datCot('tu-linh',1000);w.dan.debug.datCot('an-than',1000);use(w,'hoan-sinh',3);eq(tui(w).diChung,50);eq(tui(w).cot['tu-linh'],600);eq(tui(w).cot['an-than'],600);eq(tui(w).nhatKyCuu.length,1);});
+ test('Di chứng giữ trần Khí huyết qua hồi máu và save/load, Vạn Giải khôi phục',()=>{const w=tao();bac(w,3);const tran=w.chiSo.xem().tranKhiHuyet;cap(w,'hoan-sinh',3);w.dan.debug.datCot('thai-thanh',550);use(w,'thai-thanh');eq(w.chiSo.xem().tranKhiHuyet,Math.max(0,tran-100));use(w,'hoi-nguyen',3);eq(w.chiSo.xem().tranKhiHuyet,Math.max(0,tran-100));const v=tao(w.xuat());eq(v.dan.xem().diChung,50);eq(v.chiSo.xem().tranKhiHuyet,w.chiSo.xem().tranKhiHuyet);use(v,'van-giai',3);eq(v.chiSo.xem().tranKhiHuyet,tran);});
+ test('EXP chốt phiên đủ1440 phút khớp engine gốc với DL120% trong480 phút',()=>{const w=tao();w.tuLuyen.cauHinhDebug({linhCan:0});let ref=HD_taoTheGioiV03(123456);ref.tuLuyen.cauHinhDebug({linhCan:0,DL:[6,5]});use(w,'ngung-khi');w.tuLuyen.batDau();ref.tuLuyen.batDau();w.core.tien(480);ref.core.tien(480);const snap=ref.xuat();snap.tuLuyen.DL=[1,1];ref=HD_taoTheGioiV03(123456,snap);w.core.tien(960);ref.core.tien(960);eq(w.tuLuyen.xem().exp,ref.tuLuyen.xem().exp);eq(w.tuLuyen.xem().tang,ref.tuLuyen.xem().tang);ok(!w.tuLuyen.xem().phien);eq(w.core.xem().seed,ref.core.xem().seed);});
+ if(inBang)console.table(ds);return {dat:ds.filter(t=>t.ketQua==='PASS').length,truot:ds.filter(t=>t.ketQua==='FAIL').length,danhSach:ds};
+};
+
+
+(function HD_danGiaoDienV09(){
+'use strict';
+const V=window.HD_V09,w=window.HD_V03.theGioi,d=document,$=id=>d.getElementById(id);
+if(!w.dan)throw Error('V09 chưa được ghép vào thế giới');
+const style=d.createElement('style');style.id='hd-v09-style';style.textContent='#hd-v09{overflow-wrap:anywhere;min-width:0}#hd-v09 button,#hd-v09-debug button,#hd-v09 select,#hd-v09-debug select,#hd-v09-debug input{min-height:48px;max-width:100%;width:100%}#hd-v09-debug label{display:block;margin:8px 0}#hd-v09-debug input{box-sizing:border-box;background:var(--paper);color:var(--ink);font:inherit;padding:8px;border:1px solid var(--line)}.v09-item{padding:12px 0;border-bottom:1px dashed var(--line)}.v09-item small{display:block}.v09-cols{display:grid;gap:9px}.v09-col{border:1px solid #80705866;padding:9px;min-width:0}.v09-track{position:relative;height:13px;border:1px solid var(--line);margin:5px 0;background:linear-gradient(90deg,transparent 29%,#a3332766 30%,transparent 31%,transparent 59%,#a3332766 60%,transparent 61%,transparent 89%,#a3332766 90%,transparent 91%)}.v09-track i{display:block;height:100%;background:#a3332755}.v09-meta{font-size:.78rem;font-variant-numeric:tabular-nums}#hd-v09-msg{border-left:3px solid var(--red);padding:8px;white-space:pre-wrap}#hd-v09-debug pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow:auto}@media(min-width:650px){.v09-cols{grid-template-columns:1fr 1fr}}@media(prefers-reduced-motion:reduce){#hd-v09 *,#hd-v09-debug *{animation:none!important;transition:none!important}}';d.head.append(style);
+const panel=d.createElement('article');panel.id='hd-v09';panel.className='card';panel.innerHTML='<h3>Đan Dược</h3><p class="v09-meta">D theo loại: 30 suy yếu / 60 thương tạng / 90 nguy kịch / 100 tử vong. Chỉ dùng ngoài trận. Có Hoàn Sinh dùng được trong túi sẽ tự cứu về D60.</p><p id="hd-v09-status"></p><label>Cột Thanh Độc tác động<select id="hd-v09-target"></select></label><div id="hd-v09-inventory"></div><p id="hd-v09-msg" role="status" aria-live="polite"></p><details><summary>Cột độc, kháng dược và thời gian hồi</summary><div id="hd-v09-columns" class="v09-cols"></div></details><div id="hd-v09-effects"></div><p class="v09-meta">Trúc Cơ dùng tự động 1 đan khi đủ điều kiện. Ba đại cảnh sau chưa có engine/độ khó gốc, không đặt số giả; đan được đăng ký chờ cầu nối. Trưởng Sinh không thuộc gameplay.</p>';
+$('hd-tu-luyen').after(panel);
+for(const r of V.registry.filter(x=>!x.chiRegistry))$('hd-v09-target').append(new Option(r.ten,r.id));
+const debug=d.createElement('fieldset');debug.id='hd-v09-debug';debug.innerHTML='<legend>Gỡ lỗi Đan Dược V0.9</legend><label>Loại đan<select id="hd-v09-type"></select></label><label>Phẩm chất<select id="hd-v09-quality"></select></label><label>Số viên<input id="hd-v09-count" type="number" min="1" max="100000" step="1" value="1"></label><button type="button" id="hd-v09-grant">Cấp đan vào túi</button><button type="button" id="hd-v09-tests">Kiểm thử V09 và 415 hồi quy</button><pre id="hd-v09-tests-out" role="status"></pre>';
+$('hd-debug').append(debug);for(const r of V.registry.filter(x=>!x.chiRegistry))$('hd-v09-type').append(new Option(r.ten,r.id));V.pham.forEach((p,i)=>$('hd-v09-quality').append(new Option(p.ten,i)));
+function quality(){const co=V.registry.find(r=>r.id===$('hd-v09-type').value).coPham;$('hd-v09-quality').disabled=!co;if(!co)$('hd-v09-quality').value='0';}
+$('hd-v09-type').onchange=quality;quality();
+const num=n=>String(n/10).replace('.',','),gia=n=>n===null?'Không định giá':n<100?n+' hạ':Math.floor(n/100)+' trung'+(n%100?' '+n%100+' hạ':'');
+function render(){const s=w.dan.xem(),now=w.core.xem().phut,dead=w.core.xem().daChet,tran=w.chiSo.xem().chienDau;
+ $('hd-v09-status').textContent=(dead?'Đạo tiêu - không thể dùng hoặc lưu':tran?'Đang trong trận - khóa dùng đan':'Ngoài trận')+' · Di chứng: -'+num(s.diChung)+' điểm B · TN bổ sung '+w.dan.thanNiem()+'/'+w.chiSo.xem().thanNiem;
+ const inv=$('hd-v09-inventory');inv.replaceChildren();const carrying=Object.entries(s.tui).filter(([,n])=>n>0);if(!carrying.length)inv.textContent='Túi đan trống. Chỉ cấp qua mục gỡ lỗi.';
+ for(const [ma,n]of carrying){const [id,q]=ma.split(':'),b=V.bienThe(id,+q),row=d.createElement('div');row.className='v09-item';const name=d.createElement('b');name.textContent=b.ten+' · '+b.tenPham+' · '+n+' viên';const info=d.createElement('small');info.textContent='Bậc '+(b.bac===null?'đơn phẩm':b.bac)+' · Độc '+num(b.doc10)+' · Giá tham chiếu '+gia(b.giaHa);const use=d.createElement('button');use.type='button';const con=Math.max(0,(s.hoi[id]||0)-now);use.textContent=b.loai==='dotPha'?'Tự dùng ở lần thử đột phá':con?'Hồi còn '+con+' phút':'Dùng '+b.ten;use.disabled=dead||tran||con>0||b.loai==='dotPha';use.onclick=()=>{try{const r=w.dan.dung(id,+q,$('hd-v09-target').value);$('hd-v09-msg').textContent=r.hopLe?'Đã dùng '+b.ten+' · '+b.tenPham:r.lyDo;window.HD_V02.luu();render();}catch(e){$('hd-v09-msg').textContent=e.message;}};row.append(name,info,use);inv.append(row);}
+ const cols=$('hd-v09-columns');cols.replaceChildren();for(const r of V.registry.filter(x=>!x.chiRegistry)){const v=s.cot[r.id],el=d.createElement('div');el.className='v09-col';const label=d.createElement('b');label.textContent=r.ten;const bar=d.createElement('div');bar.className='v09-track';bar.setAttribute('role','meter');bar.setAttribute('aria-label','Độc '+r.ten);bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax','100');bar.setAttribute('aria-valuenow',v/10);const fill=d.createElement('i');fill.style.width=v/10+'%';bar.append(fill);const text=d.createElement('small');text.className='v09-meta';const n=s.khang[r.id];text.textContent='D '+num(v)+'/100 · '+w.dan.mucDoc(v)+' · Kháng '+n+' (100/'+(100+2*n)+') · Hồi '+Math.max(0,(s.hoi[r.id]||0)-now)+' phút';el.append(label,bar,text);cols.append(el);}
+ $('hd-v09-effects').textContent=s.hieuUng.length?'Hiệu ứng: '+s.hieuUng.map(f=>V.registry.find(r=>r.id===f.id).ten+' còn '+Math.max(0,f.den-now)+' phút').join('; '):'Không có hiệu ứng đang chạy.';
+}
+$('hd-v09-grant').onclick=()=>{try{if(w.core.xem().daChet)throw Error('Đã đạo tiêu');w.dan.cap($('hd-v09-type').value,+$('hd-v09-quality').value,+$('hd-v09-count').value);window.HD_V02.luu();$('hd-v09-msg').textContent='Đã cấp đan qua gỡ lỗi.';render();}catch(e){$('hd-v09-msg').textContent=e.message;}};
+$('hd-v09-tests').onclick=async()=>{const out=$('hd-v09-tests-out');out.textContent='Đang kiểm thử...';const lines=[];for(const n of ['02','03','04','05','06','07','071','072','08','081','082','09']){try{const r=await window['HD_V'+n].kiemThu({inBang:false});lines.push('V'+n+': '+r.dat+' PASS / '+r.truot+' FAIL',...r.danhSach.filter(t=>t.ketQua==='FAIL').map(t=>t.ten+': '+t.loi));}catch(e){lines.push('V'+n+': '+e.message);}}out.textContent=lines.join('\n');};
+w.core.nghe('capNhat',render);w.core.nghe('danV09ThayDoi',render);w.core.nghe('chet',render);render();V.giaoDien=Object.freeze({render});
+})();
+
+</script>
 </body>
 </html>
 
@@ -1990,4 +2236,8 @@ LỊCH SỬ THAY ĐỔI V0.8.1
 
 <!-- LỊCH SỬ THAY ĐỔI V0.8.2
 24/10/2026 - Nút Xem thử các cảnh ở cuối khối thao tác Tu Luyện, không cần mở gỡ lỗi. Module HD_V082 gọi public HD_V08.hienCanh cho đủ mười khóa registry, mỗi cảnh 2000ms và nghỉ 600ms, khoảng 26 giây. Nhãn Cảnh n/10 bằng tiếng Việt; cùng nút Dừng xem thử nổi trên overlay để hủy ngay. Chạm tranh vẫn chỉ tắt cảnh hiện tại, không đổi lịch cảnh sau. Giữ nguyên overlay V08 và toàn bộ engine V02-V05, RNG/seed, bus, nhịp 1150ms, hardcore, lưu/tải, năm nút disabled và kho art/. Triện LÕI V0.2 là nhãn tĩnh của lõi động cơ, không phải báo LỖI hay self-test thất bại; giữ nguyên. Cập nhật nhãn bìa/tựa/footer và kỳ vọng nhãn test, thêm HD_V082.kiemThu với fixture đồng hồ riêng. Chỉ index.html trên v05-thu.
+-->
+
+<!-- LỊCH SỬ THAY ĐỔI V0.9
+24/10/2026 - HD_V09 độc lập: 30 bản gốc, 102 mã; phẩm per-100, độc/kháng/hồi theo loại, chênh bậc, di chứng/cứu độc, hiệu ứng phút và lưu chung. Chỉ cấp túi qua gỡ lỗi; không cửa hàng/luyện đan. Tu Luyện thêm khối Đan Dược. Facade chỉ sử dụng public constructor/xuat/bus, không đổi engine hay RNG. Kim Đan/Nguyên Anh/Hóa Thần chưa có engine/độ khó gốc nên chỉ adapter, chưa có gameplay đột phá đại cảnh đó. TN bổ sung V09 không sửa mô hình dung lượng/chú ý của V04. Chỉ index.html trên v05-thu; không sửa main/tài liệu/art. Bản ứng viên chưa commit khi chưa nghiệm thu đủ.
 -->
