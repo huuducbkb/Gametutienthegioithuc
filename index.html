@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MODULE V0.8
+MỤC LỤC MODULE V0.8.1
+VÁ GIAO DIỆN V081: nhãn bìa V0.8.1 trong V07/V071; chọn Trận Mộc trực tiếp ở giao diện V04 và bộ dựng NPC, ánh xạ hieuUng.mocTran sẵn có, không sửa engine. Module kiểm thử V081 ở script cuối. Nút tải V0.1 là khung cố ý khóa; V02/V03 đã tự tải khi mở trang, giữ nguyên hardcore.
 MÔ ĐUN CẢNH HOẠT ĐỘNG V08 (script thứ mười, CSS hd-v08-style): registry mười cảnh, onerror bóng mực V07, overlay 2000ms có reduced-motion, HD_V08.hienCanh/ganCore/kiemThu. Dùng phù là dung-phu; ve-phu chỉ luyện chế phù chưa dựng. Engine giữ nguyên trừ một dòng phát bus đầu hiệp một có Trận Mộc.
 MÔ ĐUN NĂM NÚT MỰC V072 (script thứ chín, CSS hd-v072-style): viền mực vẽ tay, vết hoe sau bốn icon, triện đỏ son phẳng chữ kem Latin có dấu hai dòng; public HD_V072.apply/kiemThu. Không đổi public API/event bus, nhịp hay hành vi.
 MÔ ĐUN VÁ TRÌNH BÀY V071 (script thứ tám, CSS hd-v071-style): bìa sách JPEG qua HD_V07, viền mực hở góc không tua cuốn, năm nút giấy dó giữ nguyên trạng thái tự diễn; kiểm thử HD_V071.kiemThu. Bốn script đầu giữ nguyên từng ký tự.
@@ -248,7 +249,7 @@ function renderStory(){
   $('page-story').innerHTML=pageHead('story','CỐT TRUYỆN','05 / Mười hai hồi')+'<article class="card"><p class="muted">Khung - đang xây dựng. Hồi 1 mở; hồi 2-12 khóa. Mục tiêu là mô tả khung.</p><ol class="chapters">'+HOI.map((x,i)=>'<li class="'+(x.open?'open':'locked')+'"><span class="chapter-num">'+String(i+1).padStart(2,'0')+'</span><div><span class="lock">'+(x.open?'◉ ĐANG MỞ':'▣ ĐÃ KHÓA')+'</span><h3>'+x.title+'</h3><p>'+x.goal+'</p></div></li>').join('')+'</ol></article>';
 }
 function renderSystem(){
-  $('page-system').innerHTML=pageHead('system','HỆ THỐNG','06 / Ấn ký bản thảo')+'<h3>Chọn cách mở cuốn thư</h3><p class="muted">Đổi bố cục giữ nguyên trang và lựa chọn thể chất. Bố cục được nhớ trên trình duyệt này.</p><div class="layouts">'+LAYOUTS.map(x=>'<button type="button" class="layout-choice" data-layout-choice="'+x.id+'" aria-pressed="false"><span class="preview '+x.preview+'" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span><strong>'+x.id+' · '+x.name+'</strong><small>'+x.desc+'</small></span></button>').join('')+'</div><p class="notice">AI sẽ tích hợp ở mốc sau - hiện chưa có</p><article class="card"><h3>Lưu / tải · khung</h3><p>Chưa có save nhân vật; hiện chỉ lưu lựa chọn bố cục bằng localStorage.</p><button type="button" disabled>Lưu hành trình</button> <button type="button" disabled>Tải hành trình</button></article><article class="card"><h3>Lộ trình phát triển</h3><ol class="roadmap"><li><b>M1 · Lõi số liệu</b> — chờ mô phỏng & cân bằng.</li><li><b>M2 · Giao diện</b> — V0.1, ba bố cục bản khung.</li><li><b>M3 · Lớp AI + JSON hợp đồng</b> — chưa tích hợp.</li><li><b>M4 · Nội dung 12 hồi</b> — đang có sơ đồ.</li><li><b>Test iPhone</b> — khung ưu tiên 414 × 896.</li></ol><small>23 hệ thống sẽ bổ sung dần vào các mốc này.</small></article>';
+  $('page-system').innerHTML=pageHead('system','HỆ THỐNG','06 / Ấn ký bản thảo')+'<h3>Chọn cách mở cuốn thư</h3><p class="muted">Đổi bố cục giữ nguyên trang và lựa chọn thể chất. Bố cục được nhớ trên trình duyệt này.</p><div class="layouts">'+LAYOUTS.map(x=>'<button type="button" class="layout-choice" data-layout-choice="'+x.id+'" aria-pressed="false"><span class="preview '+x.preview+'" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span><strong>'+x.id+' · '+x.name+'</strong><small>'+x.desc+'</small></span></button>').join('')+'</div><p class="notice">AI sẽ tích hợp ở mốc sau - hiện chưa có</p><article class="card"><!-- V0.8.1: hai nút V0.1 dưới đây là khung chưa triển khai, cố ý disabled, không phụ thuộc có save. Lưu thật ở hd-save; V02/V03 tự tải localStorage khi khởi động và xóa save khi đạo tiêu. Giữ nguyên, không thêm đường tải có thể phục sinh nhân vật. --><h3>Lưu / tải · khung</h3><p>Chưa có save nhân vật; hiện chỉ lưu lựa chọn bố cục bằng localStorage.</p><button type="button" disabled>Lưu hành trình</button> <button type="button" disabled>Tải hành trình</button></article><article class="card"><h3>Lộ trình phát triển</h3><ol class="roadmap"><li><b>M1 · Lõi số liệu</b> — chờ mô phỏng & cân bằng.</li><li><b>M2 · Giao diện</b> — V0.1, ba bố cục bản khung.</li><li><b>M3 · Lớp AI + JSON hợp đồng</b> — chưa tích hợp.</li><li><b>M4 · Nội dung 12 hồi</b> — đang có sơ đồ.</li><li><b>Test iPhone</b> — khung ưu tiên 414 × 896.</li></ol><small>23 hệ thống sẽ bổ sung dần vào các mốc này.</small></article>';
   document.querySelectorAll('[data-layout-choice]').forEach(button=>button.addEventListener('click',()=>setLayout(Number(button.dataset.layoutChoice))));
 }
 // === NAVIGATION & LAYOUT: không render lại nội dung khi đổi chế độ ===
@@ -1246,6 +1247,10 @@ Tính năng đã qua kiểm thử - KHÔNG XÓA.
  // Bảng thông số duy nhất do giao diện V03 dựng, giữ toàn bộ mã phần tử cũ.
  const arena=tao('article',{id:'hd-v04-arena',className:'card hd-v04'});arena.innerHTML='<p class="eyebrow">Đấu trường thử nghiệm V0.4</p><h2>CHIẾN ĐẤU</h2><p>Khí huyết về không: hấp hối, không xóa hành trình. Đặt lại không hồi máu.</p><p id="hd-v04-turn" role="status">Chưa bắt đầu</p><div class="dau-si" id="hd-v04-fighters"></div><label>Thế trận<select id="hd-v04-terrain"></select></label><label>Vũ khí dùng cho đòn đánh<select id="hd-v04-weapon"></select></label><label>Phù mang theo<select id="hd-v04-phu"></select></label><div class="lenh"><button id="hd-v04-physical">Tấn công vật lý</button><button id="hd-v04-magic">Tấn công phép</button><button id="hd-v04-cast">Dùng phù</button><button id="hd-v04-flee">Bỏ chạy</button></div><p id="hd-v04-message" role="status"></p><h3>Nhật ký chiến đấu</h3><pre id="hd-v04-log" tabindex="0" aria-label="Nhật ký chiến đấu"></pre><small>Toàn bộ dữ liệu số nằm trong nhật ký CORE, moDun V04; đơn vị B chia mười khi hiển thị.</small>';el('page-training').prepend(arena);
  C.THE_TRAN.forEach(x=>el('hd-v04-terrain').append(new Option(x.ten,x.id)));
+ // V0.8.1: Trận Mộc là hiệu ứng sẵn có của người dựng, không phải địa hình mới.
+ // Chọn trực tiếp chỉ đặt cùng cờ như Mộc Trận Phù, không tiêu phù/LL hay đổi luật engine.
+ el('hd-v04-terrain').append(new Option('Trận Mộc','mocTran'));
+ function chonTranMoc(p){if(el('hd-v04-terrain').value==='mocTran')p.hieuUng.mocTran=true;return p;}
  const dbg=tao('div',{id:'hd-v04-debug',className:'hd-v04'});dbg.innerHTML='<h3>Gỡ lỗi chiến đấu V0.4</h3><p>Nhóm B nhập đơn vị hiển thị 0 đến 100, bước 0,1. Phần cộng trang bị và thế trận cũng nhập đơn vị hiển thị.</p><label>Chính xác nhân vật<input id="hd-v04-set-cx" type="number" min="0" max="100" step="0.1" value="15"></label><button id="hd-v04-save-cx">Đặt chính xác</button><label>Né tránh nhân vật<input id="hd-v04-set-ne" type="number" min="0" max="100" step="0.1" value="15"></label><button id="hd-v04-save-ne">Đặt né tránh</button><label>Công pháp nhân vật<select id="hd-v04-player-cp"></select></label><button id="hd-v04-equip">Trang bị công pháp</button><label>Vật phẩm để nhận diện<select id="hd-v04-reveal-item"></select></label><button id="hd-v04-reveal">Nhận diện bằng TN dư</button><p>Tiêu dùng 20 TN chú ý nếu còn trống ít nhất 20. Luyện hóa chưa xây.</p><p id="hd-v04-hidden-status"></p><button id="hd-v04-stop-bleed">Cầm máu nhân vật</button><button id="hd-v04-stop-npc-bleed">Cầm máu đối thủ</button><button id="hd-v04-give">Bổ sung ba phù mẫu cho nhân vật</button><details><summary>Dựng đối thủ thử nghiệm</summary><div id="hd-v04-npc-fields" class="nhom-o"></div><h3>Vũ khí đối thủ</h3><div id="hd-v04-npc-weapons"></div><h3>Phù đối thủ</h3><div id="hd-v04-npc-spells"></div></details><div class="lenh"><button id="hd-v04-start">Bắt đầu đấu trường</button><button id="hd-v04-reset">Đặt lại đấu trường</button></div><button id="hd-v04-tests">Kiểm thử cả ba phiên bản</button><pre id="hd-v04-tests-out" role="status"></pre>';el('hd-debug').append(dbg);
  const tenB=['Khí huyết','Sức mạnh','Thân pháp','Kháng ngũ cảm','Chính xác','Né tránh'];
  function field(id,label,v,min=0,max=100000,step='1'){const l=tao('label',{textContent:label}),i=tao('input',{id:'hd-v04-npc-'+id,type:'number',value:String(v),min:String(min),max:String(max),step});l.append(i);el('hd-v04-npc-fields').append(l);}
@@ -1256,18 +1261,20 @@ Tính năng đã qua kiểm thử - KHÔNG XÓA.
  for(const [k,t]of [['cong','Công'],['thu','Thủ'],['khangPhep','Kháng phép'],['chinhXac','Chính xác'],['ne','Né'],['than','Thân pháp']])field('eq-'+k,'Trang bị '+t,0,-1000,1000,'0.1');
  for(const [k,t]of [['cong','Công'],['thu','Thủ'],['chinhXac','Chính xác'],['ne','Né'],['than','Thân pháp']])field('mod-'+k,'Thế trận riêng '+t,0,-1000,1000,'0.1');
  const lab=tao('label',{textContent:'Công pháp đối thủ'});lab.append(tao('select',{id:'hd-v04-npc-cp'}));el('hd-v04-npc-fields').append(lab);
+ // V0.8.1: NPC có thể dựng Trận Mộc bằng cùng cờ hieuUng, không cộng chỉ số ẩn.
+ const mocLab=tao('label',{textContent:'Trận Mộc của đối thủ'});mocLab.prepend(tao('input',{id:'hd-v04-npc-moc-tran',type:'checkbox'}));el('hd-v04-npc-fields').append(mocLab);
  const eLab=tao('label',{textContent:'Nhóm E: tên công cụ, cách nhau bởi dấu chấm phẩy; chưa kích hoạt'});eLab.append(tao('textarea',{id:'hd-v04-npc-e'}));el('hd-v04-npc-fields').append(eLab);
  for(const p of HD_V04_DU_LIEU.congPhap){el('hd-v04-npc-cp').append(new Option(p.ten,p.id));el('hd-v04-player-cp').append(new Option(p.ten,p.id));}
  for(const v of HD_V04_DU_LIEU.vuKhi){el('hd-v04-reveal-item').append(new Option(v.ten,v.id));const l=tao('label',{textContent:v.ten+'; TN '+v.yeuCauTN});l.prepend(tao('input',{type:'checkbox',value:String(v.id),className:'hd-v04-npc-vk'}));el('hd-v04-npc-weapons').append(l);}
  for(const p of HD_V04_DU_LIEU.phuLuc){const l=tao('label',{textContent:p.ten});l.prepend(tao('input',{type:'checkbox',value:String(p.id),className:'hd-v04-npc-phu'}));el('hd-v04-npc-spells').append(l);}
  function so(id){const n=Number(el(id).value);if(el(id).value==='')throw Error('Cần nhập đủ các ô số');return w.core.nguyen(n);}
  function bSo(id){const v=el(id).value,m=/^(-?)(\d+)(?:[.,](\d))?$/.exec(v);if(!m)throw Error('Cần số bước 0,1');return (m[1]?-1:1)*(Number(m[2])*10+Number(m[3]||0));}
- function npc(){const get=k=>so('hd-v04-npc-'+k),mods=prefix=>Object.fromEntries([...el('hd-v04-npc-fields').querySelectorAll('input[id*="-'+prefix+'-"]')].map(x=>[x.id.split('-').at(-1),bSo(x.id)]));return HD_taoDauSiV04(w.core,{ten:el('hd-v04-npc-name').value,nhomB:tenB.map((_,i)=>bSo('hd-v04-npc-b'+i)),canhGioi:get('realm'),tang:get('level'),thanNiem:get('tn'),tnDangChiem:get('occupied'),linhLuc:get('ll'),linhLucToiDa:get('llmax'),SL:[get('sl-n'),get('sl-d')],nguyenTo:Object.fromEntries(HD_V03_CB.NGUYEN_TO.map((he,i)=>[he,get('e'+i)])),congPhap:so('hd-v04-npc-cp'),vuKhi:[...document.querySelectorAll('.hd-v04-npc-vk:checked')].map(x=>Number(x.value)),phuLuc:[...document.querySelectorAll('.hd-v04-npc-phu:checked')].map(x=>Number(x.value)),trangBi:mods('eq'),theTran:mods('mod'),nhomE:el('hd-v04-npc-e').value.split(';').map(x=>x.trim()).filter(Boolean)});}
+ function npc(){const get=k=>so('hd-v04-npc-'+k),mods=prefix=>Object.fromEntries([...el('hd-v04-npc-fields').querySelectorAll('input[id*="-'+prefix+'-"]')].map(x=>[x.id.split('-').at(-1),bSo(x.id)]));return HD_taoDauSiV04(w.core,{ten:el('hd-v04-npc-name').value,nhomB:tenB.map((_,i)=>bSo('hd-v04-npc-b'+i)),canhGioi:get('realm'),tang:get('level'),thanNiem:get('tn'),tnDangChiem:get('occupied'),linhLuc:get('ll'),linhLucToiDa:get('llmax'),SL:[get('sl-n'),get('sl-d')],nguyenTo:Object.fromEntries(HD_V03_CB.NGUYEN_TO.map((he,i)=>[he,get('e'+i)])),congPhap:so('hd-v04-npc-cp'),vuKhi:[...document.querySelectorAll('.hd-v04-npc-vk:checked')].map(x=>Number(x.value)),phuLuc:[...document.querySelectorAll('.hd-v04-npc-phu:checked')].map(x=>Number(x.value)),trangBi:mods('eq'),theTran:mods('mod'),hieuUng:{mocTran:el('hd-v04-npc-moc-tran').checked},nhomE:el('hd-v04-npc-e').value.split(';').map(x=>x.trim()).filter(Boolean)});}
  function dongBo(f){dangDongBo=true;try{a.datB(0,f.nhomB[0]);a.datLL(f.linhLuc);a.cauHinhChienDau({phuLuc:f.phuLuc,thuongV04:f.hieuUng});window.HD_V03.luu();}finally{dangDongBo=false;}}
  function tuDong(){let n=0;while(tran?.xem().dang&&tran.xem().luot===1&&n++<50){const z=tran.xem().dauSi[1],loai=HD_v04Tra('congPhap',z.congPhap).he==='Khong'?'vatLy':'phep';try{tran.hanhDong(1,loai);}catch(e){tran.hanhDong(1,'boChay');}}}
  function lenh(fn){try{fn();el('hd-v04-message').textContent='';}catch(e){el('hd-v04-message').textContent=e.message;}hien();}
  function khoaSua(){if(tran?.xem().dang)throw Error('Dừng trận trước khi đổi gói đấu sĩ');}
- el('hd-v04-start').onclick=()=>lenh(()=>{khoaSua();const p=HD_tuNhanVatV04(w),n=npc();if(p.nhomB[0]===0||n.nhomB[0]===0)throw Error('Đấu sĩ hấp hối không thể bắt đầu');w.tuLuyen.dung('Bắt đầu đấu trường');a.chienDau(true);tran=HD_taoChienDauV04(w.core,p,n,el('hd-v04-terrain').value,{dongBo,ketThuc:()=>{a.chienDau(false);window.HD_V03.luu();},loAn:(ben,id)=>{if(ben===0)a.nhanDien(id,true);}});tran.batDau();tuDong();});
+ el('hd-v04-start').onclick=()=>lenh(()=>{khoaSua();const p=chonTranMoc(HD_tuNhanVatV04(w)),n=npc();if(p.nhomB[0]===0||n.nhomB[0]===0)throw Error('Đấu sĩ hấp hối không thể bắt đầu');w.tuLuyen.dung('Bắt đầu đấu trường');a.chienDau(true);tran=HD_taoChienDauV04(w.core,p,n,el('hd-v04-terrain').value==='mocTran'?'trong':el('hd-v04-terrain').value,{dongBo,ketThuc:()=>{a.chienDau(false);window.HD_V03.luu();},loAn:(ben,id)=>{if(ben===0)a.nhanDien(id,true);}});tran.batDau();tuDong();});
  el('hd-v04-reset').onclick=()=>lenh(()=>{tran?.dung();tran=null;a.chienDau(false);window.HD_V03.luu();});
  for(const [id,type]of [['physical','vatLy'],['magic','phep'],['cast','phu'],['flee','boChay']])el('hd-v04-'+id).onclick=()=>lenh(()=>{if(!tran)throw Error('Chưa bắt đầu');tran.capNhatNhanVat(HD_tuNhanVatV04(w));const item=type==='phu'?Number(el('hd-v04-phu').value):Number(el('hd-v04-weapon').value)||null;tran.hanhDong(0,type,item);tuDong();});
  el('hd-v04-save-cx').onclick=()=>lenh(()=>{khoaSua();a.datB(4,bSo('hd-v04-set-cx'));window.HD_V03.luu();});el('hd-v04-save-ne').onclick=()=>lenh(()=>{khoaSua();a.datB(5,bSo('hd-v04-set-ne'));window.HD_V03.luu();});
@@ -1293,7 +1300,7 @@ Tính năng đã qua kiểm thử - KHÔNG XÓA.
  el('hd-v04-log').textContent=(z?.nhatKy||[]).slice(-60).map(x=>'Hiệp '+x.hiep+': '+(labels[x.loai]||x.loai)+(x.roll!==undefined?' d100='+x.roll+', chính xác='+fmt(x.chinhXac)+', né='+fmt(x.ne)+', ngưỡng='+x.nguong+', '+(x.trung?'trúng':'né'):'')+(x.hang?' công='+fmt(x.cong)+', thủ='+fmt(x.phongThu)+', chênh='+fmt(x.chenh)+', '+x.hang.ten+', chí mạng d100='+x.rollChi+'/'+x.nguongChi+', sát thương='+fmt(x.satThuong):'')+(x.lyDo?' '+x.lyDo:'')+(x.moTa?' '+x.moTa:'')+(x.haoLL!==undefined?' LL trừ '+x.haoLL:'')+(x.thucTe!==undefined?' '+fmt(x.thucTe):'')).join('\n');
  }
  w.core.nghe('chiSoThayDoi',()=>{if(!hien.dang){hien.dang=true;try{hien();}finally{hien.dang=false;}}});w.core.nghe('capNhat',hien);
- window.HD_V04=Object.freeze({kiemThu:HD_kiemThuV04,taoDauSi:HD_taoDauSiV04,taoChienDau:HD_taoChienDauV04,tuNhanVat:HD_tuNhanVatV04,tong:HD_tongV04,tra:HD_v04Tra,canBang:C,theGioi:w,debug:{npc,tran:()=>tran,nhanDien:id=>a.nhanDien(id),luyenHoa:()=>({hopLe:false,lyDo:'Luyện hóa chưa xây'})}});hien();
+ window.HD_V04=Object.freeze({kiemThu:HD_kiemThuV04,taoDauSi:HD_taoDauSiV04,taoChienDau:HD_taoChienDauV04,tuNhanVat:HD_tuNhanVatV04,tong:HD_tongV04,tra:HD_v04Tra,canBang:C,theGioi:w,debug:{npc,chonTranMoc,tran:()=>tran,nhanDien:id=>a.nhanDien(id),luyenHoa:()=>({hopLe:false,lyDo:'Luyện hóa chưa xây'})}});hien();
 })();
 
 </script>
@@ -1342,7 +1349,8 @@ Self-test tạo CORE/thế giới/DOM cô lập, không ghi save, không đổi 
  const make=(tag,props={})=>Object.assign(document.createElement(tag),props);
  const b=n=>Number.isSafeInteger(n)?W.chiSo.hienThiB(n):'???';
  const val=n=>Number.isSafeInteger(n)?String(n):'???';
- const terrain=id=>V.canBang.THE_TRAN.find(x=>x.id===id)?.ten||'???';
+ // V0.8.1: nhãn lựa chọn trực tiếp, không thêm địa hình vào registry engine.
+ const terrain=id=>id==='mocTran'?'Trận Mộc':V.canBang.THE_TRAN.find(x=>x.id===id)?.ten||'???';
  const names={chayMau:'Chảy máu',dot:'Thiêu đốt',lanh:'Chậm thân pháp',anThan:'Ẩn thân',mocTran:'Trận Mộc',nang:'Thương nặng'};
  const labels={moHiep:'Mở hiệp',trungNe:'Trúng hoặc né',thuongThe:'Bảng thương thế',matKhiHuyet:'Mất khí huyết',thuocTinhAn:'Thuộc tính ẩn bộc phát',boChay:'Bỏ chạy',phanCongMienPhi:'Phản công miễn phí',dungPhu:'Dùng phù',camMau:'Cầm máu',ketThuc:'Kết thúc',thuongNang:'Thương nặng'};
  function portrait(enemy=false){return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 220" role="img" aria-label="'+(enemy?'Chiến binh giáp mực':'Kiếm sĩ áo vải')+'"><g fill="none" stroke="#3d382c" opacity=".18"><path d="M0 191L25 135 40 160 66 107 101 181 131 137 180 196M0 202Q80 174 180 205"/><path d="M5 210L30 191 75 203 135 183 175 210"/></g><g fill="'+(enemy?'#63573d':'#494a40')+'" stroke="#292921" stroke-width="1.7" stroke-linejoin="round"><path opacity=".18" d="M5 211L32 131 47 113 125 104 161 175 178 215Z"/><path d="M61 112Q40 120 27 164L14 195 51 188 63 153 48 215 129 216 116 151 145 181 162 168 132 122 109 111Z"/><path d="M64 112L88 141 109 111 109 166 126 211 59 212 71 160Z" fill="'+(enemy?'#756647':'#838071')+'"/><path d="M70 88L72 113 88 130 102 108 104 83Z" fill="#b7a780"/><path d="M67 62Q62 35 88 34 113 35 116 58L108 92 94 106 79 99 69 82Z" fill="#c4b18b"/><path d="M64 70Q51 50 67 36L78 27Q66 5 85 8 108 3 101 28 124 35 118 68L106 63 103 47 81 53 72 76Z" fill="#292c26"/><path d="M73 42Q42 59 52 100L40 139 65 109 70 73M68 36Q40 40 42 66 50 86 32 111 14 126 8 149L41 127 58 94" fill="#34372e"/><path d="M80 27L107 30 119 22M78 28L63 17" fill="none" stroke-width="4"/><path d="M75 71L86 68M94 68L104 70M91 74L87 86 94 86M84 93L96 93" fill="none" stroke-width="1.5"/><path d="M52 152L68 131 59 168M114 129L127 151 119 159M72 166L102 166 116 174 66 178Z" fill="#393b31"/><path d="M71 178L63 209M99 181L114 211M44 135L38 165 27 182M80 139L72 157 76 161M105 151L111 162" fill="none" stroke="#b0a184"/><path d="M39 206L25 217 69 217 71 211M106 211L105 217 145 217 128 210" fill="#2e3029"/><path d="M140 170L153 174 174 108 168 100Z" fill="#b8b6a1"/><path d="M134 169L157 180M140 178L135 194" stroke-width="5" fill="none"/>'+(enemy?'<path d="M63 50L69 17 84 34 96 15 108 35 123 22 115 57 100 50 96 70 85 68 79 49Z" fill="#70613f"/><path d="M61 117L43 127 33 147 63 149 74 135ZM112 116L130 120 146 141 118 150 105 132Z" fill="#827048"/><path d="M74 140L107 138 114 168 94 179 68 163Z" fill="#514a34"/><path d="M75 147L105 146M73 155L109 153M71 162L112 161M58 180L110 183M55 190L117 193M53 200L121 203" stroke="#baa26c" fill="none"/><circle cx="93" cy="157" r="7" fill="#a78d54"/>':'')+'</g><g fill="#413c2b" opacity=".23"><circle cx="26" cy="206" r="4"/><circle cx="151" cy="202" r="3"/><circle cx="20" cy="183" r="2"/><circle cx="170" cy="210" r="5"/><circle cx="8" cy="212" r="2"/></g></svg>';}
@@ -1398,7 +1406,8 @@ Self-test tạo CORE/thế giới/DOM cô lập, không ghi save, không đổi 
  const clock=driver(()=>fight,{manual:()=>modeBox.checked,onStep:action=>{lastAction=action;scene.light(action.kind);draw();},onError:message});
  function sync(f){busy=true;try{a.datB(0,f.nhomB[0]);a.datLL(f.linhLuc);a.cauHinhChienDau({phuLuc:f.phuLuc,thuongV04:f.hieuUng});window.HD_V03.luu();}finally{busy=false;}}
  function capture(id,fn){by(id).addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();try{fn();by('hd-v04-message').textContent='';}catch(error){message(error);}draw();},true);}
- capture('hd-v04-start',()=>{if(fight?.xem().dang)throw Error('Trận đang diễn ra');const p=V.tuNhanVat(W),n=V.debug.npc();if(!p.nhomB[0]||!n.nhomB[0])throw Error('Đấu sĩ hấp hối không thể bắt đầu');clock.stop();scene.reset();W.tuLuyen.dung('Bắt đầu đấu trường');a.chienDau(true);fight=V.taoChienDau(W.core,p,n,by('hd-v04-terrain').value,{dongBo:sync,ketThuc:()=>{a.chienDau(false);window.HD_V03.luu();},loAn:(side,id)=>{if(side===0)a.nhanDien(id,true);}});fight.batDau();clock.kick();});
+ // V0.8.1: V05 tiếp quản nút bắt đầu; dùng cùng ánh xạ cờ Trận Mộc của giao diện V04.
+ capture('hd-v04-start',()=>{if(fight?.xem().dang)throw Error('Trận đang diễn ra');const p=V.debug.chonTranMoc(V.tuNhanVat(W)),n=V.debug.npc();if(!p.nhomB[0]||!n.nhomB[0])throw Error('Đấu sĩ hấp hối không thể bắt đầu');clock.stop();scene.reset();W.tuLuyen.dung('Bắt đầu đấu trường');a.chienDau(true);fight=V.taoChienDau(W.core,p,n,by('hd-v04-terrain').value==='mocTran'?'trong':by('hd-v04-terrain').value,{dongBo:sync,ketThuc:()=>{a.chienDau(false);window.HD_V03.luu();},loAn:(side,id)=>{if(side===0)a.nhanDien(id,true);}});fight.batDau();clock.kick();});
  capture('hd-v04-reset',()=>{clock.stop();fight?.dung();fight=null;scene.reset();a.chienDau(false);window.HD_V03.luu();});
  capture('hd-v04-stop-bleed',()=>{if(fight)fight.camMau(0);else{const e=a.xem().thuongV04;e.chayMau=false;a.cauHinhChienDau({thuongV04:e});window.HD_V03.luu();}});
  capture('hd-v04-stop-npc-bleed',()=>{if(!fight)throw Error('Chưa có đối thủ');fight.camMau(1);});
@@ -1611,20 +1620,21 @@ function apply(root,fs){
 }
 const cover=d.getElementById('hd-v06-cover'),article=cover.querySelector('article');
 article.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v07-cover-art'));
-article.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.7';
+// V0.8.1: nhãn bản phát hành trên cả hai bìa và lời tựa; không đổi kho tranh.
+article.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.8.1';
 // V0.7.1: dùng cùng public kho cảnh và onerror cho trang bìa trong sách.
 const titlePage=d.querySelector('#hd-v06-book .v06-title-page');
 titlePage.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v071-book-art'));
-titlePage.querySelector('.eyebrow').textContent='Một đời cầu đạo · V0.7';
-titlePage.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.7';
-d.querySelector('.v06-preface .v06-seal').textContent='V1 · V0.7';
+titlePage.querySelector('.eyebrow').textContent='Một đời cầu đạo · V0.8.1';
+titlePage.querySelector('.v06-seal').textContent='HỒNG ĐỨC · V0.8.1';
+d.querySelector('.v06-preface .v06-seal').textContent='V1 · V0.8.1';
 const preload=d.createElement('div');preload.hidden=true;preload.id='hd-v07-kho';preload.setAttribute('aria-hidden','true');
 for(const [key,path]of Object.entries(chanDung))if(key!=='mac-dinh'){
  const img=taoAnh(path,'Kho chân dung '+key);img.dataset.v07Portrait=key;preload.append(img);
 }
 d.getElementById('hd-v06-combat').append(preload);
 apply(d.getElementById('hd-v05-scene'),window.HD_V05.debug.tran()?.xem().dauSi);
-d.querySelector('footer').textContent='V0.7 · Kho tranh art/ · Engine V0.2–V0.5 giữ nguyên';
+d.querySelector('footer').textContent='V0.8.1 · Kho tranh art/ · Engine V0.2–V0.5 giữ nguyên';
 function kiemThu({inBang=true}={}){
  const ds=[],eq=(a,b)=>{if(a!==b)throw Error(String(a)+' khác '+String(b));},ok=x=>{if(!x)throw Error('Không đạt');},test=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
  for(const [key,path]of Object.entries(chanDung))test('Lookup chân dung '+key,()=>eq(lookup(key),path));
@@ -1635,7 +1645,7 @@ function kiemThu({inBang=true}={}){
  test('onerror chuyển bóng mực đúng một lần',()=>{const img=taoAnh('art/chua-co.jpg','Thử');img.dispatchEvent(new Event('error'));eq(img.getAttribute('src'),bongMuc);eq(img.onerror,null);eq(img.dataset.v07Fallback,'true');});
  test('Tất cả tám tranh có trong DOM, dùng đường tương đối',()=>{for(const path of [...Object.values(canh),...Object.entries(chanDung).filter(([k])=>k!=='mac-dinh').map(([,p])=>p)])ok([...d.querySelectorAll('img.v07-ink')].some(n=>n.dataset.v07Path===path));});
  test('Hai thẻ và tranh giữa không còn tranh SVG cũ',()=>{const root=d.getElementById('hd-v05-scene');eq(root.querySelectorAll('img.v05-face').length,2);eq(root.querySelectorAll('img.v07-battle').length,1);eq(root.querySelectorAll('.v06-stage-person').length,2);});
- test('Bìa giữ chữ và hai nút HTML',()=>{ok(article.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));ok(article.textContent.includes('Một trang giấy dó, một đời cầu đạo.'));ok(d.getElementById('hd-v06-open'));ok(d.getElementById('hd-v06-skip'));eq(article.querySelector('.v06-seal').textContent,'HỒNG ĐỨC · V0.7');});
+ test('Bìa giữ chữ và hai nút HTML',()=>{ok(article.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));ok(article.textContent.includes('Một trang giấy dó, một đời cầu đạo.'));ok(d.getElementById('hd-v06-open'));ok(d.getElementById('hd-v06-skip'));eq(article.querySelector('.v06-seal').textContent,'HỒNG ĐỨC · V0.8.1');});
  test('Select Thế trận vẫn là select gốc',()=>eq(d.getElementById('hd-v04-terrain').tagName,'SELECT'));
  test('Không có ký tự cấm trong DOM nguồn',()=>ok(!/[\p{Script=Han}\p{Script=Cyrillic}\p{Extended_Pictographic}]/u.test(d.documentElement.outerHTML)));
  const result={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};if(inBang)console.table(ds);return result;
@@ -1667,8 +1677,8 @@ async function kiemThu({inBang=true}={}){
  await test('Hai ảnh bìa tải thật, không phải onerror fallback',async()=>{
   for(const img of d.querySelectorAll('img[data-v07-scene="bia"]')){await img.decode();ok(img.naturalWidth>0);ok(!img.dataset.v07Fallback);ok(img.getAttribute('src')==='art/bia.jpg');}
  });
- await test('Nhãn bìa V0.7, giữ chữ HTML và hai nút mở',()=>{
-  const title=d.querySelector('#hd-v06-book .v06-title-page');ok(title.querySelector('h2').textContent.includes('TU TIÊN LỘ V1'));ok(title.querySelector('.eyebrow').textContent.includes('V0.7'));ok(title.querySelector('.v06-seal').textContent.includes('V0.7'));ok(cover.querySelector('h1'));ok($('hd-v06-open'));ok($('hd-v06-skip'));
+ await test('Nhãn bìa V0.8.1, giữ chữ HTML và hai nút mở',()=>{
+  const title=d.querySelector('#hd-v06-book .v06-title-page');ok(title.querySelector('h2').textContent.includes('TU TIÊN LỘ V1'));ok(title.querySelector('.eyebrow').textContent.includes('V0.8.1'));ok(title.querySelector('.v06-seal').textContent.includes('V0.8.1'));ok(cover.querySelector('h1'));ok($('hd-v06-open'));ok($('hd-v06-skip'));
  });
  await test('Khung thẻ chỉ hai nét mực hở, không tua cuốn góc',()=>{
   const frames=d.querySelectorAll('#hd-v05-scene .v05-fighter>.v06-brush-frame');ok(frames.length===2);frames.forEach(f=>{ok(f.classList.contains('v071-ink-frame'));ok(f.querySelectorAll('path').length===2);ok(!f.querySelector('circle,polygon,[fill]:not([fill="none"])'));ok([...f.querySelectorAll('path')].every(p=>!/[zZ]/.test(p.getAttribute('d'))));});
@@ -1825,6 +1835,40 @@ async function kiemThu({inBang=true,nguon=null}={}){
 }
 })();
 </script>
+<script id="hd-v081-tests">
+(function HD_kiemThuGiaoDienV081(){
+'use strict';
+/* V0.8.1: hồi quy giao diện, fixture cô lập; không ghi localStorage hay đổi seed nhân vật thật.
+Nút Tải hành trình là khung V0.1 cố ý khóa; tải thật diễn ra tự động ở HD_giaoDien.
+Không thêm loader, không phục sinh nhân vật đạo tiêu và không thay đổi cơ chế xóa save. */
+function kiemThu({inBang=true}={}){
+ const d=document,$=id=>d.getElementById(id),V=window.HD_V04,W=window.HD_V03,ds=[];
+ const ok=x=>{if(!x)throw Error('Không đạt');},eq=(a,b)=>ok(JSON.stringify(a)===JSON.stringify(b));
+ const test=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
+ const sel=$('hd-v04-terrain'),box=$('hd-v04-npc-moc-tran'),old=sel.value,checked=box.checked;
+ const load=[...d.querySelectorAll('button')].find(b=>b.textContent==='Tải hành trình');
+ const dau=(c,patch={})=>V.taoDauSi(c,{nhomB:[1000,150,500,100,1000,0],linhLuc:200,linhLucToiDa:200,phuLuc:[1,2,3],...patch});
+ const thu=(p,n)=>{const w=W.taoTheGioi(123456),events=[];window.HD_V08.ganCore(w.core,k=>events.push(k));const t=V.taoChienDau(w.core,p(w.core),n(w.core),'trong');t.batDau();return {w,t,events};};
+ try{
+ test('Hai bìa, lời tựa và footer đều ghi V0.8.1',()=>{for(const el of [d.querySelector('#hd-v06-cover .v06-seal'),d.querySelector('.v06-title-page .eyebrow'),d.querySelector('.v06-title-page .v06-seal'),d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer')])ok(el.textContent.includes('V0.8.1'));});
+ test('Select gốc có đúng một lựa chọn Trận Mộc',()=>{eq(sel.tagName,'SELECT');eq([...sel.options].filter(x=>x.value==='mocTran').map(x=>x.text),['Trận Mộc']);});
+ test('Chọn Trận Mộc chỉ đổi cờ, không trừ phù hay linh lực',()=>{sel.value='mocTran';const c=W.taoTheGioi(123456).core,p=dau(c),before=structuredClone(p);V.debug.chonTranMoc(p);before.hieuUng.mocTran=true;eq(p,before);});
+ test('Trận Mộc trực tiếp phát đúng một tran-ky ở hiệp một',()=>{sel.value='mocTran';const r=thu(c=>V.debug.chonTranMoc(dau(c)),c=>dau(c,{nhomB:[1000,150,150,100,150,0]}));eq(r.t.xem().hiep,1);eq(r.events,['tran-ky']);r.t.hanhDong(0,'vatLy');eq(r.events,['tran-ky']);});
+ test('Trận thường không bật cờ và không phát cảnh Trận Mộc',()=>{sel.value='trong';const r=thu(c=>V.debug.chonTranMoc(dau(c)),c=>dau(c));eq(r.events,[]);eq(r.t.xem().dauSi[0].hieuUng.mocTran,false);});
+ test('Bộ dựng NPC có lựa chọn Trận Mộc độc lập',()=>{box.checked=true;ok(V.debug.npc().hieuUng.mocTran);box.checked=false;eq(V.debug.npc().hieuUng.mocTran,false);});
+ test('Trận Mộc của NPC cũng phát tran-ky tại hiệp một',()=>{box.checked=true;const r=thu(c=>dau(c),()=>V.debug.npc());eq(r.events,['tran-ky']);eq(r.t.xem().hiep,1);});
+ test('Dùng Mộc Trận Phù vẫn phát dung-phu, không ve-phu',()=>{const r=thu(c=>dau(c),c=>dau(c,{nhomB:[1000,150,150,100,150,0]}));r.t.hanhDong(0,'phu',3);eq(r.events,['dung-phu']);ok(r.t.xem().dauSi[0].hieuUng.mocTran);eq(r.t.xem().dauSi[0].linhLuc,160);});
+ test('Bắt đầu tĩnh tọa vẫn phát toa-thien',()=>{const w=W.taoTheGioi(123456),events=[],h=window.HD_V08.ganCore(w.core,k=>events.push(k));try{ok(w.tuLuyen.batDau());eq(events,['toa-thien']);}finally{h();}});
+ test('Tải hành trình là nút khung disabled, không có loader thủ công',()=>{ok(load);ok(load.disabled);eq(load.onclick,null);ok(load.closest('article').querySelector('h3').textContent.includes('khung'));});
+ test('Save hợp lệ nạp được bằng loader V03 hiện hữu, giữ seed và dữ liệu',()=>{const w=W.taoTheGioi(123456);w.core.tien(7);const saved=JSON.parse(JSON.stringify(w.xuat())),restored=W.taoTheGioi(undefined,saved);eq(restored.xuat(),saved);});
+ test('Save sai phiên bản bị từ chối, không mở loader khung',()=>{let rejected=false;try{W.taoTheGioi(undefined,{phienBan:-1});}catch(e){rejected=true;}ok(rejected);ok(load.disabled);});
+ test('Đạo tiêu vẫn chặn hành động và giữ nguyên trạng thái chết khi nạp',()=>{const w=W.taoTheGioi(123456);w.core.chet('Kiểm thử cô lập');eq(w.tuLuyen.batDau(),false);const r=W.taoTheGioi(undefined,w.xuat());ok(r.core.xem().daChet);eq(r.tuLuyen.batDau(),false);});
+ }finally{sel.value=old;box.checked=checked;}
+ const r={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};if(inBang)console.table(ds);return r;
+}
+window.HD_V081=Object.freeze({kiemThu});
+})();
+</script>
 </body>
 </html>
 
@@ -1877,4 +1921,9 @@ LỊCH SỬ THAY ĐỔI V0.7.2 23/10/2026 - Chỉ module trình bày năm nút: 
 
 <!--
 LỊCH SỬ THAY ĐỔI V0.8 23/10/2026 - Thêm mười JPEG cảnh vào art/; module HD_V08 độc lập, registry mở rộng giữ nguyên V07, onerror bóng mực qua taoAnh V07. Overlay giấy dó toàn màn 2000ms, mực loang/phai CSS, chạm tắt, cảnh mới thay và reset timer, reduced-motion vẫn đủ thời lượng. Bus công khai nối bắt đầu phiên tu luyện, roll CORE đại cảnh, dùng phù tay/tự diễn và đầu chiến đấu có Trận Mộc; chỉ thêm một dòng V04 phát bus đầu hiepMoi, không đổi luật. Dùng phù hiện dung-phu; ve-phu là luyện chế phù chỉ registry/API. Các hệ chưa dựng có ví dụ gọi một dòng, không tạo gameplay mới. Giữ nhịp 1150ms, cùng seed cùng kết quả, save/load, bốn API tay, năm nút disabled CÁCH 1 >=48px, bìa/góc mực/kho ảnh và nền tran-dau V07. Bổ sung kiểm thử V08; chỉ art/ và index.html trên v05-thu. Chưa nghiệm thu iPhone thật.
+-->
+
+<!--
+LỊCH SỬ THAY ĐỔI V0.8.1
+24/10/2026 - Sửa nhãn hai bìa, lời tựa và footer thành V0.8.1; cập nhật kỳ vọng nhãn V07/V071, giữ nguyên số ca. Giao diện V04 thêm lựa chọn Trận Mộc cho người chơi và checkbox riêng của bộ dựng NPC, ánh xạ đúng hieuUng.mocTran hiện hữu; địa hình nền vẫn đất trống, không sửa engine, RNG, seed, nhịp 1150ms hay bus. Hiệp một phát tran-ky qua dòng V08 đã có; phù vẫn dung-phu và tĩnh tọa vẫn toa-thien. Điều tra nút Tải hành trình: nút khung V0.1 cố ý disabled vô điều kiện; loader V02/V03 đã tự tải khi mở trang. Không sửa nút, không thêm loader thủ công; giữ cơ chế đạo tiêu xóa save và chặn lưu. Thêm 13 kiểm thử HD_V081.kiemThu, chỉ dùng fixture cô lập. Chỉ index.html trên v05-thu, không sửa main, tài liệu hay art/.
 -->
