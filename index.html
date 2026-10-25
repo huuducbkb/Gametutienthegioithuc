@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MODULE V0.10
+MỤC LỤC MODULE V1.0
+HD_V1: tài nguyên Thần Niệm độc lập trước V09; một hook đầu đòn V04, lưu thanNiemV1, hồi theo phút/bus; HUD và kiểm thử V1.0 cuối body. API nhóm lò 10 TN chưa mở gameplay theo chủ kho chốt. Phí bốn mẫu 2/3/4/5; đan không hồi TN khi module bật.
 V10: bảng đại cảnh trước HD_CAN_BANG; vá đúng sinh lý/tu luyện V02, hệ số tẩy tủy V03 và adapter đột phá V09; UI/kiểm thử độc lập cuối body. Tuổi, thọ và kết truyện dùng save V2 tương thích.
 MÔ ĐUN VÁ HD_V094 (CSS sau hd-v093-style): trạng thái chọn/điều khiển đỏ son #963c2c, chữ kem #fff0d3; nút khóa giữ disabled, nền giấy trầm và chữ nâu đậm, không dùng opacity để làm nhạt chữ. Hover/active/focus và phản hồi chạm iOS rõ ràng. Chỉ trình bày, không đổi engine, điều kiện, listener, save hay chất liệu.
 MÔ ĐUN VÁ HD_V093: nền đỏ riêng nút tỉnh tọa disabled; bỏ khung giả bìa cắt tranh; V082 hiển thị thật mỗi cảnh 4000ms và nghỉ 600ms, tùy chọn thời lượng V08 chỉ dùng khi xem thử. Giữ engine V02-V05, Đan Dược, save và ba chất liệu AI. Kiểm thử V093 cuối file.
@@ -454,7 +455,7 @@ Mọi hằng cân bằng nằm tại đây; dữ liệu khung V0.1 không đư�
 Tính năng đã qua kiểm thử - KHÔNG XÓA.
 */
 /*
-MÔ ĐUN ĐỘC LẬP HD_V10 - thiết kế V0.10 duyệt ngày 25/10/2026.
+MÔ ĐUN ĐỘC LẬP HD_V10 - thiết kế V1.0 duyệt ngày 25/10/2026.
 Mỗi cảnh LK, Trúc Cơ, Kim Đan, Nguyên Anh, Hóa Thần có 13 tầng. Ngưỡng tầng
 là 1500 x k bình phương, không tăng theo cảnh; mỗi chu thiên vẫn tối đa một tầng.
 Cảnh nền nhân ba: 100, 300, 900, 2700, 8100. Tầng 13 nạp bể cảnh kế
@@ -1137,9 +1138,11 @@ function HD_taoDauSiV04(core,p={}){
  if(new Set(q.vuKhi).size!==q.vuKhi.length)throw Error('Vũ khí trùng');
  const chiem=q.vuKhi.reduce((n,id)=>n+HD_v04Tra('vuKhi',id).yeuCauTN,0);q.tnDangChiem=Math.max(q.tnDangChiem,chiem);
  if(q.thanNiem<q.tnDangChiem||q.tnDangChiem<0||q.linhLuc<0||q.linhLuc>q.linhLucToiDa||q.tranKhiHuyet<q.nhomB[0]||q.SL.length!==2||!q.SL.every(Number.isSafeInteger)||q.SL[0]<0||q.SL[1]<=0)throw Error('Gói đấu sĩ ngoài phạm vi');
+ if(typeof HD_V1!=='undefined'&&HD_V1.bat){q.tnHienTai=kep(p.tnHienTai??q.thanNiem,0,q.thanNiem);} // V1.0: snapshot tài nguyên, không thay trần/dung lượng V04.
  for(const v of Object.values(q.trangBi))ng(v);for(const k of ['cong','thu','chinhXac','ne','than'])ng(q.theTran[k]);return q;
 }
 function HD_tuNhanVatV04(w){const s=w.chiSo.xem(),t=w.tuLuyen.xem();return HD_taoDauSiV04(w.core,{ten:'Nhân vật',nhomB:s.nhomBDayDu,tranKhiHuyet:s.tranKhiHuyet,
+ ...(typeof HD_V1!=='undefined'&&HD_V1.bat?{tnHienTai:HD_V1.theo(w.core)?.xem().hienTai??s.thanNiem}:{}),
  canhGioi:t.canhGioi,tang:t.tang,thanNiem:s.thanNiem,tnDangChiem:s.tnDangChiem+s.tnNhanDien,linhLuc:s.linhLuc,linhLucToiDa:s.linhLucToiDa,SL:w.sinhLy.xem().SL,
  nguyenTo:s.nguyenTo,congPhap:s.congPhap,vuKhi:s.dieuKhien,phuLuc:s.phuLuc,daHien:s.daHien,hieuUng:s.thuongV04});}
 function HD_tongV04(core,f,canh='trong',vuKhi=null){
@@ -1176,6 +1179,7 @@ function HD_taoChienDauV04(core,trai,phai,canh='trong',moc={}){
  function nguongTrung(cx,ne){return core.chan(C.TRUNG_GOC-Math.floor((cx-ne)/10),C.NGUONG_TRUNG_MIN,C.NGUONG_TRUNG_MAX);}
  function hangThuong(chenh){return sao(C.BANG_THUONG.find(r=>r.tran===null||chenh<=r.tran));}
  function tanCong(i,loai='vatLy',id=ds[i].vuKhi[0]??null,congThem=0,phu=null){
+ const tnV1=typeof HD_V1==='undefined'?null:HD_V1.don({core,f:ds[i],ben:i,loai,id,phu,canh,danh:(k,v)=>tanCong(i,k,v,congThem,phu)});if(tnV1?.xuLy)return tnV1.ketQua; // V1.0: hook duy nhất hỏi phí, tắt module đi nguyên đường cũ.
  const f=ds[i],o=ds[1-i],v=id===null?null:HD_v04Tra('vuKhi',id),p=HD_v04Tra('congPhap',f.congPhap);
  if(v&&!f.vuKhi.includes(id))throw Error('Chưa điều khiển vũ khí');if(!['vatLy','phep'].includes(loai))throw Error('Đòn không hợp lệ');
  if(!phu&&((loai==='vatLy')!==(p.he==='Khong')))throw Error('Loại tấn công phải đúng hệ công pháp đang trang bị');
@@ -1315,6 +1319,94 @@ Công khai HD_V02 gồm theGioi, kiemThu, luu, debug.tichCoc, debug.thuDotPha.
 Tính năng đã qua kiểm thử - KHÔNG XÓA.
 */
 
+
+/*
+MÔ ĐUN THẦN NIỆM V1.0 - độc lập, duyệt 25/10/2026.
+MỤC LỤC MODULE: 1 Hằng số; 2 Trạng thái/lưu; 3 Phút/hành động;
+4 Phí chiến đấu/hook V04; 5 API nhóm lò dự phòng; 6 HUD theo Linh Lực.
+Trần chỉ đọc chiSo.thanNiem của engine V03/V10, không sửa công thức.
+Tài nguyên hiện tại tách khỏi dung lượng/chú ý V04. Không thêm RNG.
+Tắt module trả nguyên đường V04/V09 cũ. Bộ kiểm thử cũ chạy với module tắt.
+*/
+const HD_V1=(()=>{
+ 'use strict';
+ const C=Object.freeze({
+  // Phí theo ID bốn mẫu Phàm/LK/Trúc Cơ/Kim Đan, chủ kho chốt 2/3/4/5.
+  PHI:Object.freeze({1:2,2:3,3:4,4:5}),
+  VUOT:2, // Vượt cấp nhân đôi phí cơ bản, không đổi x2 LL hay 70% uy lực V04.
+  LUYEN_DAN:10, // Chỉ API nhóm lò, chưa dựng gameplay/công thức hướng D.
+  TINH_TOA:2, // TN mỗi phút game tĩnh tọa, không theo nhịp mili giây.
+  NGU_TU:25,NGU_MAU:100, // Hồi một lần khi thức, nhân trước chia sau bỏ dư.
+  IDLE_PHUT:15,IDLE_TN:1, // Mười lăm phút nghỉ tích lũy ngoài trận.
+  CANH_BAO:20 // Dưới, không bao gồm đúng 20% trần.
+ });
+ const theoCore=new WeakMap(),dangHook=new WeakSet();let bat=true;
+ function tao(w,luu){
+  const core=w.core,tran=()=>w.chiSo.xem().thanNiem;
+  let s={hienTai:tran(),idlePhut:0,nguPhut:0};
+  if(luu){for(const k of Object.keys(s)){if(!Number.isSafeInteger(luu[k])||luu[k]<0)throw Error('Lưu Thần Niệm không hợp lệ');}if(luu.idlePhut>=C.IDLE_PHUT)throw Error('Lưu phút idle không hợp lệ');s={...s,...structuredClone(luu)};}
+  let hanhDong=w.sinhLy.xem().hanhDong,phutDaXuLy=core.xem().phut,hanhDongPhut=null,phutVuaThuc=-1;
+  function xem(){s.hienTai=Math.min(s.hienTai,tran());return {...structuredClone(s),tran:tran()};}
+  function ghi(lyDo,truoc,sau,them={}){core.ghi('Thần Niệm',{moDun:'V1.0',lyDo,truoc,sau,thucTe:sau-truoc,tran:tran(),...them});core.phat('thanNiemV1ThayDoi');}
+  function tru(n,lyDo){core.nguyen(n);if(n<0)throw Error('Phí TN âm');const x=xem();if(core.xem().daChet||x.hienTai<n)return false;s.hienTai-=n;if(n)ghi(lyDo,x.hienTai,s.hienTai);return true;}
+  function hoi(n,lyDo){core.nguyen(n);if(n<0)throw Error('Hồi TN âm');if(!bat||core.xem().daChet||w.chiSo.xem().chienDau)return 0;const x=xem();s.hienTai=Math.min(x.tran,core.nguyen(x.hienTai+n));const thuc=s.hienTai-x.hienTai;if(thuc)ghi(lyDo,x.hienTai,s.hienTai);return thuc;}
+  // Chỉ cầu nối đấu sĩ được đồng bộ số đã trừ; không phải API hồi phục/đan.
+  function nhanChienDau(n){core.nguyen(n);if(n<0)throw Error('TN chiến đấu âm');s.hienTai=Math.min(n,tran());}
+  function kiemTraLuyenDan(){const x=xem(),du=x.hienTai>=C.LUYEN_DAN;return {hopLe:!core.xem().daChet&&(!bat||du),phi:bat?C.LUYEN_DAN:0,lyDo:core.xem().daChet?'Đã đạo tiêu':bat&&!du?'Thiếu Thần Niệm: cần 10 TN, hiện có '+x.hienTai+' TN':''};}
+  function nhomLo(){const r=kiemTraLuyenDan();if(!r.hopLe)return r;return {...r,hopLe:!bat||tru(C.LUYEN_DAN,'Nhóm lò luyện đan')};}
+  function ganNutLuyenDan(nut,lyDo){const cap=()=>{const r=kiemTraLuyenDan();nut.disabled=!r.hopLe;lyDo.textContent=r.lyDo;};const huy=[core.nghe('thanNiemV1ThayDoi',cap),core.nghe('capNhat',cap)];cap();return ()=>huy.forEach(fn=>fn());}
+  core.nghe('hanhDong',({ten})=>{
+   // Hoàn tất chu thiên đổi về nghỉ ngay trong phút cuối: phút đó vẫn tĩnh tọa.
+   if(core.xem().phut>phutDaXuLy&&hanhDongPhut===null)hanhDongPhut=hanhDong;
+   if(hanhDong==='ngu'&&ten!=='ngu'){if(s.nguPhut>0)hoi(core.tinh(tran(),[[C.NGU_TU,C.NGU_MAU]]),'Thức dậy');s.nguPhut=0;}
+   hanhDong=ten;
+  });
+  // Sinh lý V02 tự thức sau bốn canh qua bus thucDay, không phát hanhDong.
+  core.nghe('thucDay',()=>{if(hanhDong==='ngu'){hoi(core.tinh(tran(),[[C.NGU_TU,C.NGU_MAU]]),'Thức dậy');s.nguPhut=0;hanhDong='nghi';hanhDongPhut=null;phutVuaThuc=core.xem().phut;}});
+  core.nghe('phut',()=>{
+   const hd=hanhDongPhut??hanhDong;hanhDongPhut=null;phutDaXuLy=core.xem().phut;
+   if(!bat||core.xem().daChet||w.chiSo.xem().chienDau||phutDaXuLy===phutVuaThuc)return;
+   if(hd==='tinhToa'){s.idlePhut=0;hoi(C.TINH_TOA,'Tĩnh tọa');}
+   else if(hd==='ngu'){s.idlePhut=0;s.nguPhut=core.nguyen(s.nguPhut+1);}
+   else if(hd==='nghi'){if(++s.idlePhut===C.IDLE_PHUT){s.idlePhut=0;hoi(C.IDLE_TN,'Nghỉ idle');}}
+   else s.idlePhut=0;
+  });
+  const api=Object.freeze({xem,xuat:()=>structuredClone(s),tru,hoi,nhanChienDau,kiemTraLuyenDan,nhomLo,ganNutLuyenDan});theoCore.set(core,api);return api;
+ }
+ function phi(f,id,loai,xuyen){const v=HD_v04Tra('vuKhi',id);if(!v)return 0;const coBan=C.PHI[id],vuot=HD_V03_CB.CANH_GIOI_VU_KHI.indexOf(v.canhGioi)-1>f.canhGioi;return coBan*(vuot?C.VUOT:1)+(loai==='vatLy'&&xuyen>0?coBan:0);}
+ function don({core,f,ben,loai,id,phu,canh,danh}){
+  if(!bat||dangHook.has(f)||phu||id===null)return null;
+  const v=HD_v04Tra('vuKhi',id);if(!v)return null;
+  if(!f.vuKhi.includes(id))throw Error('Chưa điều khiển vũ khí');
+  const p=HD_v04Tra('congPhap',f.congPhap);
+  if(!['vatLy','phep'].includes(loai))throw Error('Đòn không hợp lệ');
+  if((loai==='vatLy')!==(p.he==='Khong'))throw Error('Loại tấn công phải đúng hệ công pháp đang trang bị');
+  const n=phi(f,id,loai,HD_tongV04(core,f,canh,id).xuyenGiap),a=theoCore.get(core),truoc=f.tnHienTai??f.thanNiem;
+  // Mọi đòn kể cả phản công và NPC đi qua một hook; không gọi kiemDinh ở đây.
+  if(truoc<n){
+   core.ghi('Thần niệm cạn, chuyển đòn tay',{moDun:'V1.0',ben,yeuCau:n,truoc,sau:truoc,thucTe:0});
+   const vk=f.vuKhi,cp=f.congPhap;dangHook.add(f);f.vuKhi=[];f.congPhap=1;
+   try{return {xuLy:true,ketQua:danh('vatLy',null)};}finally{f.vuKhi=vk;f.congPhap=cp;dangHook.delete(f);}
+  }
+  const vuot=HD_V03_CB.CANH_GIOI_VU_KHI.indexOf(v.canhGioi)-1>f.canhGioi;
+  if(f.linhLuc<core.tinh(v.haoLLMoiLan,[vuot?HD_V03_CB.HAO_VUOT_CAP:[1,1]]))throw Error('Không đủ linh lực');
+  f.tnHienTai=truoc-n;if(ben===0)a?.nhanChienDau(f.tnHienTai);
+  core.ghi('Thần Niệm',{moDun:'V1.0',lyDo:'Đòn vũ khí',ben,vuKhi:id,phiCoBan:C.PHI[id],vuot,xuyen:loai==='vatLy'&&HD_tongV04(core,f,canh,id).xuyenGiap>0,truoc,sau:f.tnHienTai,thucTe:-n,tran:f.thanNiem});core.phat('thanNiemV1ThayDoi');
+  dangHook.add(f);try{return {xuLy:true,ketQua:danh(loai,id)};}finally{dangHook.delete(f);}
+ }
+ // Chỉ dịch số CORE đã ghi; không roll, không suy đoán hay tự tạo số liệu.
+ function dich(x){if(x.ten==='Thần niệm cạn, chuyển đòn tay')return x.ten+'; TN '+x.truoc+' -> '+x.sau+' (0 TN)';return (x.lyDo||'Thần Niệm')+': '+(x.thucTe>0?'+':'')+x.thucTe+' TN; '+x.truoc+' -> '+x.sau+'/'+x.tran;}
+ function hudNhatKy(root,logs){let n=root.querySelector('[data-v1-tn-log]');if(!bat){n?.remove();return;}if(!n){n=document.createElement('div');n.dataset.v1TnLog='';n.setAttribute('role','log');n.setAttribute('aria-live','polite');root.querySelector('.v05-prose')?.after(n);}n.replaceChildren(...logs.filter(x=>x.moDun==='V1.0').slice(-3).map(x=>{const p=document.createElement('p');p.textContent=(x.ben===undefined?'':x.ben===0?'Nhân vật: ':'Đối thủ: ')+dich(x);return p;}));}
+ function hudDauSi(card,f,known){
+  let row=card.querySelector('[data-v1-tn-row]'),bar=card.querySelector('[data-v1-tn-bar]');
+  if(!bat){row?.remove();bar?.remove();return;}
+  if(!row){const ll=card.querySelector('[data-num=ll]');if(!ll)return;row=ll.parentElement.cloneNode(true);row.dataset.v1TnRow='';row.querySelector('span').textContent='Thần Niệm';row.querySelector('output').dataset.num='tn';bar=ll.parentElement.nextElementSibling.cloneNode(true);bar.dataset.v1TnBar='';ll.parentElement.nextElementSibling.after(row,bar);}
+  const cur=f?.tnHienTai??f?.thanNiem,max=f?.thanNiem,out=row.querySelector('output');out.textContent=known?cur+'/'+max:'???/???';out.style.color=known&&cur*100<max*C.CANH_BAO?'#a12d2d':'';bar.querySelector('i').style.width=known?HD_phanTramThanhV04(cur,max)+'%':'0%';
+ }
+ return Object.freeze({C,tao,phi,don,dich,hudNhatKy,hudDauSi,theo:core=>theoCore.get(core),get bat(){return bat;},datBat:x=>{bat=!!x;window.dispatchEvent(new Event('thanNiemV1BatTat'));}});
+})();
+window.HD_V1=HD_V1;
+
 /*
 MÔ ĐUN ĐAN DƯỢC V09 - thiết kế 24/10/2026.
 Hai trục độc lập: bậc 0..3 và phẩm 0..3. Chỉ lưu 30 bản gốc; 102 mã sinh theo phẩm.
@@ -1399,7 +1491,7 @@ function scope(core){const handlers=new Map(),offs=new Map(),hook={};return {hoo
 function taoTheGioi(hat=20261022,save){
  if(save&&save.phienBan!==2)throw Error('Phiên lưu không tương thích');
  const core=HD_taoCore(hat,save?.core),thoiGian=HD_taoThoiGian(core),s=nhapDan(save?.danV09),ss=scope(core),ts=scope(core),cs=scope(core);
- let sl,tl,a,w,gan=false,syncing=false;const now=()=>core.xem().phut;
+ let sl,tl,a,w,thanNiem,gan=false,syncing=false;const now=()=>core.xem().phut;
  const makeSL=x=>{ss.clear();sl=HD_taoSinhLy(ss.api,x);};makeSL(save?.sinhLy);
  const sinhLy={};for(const k of Object.keys(sl))sinhLy[k]=(...args)=>sl[k](...args);
  const makeTL=x=>{ts.clear();tl=HD_taoTuLuyen(ts.api,thoiGian,sinhLy,x);};makeTL(save?.tuLuyen);
@@ -1408,7 +1500,7 @@ function taoTheGioi(hat=20261022,save){
  const alive=()=>!core.xem().daChet, trongTran=()=>a.xem().chienDau;
  function slPatch(fn){const x=sl.xuat();fn(x);makeSL(x);}
  function tlPatch(fn){const x=tl.xuat();fn(x);makeTL(x);}
- function xuat(){return {phienBan:2,core:core.xuat(),sinhLy:sl.xuat(),tuLuyen:tl.xuat(),phienBanMoRong:3,chiSoV03:a.xuat(),danV09:copy(s)};}
+ function xuat(){return {phienBan:2,core:core.xuat(),sinhLy:sl.xuat(),tuLuyen:tl.xuat(),phienBanMoRong:3,chiSoV03:a.xuat(),danV09:copy(s),thanNiemV1:thanNiem.xuat()};}
  function dang(loai){return s.hieuUng.filter(f=>f.loai===loai&&f.den>now());}
  function manh(loai){return Math.max(0,...dang(loai).map(f=>f.muc));}
  function mucDoc(d){return d>=1000?'Tử vong':d>=900?'Nguy kịch':d>=600?'Thương tạng':d>=300?'Suy yếu':'Ổn định';}
@@ -1427,7 +1519,8 @@ function taoTheGioi(hat=20261022,save){
  function thuong(b,het=false){slPatch(x=>{x.thuong=x.thuong.map(t=>({...t,den:Math.max(now(),t.den-lieu(b,het?Math.max(0,t.den-now()):b.muc))})).filter(t=>t.den>now());x.thuongDoi=Math.max(0,x.thuongDoi-lieu(b,het?x.thuongDoi:b.muc));x.lietDen=Math.max(now(),x.lietDen-lieu(b,het?Math.max(0,x.lietDen-now()):b.muc));x.matKhiHuyet=Math.max(0,x.matKhiHuyet-lieu(b,het?x.matKhiHuyet:tinh(b.muc,500,N)));});}
  function hoiLL(b){const x=a.xem();a.datLL(Math.min(x.linhLucToiDa,x.linhLuc+tinh(x.linhLucToiDa,b.muc*b.heTu,100*b.heMau)));}
  function hoiKH(b){const x=a.xem();a.datB(0,Math.min(x.tranKhiHuyet,x.khiHuyet+tinh(x.tranKhiHuyet,b.muc*b.heTu,100*b.heMau)));}
- function hoiTN(b){const x=a.xem();s.tnThieu=Math.max(0,s.tnThieu-tinh(x.thanNiem,b.muc*b.heTu,100*b.heMau));}
+ function hoiTN(b){if(HD_V1.bat)return; // V1.0: chỉ chặn hồi TN, các hiệu ứng khác của đan giữ nguyên.
+ const x=a.xem();s.tnThieu=Math.max(0,s.tnThieu-tinh(x.thanNiem,b.muc*b.heTu,100*b.heMau));}
  function ketQua(b,chonCot){
   if(['ll','hoiTat'].includes(b.loai))hoiLL(b);
   if(['kh','hoiTat'].includes(b.loai))hoiKH(b);
@@ -1481,7 +1574,8 @@ function taoTheGioi(hat=20261022,save){
  });
  core.nghe('chiSoThayDoi',()=>{if(!syncing)sync();});
  const dan=Object.freeze({cap,dung,du,tinhDung,mucDoc,thuDaiCanh,xem:()=>copy(s),xuat:()=>copy(s),thanNiem:()=>Math.max(0,a.xem().thanNiem-s.tnThieu),debug:Object.freeze({datCot:(id,d)=>{if(!tra(id))throw Error('Sai cột');s.cot[id]=kep(ng(d),0,1000);sync();},datKhang:(id,n)=>{s.khang[id]=Math.max(0,ng(n));s.nghi[id]=now()+REST;},datThieuTN:n=>{s.tnThieu=Math.max(0,ng(n));},dongBo:sync})});
- w=Object.freeze({core,thoiGian,sinhLy:Object.freeze(sinhLy),tuLuyen:Object.freeze(tuLuyen),chiSo:Object.freeze(chiSo),dan,xuat});sync();return w;
+ thanNiem=HD_V1.tao({core,chiSo,sinhLy,tuLuyen},save?.thanNiemV1);
+ w=Object.freeze({core,thoiGian,sinhLy:Object.freeze(sinhLy),tuLuyen:Object.freeze(tuLuyen),chiSo:Object.freeze(chiSo),dan,thanNiem,xuat});sync();return w;
 }
 return {pham,registry,bienThe,tatCa,taoTheGioi,tinh};
 })();
@@ -1518,7 +1612,7 @@ return {pham,registry,bienThe,tatCa,taoTheGioi,tinh};
   el('hd-bat-dau').disabled=c.daChet||!!t.phien||c.phut<b.lietDen;el('hd-dung').disabled=c.daChet||!t.phien;el('hd-ngu').disabled=c.daChet||b.hanhDong==='ngu';
   el('hd-dot-pha').disabled=c.daChet||t.canhGioi!==0||t.tang!==13||t.expDotPha<C.EXP_TRUC_CO*C.EXP||!t.duPhien||!w.sinhLy.onDinh();
   el('hd-condition').textContent='Trúc Cơ: LK13 + 300.000 EXP riêng + một phiên đủ + không thương chưa hồi. P hiện tại '+f('so',w.tuLuyen.xacSuat())+'%. Cột D (giả lập): '+t.doc.map(x=>f('tc',x)).join(' / ')+'.';
-  const lines=w.core.nhatKy().slice(-40).reverse().map(r=>w.thoiGian.chuoi(r.phut)+' | '+r.ten+('roll'in r&&Number.isSafeInteger(r.hatTruoc)&&Number.isSafeInteger(r.hatSau)&&Number.isSafeInteger(r.P)?' | hạt '+f('so',r.hatTruoc)+' > '+f('so',r.hatSau)+' | d100='+f('so',r.roll)+' | P='+f('so',r.P)+' | '+(r.thanhCong?'Thành công':'Thất bại'):'roll'in r?' | d100='+f('so',r.roll)+(r.nguong!==undefined?' | ngưỡng='+f('so',r.nguong):''):'EXP'in r?' | EXP '+f('exp',r.EXP):r.loai?' | '+r.loai:''));el('hd-log').textContent=lines.join('\n');
+  const lines=w.core.nhatKy().slice(-40).reverse().map(r=>w.thoiGian.chuoi(r.phut)+' | '+r.ten+(r.moDun==='V1.0'?' | '+HD_V1.dich(r):'roll'in r&&Number.isSafeInteger(r.hatTruoc)&&Number.isSafeInteger(r.hatSau)&&Number.isSafeInteger(r.P)?' | hạt '+f('so',r.hatTruoc)+' > '+f('so',r.hatSau)+' | d100='+f('so',r.roll)+' | P='+f('so',r.P)+' | '+(r.thanhCong?'Thành công':'Thất bại'):'roll'in r?' | d100='+f('so',r.roll)+(r.nguong!==undefined?' | ngưỡng='+f('so',r.nguong):''):'EXP'in r?' | EXP '+f('exp',r.EXP):r.loai?' | '+r.loai:''));el('hd-log').textContent=lines.join('\n');
   if(canhBao)el('hd-result').textContent=canhBao;
  }
  // Mọi điều khiển gọi API công khai; không đọc biến nội bộ mô đun.
@@ -1644,7 +1738,7 @@ Tính năng đã qua kiểm thử - KHÔNG XÓA.
  function so(id){const n=Number(el(id).value);if(el(id).value==='')throw Error('Cần nhập đủ các ô số');return w.core.nguyen(n);}
  function bSo(id){const v=el(id).value,m=/^(-?)(\d+)(?:[.,](\d))?$/.exec(v);if(!m)throw Error('Cần số bước 0,1');return (m[1]?-1:1)*(Number(m[2])*10+Number(m[3]||0));}
  function npc(){const get=k=>so('hd-v04-npc-'+k),mods=prefix=>Object.fromEntries([...el('hd-v04-npc-fields').querySelectorAll('input[id*="-'+prefix+'-"]')].map(x=>[x.id.split('-').at(-1),bSo(x.id)]));return HD_taoDauSiV04(w.core,{ten:el('hd-v04-npc-name').value,nhomB:tenB.map((_,i)=>bSo('hd-v04-npc-b'+i)),canhGioi:get('realm'),tang:get('level'),thanNiem:get('tn'),tnDangChiem:get('occupied'),linhLuc:get('ll'),linhLucToiDa:get('llmax'),SL:[get('sl-n'),get('sl-d')],nguyenTo:Object.fromEntries(HD_V03_CB.NGUYEN_TO.map((he,i)=>[he,get('e'+i)])),congPhap:so('hd-v04-npc-cp'),vuKhi:[...document.querySelectorAll('.hd-v04-npc-vk:checked')].map(x=>Number(x.value)),phuLuc:[...document.querySelectorAll('.hd-v04-npc-phu:checked')].map(x=>Number(x.value)),trangBi:mods('eq'),theTran:mods('mod'),hieuUng:{mocTran:el('hd-v04-npc-moc-tran').checked},nhomE:el('hd-v04-npc-e').value.split(';').map(x=>x.trim()).filter(Boolean)});}
- function dongBo(f){dangDongBo=true;try{a.datB(0,f.nhomB[0]);a.datLL(f.linhLuc);a.cauHinhChienDau({phuLuc:f.phuLuc,thuongV04:f.hieuUng});window.HD_V03.luu();}finally{dangDongBo=false;}}
+ function dongBo(f){dangDongBo=true;try{if(HD_V1.bat&&f.tnHienTai!==undefined)w.thanNiem.nhanChienDau(f.tnHienTai);a.datB(0,f.nhomB[0]);a.datLL(f.linhLuc);a.cauHinhChienDau({phuLuc:f.phuLuc,thuongV04:f.hieuUng});window.HD_V03.luu();}finally{dangDongBo=false;}}
  function tuDong(){let n=0;while(tran?.xem().dang&&tran.xem().luot===1&&n++<50){const z=tran.xem().dauSi[1],loai=HD_v04Tra('congPhap',z.congPhap).he==='Khong'?'vatLy':'phep';try{tran.hanhDong(1,loai);}catch(e){tran.hanhDong(1,'boChay');}}}
  function lenh(fn){try{fn();el('hd-v04-message').textContent='';}catch(e){el('hd-v04-message').textContent=e.message;}hien();}
  function khoaSua(){if(tran?.xem().dang)throw Error('Dừng trận trước khi đổi gói đấu sĩ');}
@@ -1743,9 +1837,10 @@ Self-test tạo CORE/thế giới/DOM cô lập, không ghi save, không đổi 
     c.querySelectorAll('.v05-meter i').forEach((bar,j)=>{const cur=known?(j?f.linhLuc:f.nhomB[0]):0,max=known?(j?f.linhLucToiDa:f.tranKhiHuyet):0;bar.style.width=HD_phanTramThanhV04(cur,max)+'%';});
     const chips=c.querySelector('.v05-chips'),active=known?Object.entries(names).filter(([k])=>!!f.hieuUng[k]):[];for(const node of [...chips.children])if(!active.some(([k])=>node.dataset.effect===k))node.remove();for(const [k,label]of active){let chip=chips.querySelector('[data-effect='+k+']');if(!chip){chip=make('span',{className:'v05-chip'});chip.dataset.effect=k;chips.append(chip);}chip.textContent=label+(typeof f.hieuUng[k]==='number'?' '+f.hieuUng[k]+' hiệp':'');}
     c.querySelector('.v05-meta').textContent=known?'Vũ khí: '+(f.vuKhi.map(id=>V.tra('vuKhi',id)?.ten).join(', ')||'Tay không'):'Sức mạnh chưa rõ';
+    HD_V1.hudDauSi(c,f,known); // Cùng cấu trúc/màu thanh LL, không thanh đôi.
    });root.querySelector('.v05-round b').textContent=val(z?.hiep||0);root.querySelector('.v05-terrain').textContent='Thế trận · '+terrain(z?.theTran||canh);
    const prose=root.querySelector('.v05-prose');prose.replaceChildren(...logs.map(x=>eventText(x,fs)).filter(Boolean).slice(-3).map(text=>make('p',{textContent:text})));if(!logs.length)prose.append(make('p',{textContent:'Chưa có diễn biến. Bắt đầu đấu trường trong mục gỡ lỗi.'}));
-   damageEvents(logs).filter(x=>x.index>=seen).forEach(x=>{const c=cards[x.ben];if(!c)return;const e=make('span',{className:'v05-float'+(x.critical?' crit':''),textContent:x.text});e.dataset.coreDamage=String(x.amount);if(x.critical)e.append(make('small',{textContent:'Chí mạng'}));c.append(e);e.addEventListener('animationend',()=>e.remove(),{once:true});setTimeout(()=>e.remove(),1500);c.classList.remove('v05-hit');void c.offsetWidth;c.classList.add('v05-hit');});seen=logs.length;
+   damageEvents(logs).filter(x=>x.index>=seen).forEach(x=>{const c=cards[x.ben];if(!c)return;const e=make('span',{className:'v05-float'+(x.critical?' crit':''),textContent:x.text});e.dataset.coreDamage=String(x.amount);if(x.critical)e.append(make('small',{textContent:'Chí mạng'}));c.append(e);e.addEventListener('animationend',()=>e.remove(),{once:true});setTimeout(()=>e.remove(),1500);c.classList.remove('v05-hit');void c.offsetWidth;c.classList.add('v05-hit');});seen=logs.length;HD_V1.hudNhatKy(root,W.core.nhatKy());
   }
   return {render,root,reset:()=>{seen=0;lastLog=null;root.querySelectorAll('.v05-float').forEach(x=>x.remove());},mode:manual=>root.querySelector('.v05-caption').textContent=manual?'Điều khiển tay · Bốn hành động V0.4':'Xem tự động · Năm nút chỉ để trưng',light:kind=>{const bs=root.querySelectorAll('.v05-actions button');bs.forEach(x=>x.classList.remove('v05-lit'));bs[kind==='phu'?2:kind==='boChay'?3:0].classList.add('v05-lit');bs[4].classList.add('v05-lit');}};
  }
@@ -1778,7 +1873,7 @@ Self-test tạo CORE/thế giới/DOM cô lập, không ghi save, không đổi 
  }
  function queue(){if(queued)return;queued=true;queueMicrotask(()=>{queued=false;draw();});}
  const clock=driver(()=>fight,{manual:()=>modeBox.checked,onStep:action=>{lastAction=action;scene.light(action.kind);draw();},onError:message});
- function sync(f){busy=true;try{a.datB(0,f.nhomB[0]);a.datLL(f.linhLuc);a.cauHinhChienDau({phuLuc:f.phuLuc,thuongV04:f.hieuUng});window.HD_V03.luu();}finally{busy=false;}}
+ function sync(f){busy=true;try{if(HD_V1.bat&&f.tnHienTai!==undefined)W.thanNiem.nhanChienDau(f.tnHienTai);a.datB(0,f.nhomB[0]);a.datLL(f.linhLuc);a.cauHinhChienDau({phuLuc:f.phuLuc,thuongV04:f.hieuUng});window.HD_V03.luu();}finally{busy=false;}}
  function capture(id,fn){by(id).addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();try{fn();by('hd-v04-message').textContent='';}catch(error){message(error);}draw();},true);}
  // V0.8.1: V05 tiếp quản nút bắt đầu; dùng cùng ánh xạ cờ Trận Mộc của giao diện V04.
  capture('hd-v04-start',()=>{if(fight?.xem().dang)throw Error('Trận đang diễn ra');const p=V.debug.chonTranMoc(V.tuNhanVat(W)),n=V.debug.npc();if(!p.nhomB[0]||!n.nhomB[0])throw Error('Đấu sĩ hấp hối không thể bắt đầu');clock.stop();scene.reset();W.tuLuyen.dung('Bắt đầu đấu trường');a.chienDau(true);fight=V.taoChienDau(W.core,p,n,by('hd-v04-terrain').value==='mocTran'?'trong':by('hd-v04-terrain').value,{dongBo:sync,ketThuc:()=>{a.chienDau(false);window.HD_V03.luu();},loAn:(side,id)=>{if(side===0)a.nhanDien(id,true);}});fight.batDau();clock.kick();});
@@ -1995,20 +2090,20 @@ function apply(root,fs){
 const cover=d.getElementById('hd-v06-cover'),article=cover.querySelector('article');
 article.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v07-cover-art'));
 // V0.9.4: nhãn bản phát hành trên cả hai bìa và lời tựa; không đổi kho tranh.
-article.querySelector('.v06-seal').textContent='V1 - V0.10';
+article.querySelector('.v06-seal').textContent='V1 - V1.0';
 // V0.7.1: dùng cùng public kho cảnh và onerror cho trang bìa trong sách.
 const titlePage=d.querySelector('#hd-v06-book .v06-title-page');
 titlePage.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v071-book-art'));
-titlePage.querySelector('.eyebrow').textContent='Một đời cầu đạo · V0.10';
-titlePage.querySelector('.v06-seal').textContent='V1 - V0.10';
-d.querySelector('.v06-preface .v06-seal').textContent='V1 - V0.10';
+titlePage.querySelector('.eyebrow').textContent='Một đời cầu đạo · V1.0';
+titlePage.querySelector('.v06-seal').textContent='V1 - V1.0';
+d.querySelector('.v06-preface .v06-seal').textContent='V1 - V1.0';
 const preload=d.createElement('div');preload.hidden=true;preload.id='hd-v07-kho';preload.setAttribute('aria-hidden','true');
 for(const [key,path]of Object.entries(chanDung))if(key!=='mac-dinh'){
  const img=taoAnh(path,'Kho chân dung '+key);img.dataset.v07Portrait=key;preload.append(img);
 }
 d.getElementById('hd-v06-combat').append(preload);
 apply(d.getElementById('hd-v05-scene'),window.HD_V05.debug.tran()?.xem().dauSi);
-d.querySelector('footer').textContent='V1 - V0.10 · Kho tranh art/ · Engine V0.2–V0.5 giữ nguyên';
+d.querySelector('footer').textContent='V1 - V1.0 · Kho tranh art/ · Engine V0.2–V0.5 giữ nguyên';
 function kiemThu({inBang=true}={}){
  const ds=[],eq=(a,b)=>{if(a!==b)throw Error(String(a)+' khác '+String(b));},ok=x=>{if(!x)throw Error('Không đạt');},test=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
  for(const [key,path]of Object.entries(chanDung))test('Lookup chân dung '+key,()=>eq(lookup(key),path));
@@ -2019,7 +2114,7 @@ function kiemThu({inBang=true}={}){
  test('onerror chuyển bóng mực đúng một lần',()=>{const img=taoAnh('art/chua-co.jpg','Thử');img.dispatchEvent(new Event('error'));eq(img.getAttribute('src'),bongMuc);eq(img.onerror,null);eq(img.dataset.v07Fallback,'true');});
  test('Tất cả tám tranh có trong DOM, dùng đường tương đối',()=>{for(const path of [...Object.values(canh),...Object.entries(chanDung).filter(([k])=>k!=='mac-dinh').map(([,p])=>p)])ok([...d.querySelectorAll('img.v07-ink')].some(n=>n.dataset.v07Path===path));});
  test('Hai thẻ và tranh giữa không còn tranh SVG cũ',()=>{const root=d.getElementById('hd-v05-scene');eq(root.querySelectorAll('img.v05-face').length,2);eq(root.querySelectorAll('img.v07-battle').length,1);eq(root.querySelectorAll('.v06-stage-person').length,2);});
- test('Bìa giữ chữ và hai nút HTML',()=>{ok(article.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));ok(article.textContent.includes('Một trang giấy dó, một đời cầu đạo.'));ok(d.getElementById('hd-v06-open'));ok(d.getElementById('hd-v06-skip'));eq(article.querySelector('.v06-seal').textContent,'V1 - V0.10');});
+ test('Bìa giữ chữ và hai nút HTML',()=>{ok(article.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));ok(article.textContent.includes('Một trang giấy dó, một đời cầu đạo.'));ok(d.getElementById('hd-v06-open'));ok(d.getElementById('hd-v06-skip'));eq(article.querySelector('.v06-seal').textContent,'V1 - V1.0');});
  test('Select Thế trận vẫn là select gốc',()=>eq(d.getElementById('hd-v04-terrain').tagName,'SELECT'));
  test('Không có ký tự cấm trong DOM nguồn',()=>ok(!/[\p{Script=Han}\p{Script=Cyrillic}\p{Extended_Pictographic}]/u.test(d.documentElement.outerHTML)));
  const result={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};if(inBang)console.table(ds);return result;
@@ -2051,8 +2146,8 @@ async function kiemThu({inBang=true}={}){
  await test('Hai ảnh bìa tải thật, không phải onerror fallback',async()=>{
   for(const img of d.querySelectorAll('img[data-v07-scene="bia"]')){await img.decode();ok(img.naturalWidth>0);ok(!img.dataset.v07Fallback);ok(img.getAttribute('src')==='art/bia.jpg');}
  });
- await test('Nhãn bìa V0.10, giữ chữ HTML và hai nút mở',()=>{
-  const title=d.querySelector('#hd-v06-book .v06-title-page');ok(title.querySelector('h2').textContent.includes('TU TIÊN LỘ V1'));ok(title.querySelector('.eyebrow').textContent.includes('V0.10'));ok(title.querySelector('.v06-seal').textContent.includes('V0.10'));ok(cover.querySelector('h1'));ok($('hd-v06-open'));ok($('hd-v06-skip'));
+ await test('Nhãn bìa V1.0, giữ chữ HTML và hai nút mở',()=>{
+  const title=d.querySelector('#hd-v06-book .v06-title-page');ok(title.querySelector('h2').textContent.includes('TU TIÊN LỘ V1'));ok(title.querySelector('.eyebrow').textContent.includes('V1.0'));ok(title.querySelector('.v06-seal').textContent.includes('V1.0'));ok(cover.querySelector('h1'));ok($('hd-v06-open'));ok($('hd-v06-skip'));
  });
  await test('Khung thẻ chỉ hai nét mực hở, không tua cuốn góc',()=>{
   const frames=d.querySelectorAll('#hd-v05-scene .v05-fighter>.v06-brush-frame');ok(frames.length===2);frames.forEach(f=>{ok(f.classList.contains('v071-ink-frame'));ok(f.querySelectorAll('path').length===2);ok(!f.querySelector('circle,polygon,[fill]:not([fill="none"])'));ok([...f.querySelectorAll('path')].every(p=>!/[zZ]/.test(p.getAttribute('d'))));});
@@ -2225,7 +2320,7 @@ function kiemThu({inBang=true}={}){
  const dau=(c,patch={})=>V.taoDauSi(c,{nhomB:[1000,150,500,100,1000,0],linhLuc:200,linhLucToiDa:200,phuLuc:[1,2,3],...patch});
  const thu=(p,n)=>{const w=W.taoTheGioi(123456),events=[];window.HD_V08.ganCore(w.core,k=>events.push(k));const t=V.taoChienDau(w.core,p(w.core),n(w.core),'trong');t.batDau();return {w,t,events};};
  try{
- test('Hai bìa, lời tựa và footer đều ghi V0.10',()=>{for(const el of [d.querySelector('#hd-v06-cover .v06-seal'),d.querySelector('.v06-title-page .eyebrow'),d.querySelector('.v06-title-page .v06-seal'),d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer')])ok(el.textContent.includes('V0.10'));});
+ test('Hai bìa, lời tựa và footer đều ghi V1.0',()=>{for(const el of [d.querySelector('#hd-v06-cover .v06-seal'),d.querySelector('.v06-title-page .eyebrow'),d.querySelector('.v06-title-page .v06-seal'),d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer')])ok(el.textContent.includes('V1.0'));});
  test('Select gốc có đúng một lựa chọn Trận Mộc',()=>{eq(sel.tagName,'SELECT');eq([...sel.options].filter(x=>x.value==='mocTran').map(x=>x.text),['Trận Mộc']);});
  test('Chọn Trận Mộc chỉ đổi cờ, không trừ phù hay linh lực',()=>{sel.value='mocTran';const c=W.taoTheGioi(123456).core,p=dau(c),before=structuredClone(p);V.debug.chonTranMoc(p);before.hieuUng.mocTran=true;eq(p,before);});
  test('Trận Mộc trực tiếp phát đúng một tran-ky ở hiệp một',()=>{sel.value='mocTran';const r=thu(c=>V.debug.chonTranMoc(dau(c)),c=>dau(c,{nhomB:[1000,150,150,100,150,0]}));eq(r.t.xem().hiep,1);eq(r.events,['tran-ky']);r.t.hanhDong(0,'vatLy');eq(r.events,['tran-ky']);});
@@ -2371,7 +2466,7 @@ const style=d.createElement('style');style.id='hd-v09-style';style.textContent='
 const panel=d.createElement('article');panel.id='hd-v09';panel.className='card';panel.innerHTML='<h3>Đan Dược</h3><p class="v09-meta">D theo loại: 30 suy yếu / 60 thương tạng / 90 nguy kịch / 100 tử vong. Chỉ dùng ngoài trận. Có Hoàn Sinh dùng được trong túi sẽ tự cứu về D60.</p><p id="hd-v09-status"></p><label>Cột Thanh Độc tác động<select id="hd-v09-target"></select></label><div id="hd-v09-inventory"></div><p id="hd-v09-msg" role="status" aria-live="polite"></p><details><summary>Cột độc, kháng dược và thời gian hồi</summary><div id="hd-v09-columns" class="v09-cols"></div></details><div id="hd-v09-effects"></div><p class="v09-meta">Mỗi đại cảnh dùng tự động 1 đan tương ứng khi đủ điều kiện: Trúc Cơ, Ngưng Kim, Tụ Anh, Hóa Thần; giảm 10 độ khó, độc và kháng theo V09. Trưởng Sinh không thuộc gameplay.</p>';
 $('hd-tu-luyen').after(panel);
 for(const r of V.registry.filter(x=>!x.chiRegistry))$('hd-v09-target').append(new Option(r.ten,r.id));
-const debug=d.createElement('fieldset');debug.id='hd-v09-debug';debug.innerHTML='<legend>Gỡ lỗi Đan Dược V0.10</legend><label>Loại đan<select id="hd-v09-type"></select></label><label>Phẩm chất<select id="hd-v09-quality"></select></label><label>Số viên<input id="hd-v09-count" type="number" min="1" max="100000" step="1" value="1"></label><button type="button" id="hd-v09-grant">Cấp đan vào túi</button><button type="button" id="hd-v09-tests">Kiểm thử 456 hồi quy và V091</button><pre id="hd-v09-tests-out" role="status"></pre>';
+const debug=d.createElement('fieldset');debug.id='hd-v09-debug';debug.innerHTML='<legend>Gỡ lỗi Đan Dược V1.0</legend><label>Loại đan<select id="hd-v09-type"></select></label><label>Phẩm chất<select id="hd-v09-quality"></select></label><label>Số viên<input id="hd-v09-count" type="number" min="1" max="100000" step="1" value="1"></label><button type="button" id="hd-v09-grant">Cấp đan vào túi</button><button type="button" id="hd-v09-tests">Kiểm thử 456 hồi quy và V091</button><pre id="hd-v09-tests-out" role="status"></pre>';
 $('hd-debug').append(debug);for(const r of V.registry.filter(x=>!x.chiRegistry))$('hd-v09-type').append(new Option(r.ten,r.id));V.pham.forEach((p,i)=>$('hd-v09-quality').append(new Option(p.ten,i)));
 function quality(){const co=V.registry.find(r=>r.id===$('hd-v09-type').value).coPham;$('hd-v09-quality').disabled=!co;if(!co)$('hd-v09-quality').value='0';}
 $('hd-v09-type').onchange=quality;quality();
@@ -2431,7 +2526,7 @@ test('6. Bốn phẩm có badge riêng trên nút',()=>{const labels=[];for(let 
 test('6b. Đơn phẩm không có phẩm giả',()=>{const b=d.createElement('button');V.nutDan(b,HD_V09.bienThe('tich-coc'));eq(b.querySelector('.v091-badge').textContent,'Đơn phẩm');});
 test('SVG mực có path và cùng màu currentColor',()=>['clock','note','person','lotus','book','potion','sword','gear'].forEach(k=>{const s=V.icon(k);ok(s.querySelector('path').getAttribute('d'));eq(s.getAttribute('aria-hidden'),'true');eq(s.querySelector('path').getAttribute('stroke'),'currentColor');}));
 test('Icon render ở các khối chính',()=>{V.apply();ok(d.querySelectorAll('.v091-icon').length>=15);for(const sel of ['#hd-v06-cover','#hd-v06-book','#page-character','#page-training','#hd-debug'])ok(d.querySelector(sel+' .v091-icon'),sel);});
-test('Bìa, tựa, footer V0.10',()=>['#hd-v06-cover .v06-seal','.v06-title-page .eyebrow','.v06-title-page .v06-seal','.v06-preface .v06-seal','footer','#hd-v09-debug legend'].forEach(sel=>ok(d.querySelector(sel).textContent.includes('V0.10'),sel)));
+test('Bìa, tựa, footer V1.0',()=>['#hd-v06-cover .v06-seal','.v06-title-page .eyebrow','.v06-title-page .v06-seal','.v06-preface .v06-seal','footer','#hd-v09-debug legend'].forEach(sel=>ok(d.querySelector(sel).textContent.includes('V1.0'),sel)));
 test('Không tràn ngang viewport thực',()=>{ok(d.documentElement.scrollWidth<=innerWidth,'scrollWidth '+d.documentElement.scrollWidth+' / '+innerWidth);const main=d.getElementById('main');ok(main.scrollWidth<=main.clientWidth,'main tràn ngang');});
 test('Nút đang hiện có vùng chạm ít nhất 48px',()=>{for(const b of d.querySelectorAll('button')){const r=b.getBoundingClientRect();if(r.width&&r.height)ok(r.height>=48,b.textContent+' cao '+r.height);}});
 test('Glyph nut cu duoc thay bang SVG',()=>{const scan=d.createTreeWalker(d.body,NodeFilter.SHOW_TEXT);let n;while((n=scan.nextNode()))if(!n.parentElement.closest('script,style,svg,pre,textarea'))ok(!/[\u2630\u21bb\u2715]/.test(n.nodeValue));});
@@ -2466,8 +2561,8 @@ const materialStyle=d.createElement('style');materialStyle.id='hd-v092-material'
 const brushStyle=d.createElement('style');brushStyle.id='hd-v092-handpaint';brushStyle.textContent=":root{--v092-hand-frame:url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cdefs%3E%3Cfilter%20id%3D%22r%22%20x%3D%22-12%25%22%20y%3D%22-12%25%22%20width%3D%22124%25%22%20height%3D%22124%25%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%22.14%20.22%22%20numOctaves%3D%223%22%20seed%3D%2292%22%20result%3D%22n%22%2F%3E%3CfeDisplacementMap%20in%3D%22SourceGraphic%22%20in2%3D%22n%22%20scale%3D%222.7%22%2F%3E%3CfeGaussianBlur%20stdDeviation%3D%22.13%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23493520%22%20stroke-linecap%3D%22round%22%20filter%3D%22url(%23r)%22%3E%3Cpath%20opacity%3D%22.18%22%20stroke-width%3D%228%22%20d%3D%22M9%2018Q5%206%2019%207L48%208%2077%206%20104%208Q116%206%20113%2021L114%2048%20112%2078%20113%20103Q116%20115%20101%20113L75%20114%2049%20112%2019%20114Q5%20117%207%20102L6%2076%208%2046Z%22%2F%3E%3Cpath%20opacity%3D%22.78%22%20stroke-width%3D%223.6%22%20d%3D%22M8%2019Q5%206%2020%207L47%208%2078%206%20103%208Q115%206%20113%2021L114%2047%20112%2078%20113%20103Q115%20115%20101%20113L76%20114%2048%20112%2019%20114Q5%20116%207%20102L6%2076%208%2046Z%22%2F%3E%3Cpath%20opacity%3D%22.43%22%20stroke-width%3D%221.1%22%20d%3D%22M12%2022Q10%2012%2022%2012L45%2013%2074%2011%2099%2013Q110%2011%20108%2024L109%2052%20107%2081%20108%2099Q110%20109%2098%20108L70%20109%2042%20107%2023%20109Q10%20111%2012%2097L11%2070%2013%2042%22%2F%3E%3Cpath%20opacity%3D%22.38%22%20stroke-width%3D%221.4%22%20d%3D%22M9%2013L34%2010M56%209L92%2010M111%2030L110%2065M112%2088L110%20103M85%20111L57%20110M34%20112L19%20111M10%2088L9%2057%22%2F%3E%3Cpath%20stroke%3D%22%23f1dfb6%22%20opacity%3D%22.7%22%20stroke-width%3D%22.8%22%20d%3D%22M21%207L37%207M58%208L69%207M112%2039L113%2049M112%2083L112%2091M62%20113L75%20113M8%2073L7%2085%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E\");--v092-hand-rule:url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%2012%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20fill%3D%22%234d3823%22%20opacity%3D%22.72%22%20d%3D%22M0%204L25%202%2046%204%2089%201%20130%203%20178%202%20221%204%20270%202%20320%203%20368%201%20410%204%20455%202%20498%203%20546%201%20600%204%20590%207%20552%206%20509%209%20460%207%20411%2010%20370%208%20326%209%20280%207%20230%209%20182%207%20130%209%2086%207%2040%209%200%207Z%22%2F%3E%3Cpath%20stroke%3D%22%23e8d5ae%22%20opacity%3D%22.65%22%20d%3D%22M30%204L80%204M120%205L165%204M220%206L248%205M300%204L347%204M400%205L428%206M490%204L555%204%22%2F%3E%3Cpath%20stroke%3D%22%236a5033%22%20opacity%3D%22.3%22%20d%3D%22M1%2010L157%2010M264%2011L470%2010M505%2011L597%2010%22%2F%3E%3C%2Fsvg%3E\")}\n/* Viền cọ chín lát: nét dày mỏng, khuyết mực và mép xơ tĩnh; không lọc chữ, không thay DOM hay engine. */\n.v06-page,.v06-cover,.v06-dialog,.v092-route,.card,.v092-empty,.v092-oc,.drawer,.v06-live-log{border:9px solid transparent!important;border-image:var(--v092-hand-frame) 18 stretch!important;border-radius:0!important;outline:0!important;box-shadow:none!important}\n.v06-page:before,.v06-page:after,.v06-cover:before,.v06-dialog:before,.card:before,.card:after,.v092-empty:before{border:0!important;box-shadow:none!important;outline:0!important}\n.v06-page,.v092-route{background-image:var(--v092-fibre),radial-gradient(ellipse at 10% 13%,#aa7a3430,transparent 60%),radial-gradient(ellipse at 94% 88%,#79552b1b,transparent 52%),linear-gradient(96deg,#dfc99b55,#f1e2bd88 48%,#dec69744)!important}\n.card,.v092-empty{background-image:var(--v092-fibre),radial-gradient(ellipse at 4% 8%,#9e70351d,transparent 58%),linear-gradient(110deg,#f7ecd0c9,#e7d5afc9)!important}\n.v092-route>.page-head{border:0!important;position:relative;padding:24px 12px 28px!important}.v092-route>.page-head:after{content:'';position:absolute;inset:auto 0 0;height:7px;background:var(--v092-hand-rule) center/100% 100% no-repeat;pointer-events:none}\n.card>h3,.v092-registry>h3{border:0!important;background-image:var(--v092-brush);background-size:100% 100%;padding:7px 12px;color:#f8ecd0;max-width:100%;text-shadow:0 1px #251b14}\n.card>h3 .v091-icon{color:inherit}.portrait,.v092-oc,.v092-intro,.stat,th,td,.kv>div{border-bottom-style:solid;border-bottom-color:transparent;border-image:var(--v092-hand-rule) 0 0 12 0 stretch;border-bottom-width:3px}\nbutton:not(#bottom-nav button):not([data-v072]),select,.v09-pill,.v091-pill{border:5px solid transparent!important;border-image:var(--v092-hand-frame) 18 stretch!important;border-radius:0!important;box-shadow:none!important;background-image:var(--v092-fibre),linear-gradient(110deg,#f4e7c9,#ead8b2)}\nbutton:disabled{opacity:.55}button.v06-primary{background-color:#903d2b!important;background-image:var(--v092-fibre)!important;color:#fff0d3!important}\n#bottom-nav.bottom-nav{border:0!important;background-image:var(--v092-fibre),linear-gradient(100deg,#d4bc8c,#efe0b9 48%,#d8c194)!important;box-shadow:0 -3px 9px #55361920}\n#bottom-nav.bottom-nav:before{height:9px!important;top:-4px!important;background:var(--v092-hand-rule) center/100% 100% no-repeat!important;filter:none!important}\n#bottom-nav button{border:0!important;border-image:none!important;background:transparent!important}#bottom-nav button[aria-current=page]{background:radial-gradient(ellipse,#953a2624,transparent 70%)!important}\n.v092-nav-icon{filter:url(#hd-v092-rough)!important}.v092-ring{stroke-dasharray:83 2 19 1 56 3;stroke-linecap:round;opacity:.84}.v092-nav-icon path{stroke-linecap:round;stroke-linejoin:round;opacity:.9}\n.v092-verse{font-family:'Dancing Script',Georgia,serif!important;font-size:1.8rem!important;border:0!important;line-height:1.85!important;letter-spacing:.025em!important;margin:28px 0 34px!important;max-width:100%}.v092-verse p{line-height:1.85!important}.v092-preface{border-image:var(--v092-hand-frame) 18 stretch!important}.v092-preface h3{background:none!important;color:#47301d!important}.v06-seal,.seal{border-color:#963b2c!important;filter:url(#hd-v092-soft-ink)}\nprogress{filter:url(#hd-v092-soft-ink)}@media(max-width:480px){.v06-page,.v092-route{padding:16px 12px!important}.card{padding:15px 10px!important}.v092-empty{padding:25px 12px!important}.v092-verse{font-size:1.7rem!important}.v092-preface{padding:36px 18px!important}.v092-route>.page-head{min-height:150px}.v092-oc{padding:12px 6px!important}}\n";d.head.append(brushStyle);
 const inkDefs=d.createElementNS('http://www.w3.org/2000/svg','svg');inkDefs.setAttribute('width','0');inkDefs.setAttribute('height','0');inkDefs.setAttribute('aria-hidden','true');inkDefs.style.position='absolute';inkDefs.innerHTML='<defs><filter id="hd-v092-rough" x="-6%" y="-6%" width="112%" height="112%"><feTurbulence type="fractalNoise" baseFrequency=".075" numOctaves="3" seed="92" result="grain"/><feDisplacementMap in="SourceGraphic" in2="grain" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="hd-v092-soft-ink"><feTurbulence type="fractalNoise" baseFrequency=".19" numOctaves="2" seed="92" result="grain"/><feDisplacementMap in="SourceGraphic" in2="grain" scale=".9" xChannelSelector="R" yChannelSelector="G"/></filter></defs>';d.body.append(inkDefs);
 function icon(k){const marks={character:'<circle cx="32" cy="18" r="5" fill="currentColor"/><path d="M28 26Q32 23 36 26L39 37 49 43 43 47 32 40 21 47 15 43 25 37Z" fill="currentColor"/><path d="M26 28L20 38 14 40M38 28L44 38 50 40M19 48Q32 53 45 48"/>',sect:'<path d="M12 29Q22 27 32 17Q42 27 52 29L44 31H20ZM16 39Q23 38 32 31Q41 38 48 39H16M19 40V50M45 40V50M26 40V50M38 40V50M14 51H50M25 24V20M39 24V20M31 15V11"/>',training:'<path d="M32 10A22 22 0 1 0 32 54A11 11 0 0 0 32 32A11 11 0 0 1 32 10Z" fill="currentColor"/><circle cx="32" cy="21" r="3" fill="#e9d9b9"/><circle cx="32" cy="43" r="3" fill="currentColor"/>',world:'<path d="M10 49L24 24 29 32 38 14 54 49ZM17 44L24 30 25 39M30 43L38 21 40 34 45 42M12 52Q28 47 51 53M43 14L49 11"/>',system:'<path d="M27 12H37L38 18 43 21 49 19 54 28 49 32 49 37 54 41 49 49 43 47 38 50 37 55H27L26 50 21 47 15 49 10 41 15 37 15 32 10 28 15 19 21 21 26 18Z" fill="currentColor"/><circle cx="32" cy="34" r="9" fill="#e9d9b9"/>'};return '<svg class="v092-nav-icon" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="v092-ring" d="M50 8Q24-6 9 18Q-3 44 19 58Q45 72 59 47Q69 20 50 8M47 5Q22-3 7 22M60 25Q65 50 44 60" opacity=".7"/>'+marks[k]+'</g></svg>';}
-function empty(id,title,parent=$('page-world')){const e=d.createElement('article');e.id=id;e.className='v092-empty';e.innerHTML=icon('world')+'<p class="eyebrow">Cổ quyển còn phong ấn</p><h3>'+title+'</h3><span class="seal">CHƯA KHAI MỞ</span><p>Hệ thống chưa được triển khai trong V0.10. Chưa có thao tác hay gameplay tại đây.</p>';parent.append(e);return e;}
-function page(id,title){const e=d.createElement('div');e.id='page-'+id;e.className='v092-route';e.hidden=true;e.innerHTML='<div class="page-head"><div><p class="eyebrow">Hồng Đức tu tiên lộ</p><h2 tabindex="-1">'+title+'</h2></div><span class="seal">V0.10</span></div>';main.insertBefore(e,main.querySelector('footer'));return e;}
+function empty(id,title,parent=$('page-world')){const e=d.createElement('article');e.id=id;e.className='v092-empty';e.innerHTML=icon('world')+'<p class="eyebrow">Cổ quyển còn phong ấn</p><h3>'+title+'</h3><span class="seal">CHƯA KHAI MỞ</span><p>Hệ thống chưa được triển khai trong V1.0. Chưa có thao tác hay gameplay tại đây.</p>';parent.append(e);return e;}
+function page(id,title){const e=d.createElement('div');e.id='page-'+id;e.className='v092-route';e.hidden=true;e.innerHTML='<div class="page-head"><div><p class="eyebrow">Hồng Đức tu tiên lộ</p><h2 tabindex="-1">'+title+'</h2></div><span class="seal">V1.0</span></div>';main.insertBefore(e,main.querySelector('footer'));return e;}
 const sect=page('sect','Tông Môn'),world=page('world','Giang Hồ');
 const se=empty('hd-v092-sect','Thất đại tông môn',sect);se.querySelector('.v092-nav-icon').outerHTML=icon('sect');const ul=d.createElement('ul');ul.style.textAlign='left';se.append(ul);sectors.forEach(t=>{const li=d.createElement('li');li.textContent=t;ul.append(li);});
 const log=$('hd-log').closest('article'),debug=$('hd-debug'),toggle=$('hd-debug-toggle'),save=$('hd-save');
@@ -2481,11 +2576,11 @@ const reg=d.createElement('article');reg.id='hd-v092-registry';reg.className='ca
 for(const [key,title]of [['vuKhi','Vũ Khí'],['congPhap','Công Pháp'],['phuLuc','Phù Lục']]){const el=d.createElement('details');const s=d.createElement('summary');s.textContent=title;const pre=d.createElement('pre');pre.textContent=JSON.stringify(HD_V04_DU_LIEU[key],null,2);el.append(s,pre);reg.append(el);} $('page-training').append(reg);
 const combatLink=d.createElement('button');combatLink.type='button';combatLink.textContent='Xem cửa sổ chiến đấu';combatLink.onclick=()=>window.HD_V06.debug.openModal();$('page-training').append(combatLink);
 const sheet=$('hd-v03-sheet'),oc=d.createElement('div');oc.className='v092-oc';const portrait=window.HD_V07.taoAnh(window.HD_V07.lookup('kiem-si'),'Chân dung OC hiện hành');oc.append(portrait);const ocText=d.createElement('div');ocText.innerHTML='<p class="eyebrow">Bản mệnh - một đời cầu đạo</p><h3></h3><p></p>';oc.append(ocText);oc.classList.add('card');sheet.before(oc);function syncOC(){const state=window.HD_V03.theGioi.chiSo.xem();ocText.querySelector('h3').textContent=state.ten||'Vô Danh';ocText.lastElementChild.textContent=$('hd-realm').textContent;}syncOC();V.theGioi.core.nghe('capNhat',syncOC);
-const pf=d.querySelector('.v06-preface');pf.classList.add('v092-preface');pf.querySelectorAll('p,hr').forEach(e=>e.remove());const verse=d.createElement('blockquote');verse.className='v092-verse';preface.forEach(t=>{const p=d.createElement('p');p.textContent=t;verse.append(p);});pf.insertBefore(verse,pf.querySelector('.v06-seal'));pf.querySelector('.v06-seal').textContent='V1 - V0.10';
-$('drawer').querySelector('.seal').innerHTML='V1 - V0.10';const note=$('drawer').querySelector('.notice');note.textContent='Lõi tu luyện, sinh lý, chiến đấu và Đan Dược đã triển khai. Các hệ chưa dựng được ghi rõ là chưa khai mở.';
+const pf=d.querySelector('.v06-preface');pf.classList.add('v092-preface');pf.querySelectorAll('p,hr').forEach(e=>e.remove());const verse=d.createElement('blockquote');verse.className='v092-verse';preface.forEach(t=>{const p=d.createElement('p');p.textContent=t;verse.append(p);});pf.insertBefore(verse,pf.querySelector('.v06-seal'));pf.querySelector('.v06-seal').textContent='V1 - V1.0';
+$('drawer').querySelector('.seal').innerHTML='V1 - V1.0';const note=$('drawer').querySelector('.notice');note.textContent='Lõi tu luyện, sinh lý, chiến đấu và Đan Dược đã triển khai. Các hệ chưa dựng được ghi rõ là chưa khai mở.';
 // Đồng bộ chú giải mục lục với đích mới, không để nhãn kinh tế/cốt truyện cũ gây hiểu nhầm.
 for(const b of d.querySelectorAll('#hd-v06-book nav button')){const label=b.firstChild?.textContent?.trim()||b.textContent.trim();const sub=b.querySelector('small,span:last-child');if(!sub)continue;if(label.startsWith('Pháp Bảo')||label.startsWith('Kỳ Ngộ'))sub.textContent='chưa khai mở';if(label.startsWith('Tư Trang'))sub.textContent='Trang bị hiện có';if(label.startsWith('Công Pháp'))sub.textContent='Thanh ghi mẫu';}
-settings.querySelector('h2').textContent='CÀI ĐẶT';const version=d.createElement('article');version.id='hd-v092-version';version.className='card';version.innerHTML='<h3>V1 - V0.10</h3><p>Thanh điều hướng năm mục, mục lục nối đúng nơi, lời tựa mới và icon đan viên. Save cũ tương thích; engine V02-V05 và luật Đan Dược V09 giữ nguyên.</p>';settings.append(version);
+settings.querySelector('h2').textContent='CÀI ĐẶT';const version=d.createElement('article');version.id='hd-v092-version';version.className='card';version.innerHTML='<h3>V1 - V1.0</h3><p>Thanh điều hướng năm mục, mục lục nối đúng nơi, lời tựa mới và icon đan viên. Save cũ tương thích; engine V02-V05 và luật Đan Dược V09 giữ nguyên.</p>';settings.append(version);
 // Luu lai khung V01 nhu tu lieu lich su, khong de loi ghi chu cu phu dinh save that.
 for(const card of [...settings.querySelectorAll(':scope > .card')]){if(card.textContent.includes('Chưa có save nhân vật')){const box=d.createElement('details');box.className='card';box.innerHTML='<summary>Khung lưu / tải V01 - tư liệu lịch sử</summary><p>Khung này được giữ để đối chiếu; lưu thật và tự nạp hiện hành nằm ở đầu trang.</p>';card.before(box);box.append(card);}}
 
@@ -2544,8 +2639,8 @@ async function kiemThu({inBang=true,nguon=null}={}){
  await test('Năm nút chiến đấu tiếp tục disabled',()=>{const a=[...d.querySelectorAll('#hd-v05-scene .v05-actions button')];eq(a.length,5);ok(a.every(b=>b.disabled));});
  await test('Không còn pseudo khung phủ trên bìa',()=>{cover.hidden=false;eq(getComputedStyle(cover,'::after').display,'none');eq(getComputedStyle(cover,'::after').content,'none');});
  await test('Bounding box mọi khung phủ: không mép ngang cắt vùng dưới tranh',()=>{cover.hidden=false;cover.scrollTop=0;const art=cover.querySelector('img'),a=art.getBoundingClientRect();ok(a.width>0&&a.height>0);const band={top:a.top+a.height*.6,bottom:a.bottom-8};for(const el of [cover,...cover.querySelectorAll('*')]){if(el.closest('.v06-cover-actions')||el===art)continue;for(const p of ['::before','::after']){const s=getComputedStyle(el,p);if(s.display==='none'||s.content==='none'||s.content==='normal')continue;const r=el.getBoundingClientRect(),bt=parseFloat(s.borderTopWidth)||0,bb=parseFloat(s.borderBottomWidth)||0;for(const [edge,w] of [[r.top,bt],[r.bottom,bb]])if(w&&r.left<a.right&&r.right>a.left)ok(edge<=band.top||edge>=band.bottom,el.tagName+p+' mép '+edge);}}});
- await test('Bìa giữ tranh, tiêu đề, triện V1 và hai nút',()=>{const a=cover.querySelector('img');ok(a.getAttribute('data-v07-path')==='art/bia.jpg');ok(cover.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));eq(cover.querySelector('.v06-seal').textContent,'V1 - V0.10');ok($('hd-v06-open')&&$('hd-v06-skip'));});
- await test('Nhãn Lời tựa, footer, Sổ tay đều V0.10',()=>{for(const el of [d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer'),d.querySelector('#drawer .seal')])ok(el.textContent.includes('V0.10'));});
+ await test('Bìa giữ tranh, tiêu đề, triện V1 và hai nút',()=>{const a=cover.querySelector('img');ok(a.getAttribute('data-v07-path')==='art/bia.jpg');ok(cover.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));eq(cover.querySelector('.v06-seal').textContent,'V1 - V1.0');ok($('hd-v06-open')&&$('hd-v06-skip'));});
+ await test('Nhãn Lời tựa, footer, Sổ tay đều V1.0',()=>{for(const el of [d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer'),d.querySelector('#drawer .seal')])ok(el.textContent.includes('V1.0'));});
  await test('Hai câu thơ và Dancing Script giữ nguyên',()=>{eq([...d.querySelectorAll('.v092-verse p')].map(e=>e.textContent),window.HD_V092.preface);ok(getComputedStyle(d.querySelector('.v092-verse')).fontFamily.includes('Dancing'));});
  await test('Nav vẫn đủ năm trang và bù đáy nội dung',()=>{eq(d.querySelectorAll('#bottom-nav>button').length,5);ok(parseFloat(getComputedStyle(d.body).paddingBottom)>=$('bottom-nav').getBoundingClientRect().height);});
  await test('Khung không tràn ngang, nút hiện tối thiểu 48px',()=>{cover.hidden=true;window.HD_V092.go('training','',false);ok(d.documentElement.scrollWidth<=innerWidth+1);for(const b of d.querySelectorAll('button')){const r=b.getBoundingClientRect();if(r.width&&r.height)ok(r.height>=48,b.id+' cao '+r.height);}});
@@ -2647,6 +2742,103 @@ window.HD_V10_TEST=Object.freeze({kiemThu({inBang=true}={}){
 }});
 </script>
 
+
+<script>
+/* MÔ ĐUN HUD THẦN NIỆM V1.0
+MỤC LỤC MODULE: 1 Sao đúng thanh LL; 2 Gắn bus; 3 Tắt trả giao diện cũ.
+Không dùng thanh hai màu; giữ các nút cũ để tương thích khi tắt module. */
+window.HD_V1_HUD=(()=>{
+ 'use strict';const cu=new Map();
+ function an(n){if(!n)return;if(!cu.has(n))cu.set(n,n.getAttribute('style'));n.style.setProperty('display','none','important');}
+ function hienCu(){for(const [n,s] of cu){if(s===null)n.removeAttribute('style');else n.setAttribute('style',s);}cu.clear();}
+ function ve(w,root=document){
+  if(!HD_V1.bat){root.querySelectorAll('[data-v1-hud]').forEach(n=>n.remove());hienCu();return;}
+  const q=id=>root.querySelector('#'+id),s=w.thanNiem.xem(),so=n=>w.core.dinhDang('so',n),doSo=s.hienTai*100<s.tran*HD_V1.C.CANH_BAO;
+  const ll=q('hd-v03-ll-bar'),txt=q('hd-v03-ll'),old=q('hd-v04-tn-bar');
+  if(ll&&txt&&old){
+   let p=q('hd-v1-tn-value'),bar=q('hd-v1-tn-bar');
+   if(!p){const label=txt.previousElementSibling.cloneNode(true);label.textContent='Thần Niệm';label.dataset.v1Hud='';p=txt.cloneNode(true);p.id='hd-v1-tn-value';p.dataset.v1Hud='';bar=ll.cloneNode(true);bar.id='hd-v1-tn-bar';bar.dataset.v1Hud='';bar.setAttribute('aria-label','Thần Niệm');ll.after(label,p,bar);}
+   p.textContent=so(s.hienTai)+' / '+so(s.tran);p.style.color=doSo?'#a12d2d':'';bar.max=s.tran;bar.value=s.hienTai;bar.style.accentColor=getComputedStyle(ll).accentColor;
+   an(old.previousElementSibling);an(old);const note=q('hd-v03-tn');an(note);an(note?.nextElementSibling);
+  }
+  const hll=q('hd-v04-head-ll'),hcu=q('hd-v04-head-tn-label');
+  if(hll&&hcu){let label=q('hd-v1-head-tn');if(!label){label=hll.parentElement.cloneNode(true);label.id='hd-v1-head-tn';label.dataset.v1Hud='';label.firstChild.textContent='Thần Niệm ';label.querySelector('output').id='hd-v1-head-tn-value';label.querySelector('progress').id='hd-v1-head-tn-bar';label.querySelector('progress').setAttribute('aria-label','Thần Niệm trạng thái');hll.parentElement.after(label);}const out=label.querySelector('output'),bar=label.querySelector('progress');out.textContent=s.hienTai+'/'+s.tran;out.style.color=doSo?'#a12d2d':'';bar.max=s.tran;bar.value=s.hienTai;bar.style.accentColor=getComputedStyle(hll).accentColor;an(hcu.parentElement);}
+ }
+ const w=window.HD_V04?.theGioi;if(w?.thanNiem){const cap=()=>ve(w);w.core.nghe('capNhat',cap);w.core.nghe('thanNiemV1ThayDoi',cap);window.addEventListener('thanNiemV1BatTat',cap);cap();}
+ return Object.freeze({ve});
+})();
+</script>
+
+<script>
+/* KIỂM THỬ THẦN NIỆM V1.0
+MỤC LỤC MODULE: 1 Phí/đòn tay; 2 Lò dự phòng; 3 Phút/hồi; 4 Save;
+5 HUD; 6 Cùng seed/tắt module. Mỗi ca tạo thế giới riêng, seed cố định.
+Bộ 734 ca cũ chạy với HD_V1.datBat(false) để xác nhận đường cũ nguyên vẹn. */
+window.HD_V1_TEST=(()=>{
+ 'use strict';
+ function kiemThu({inBang=true}={}){
+  const ds=[],truoc=HD_V1.bat;HD_V1.datBat(true);
+  const bang=(a,b)=>JSON.stringify(a)===JSON.stringify(b),ok=(x,m='Sai kỳ vọng')=>{if(!x)throw Error(m);};
+  const test=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',lyDo:e.message});}};
+  const world=()=>HD_V09.taoTheGioi(20261025),logTN=w=>w.core.xuat().nhatKy.filter(x=>x.moDun==='V1.0');
+  function don(id,canh=4,tn=1000,them={}){
+   const core=HD_taoCore(20261025),p={nhomB:[1000,150,900,100,900,150],thanNiem:1000,tnHienTai:tn,canhGioi:canh,linhLuc:1000,linhLucToiDa:1000,vuKhi:id===null?[]:[id],...them};
+   const b=HD_taoChienDauV04(core,p,{nhomB:[1000,150,1,100,1,150]});b.batDau();const r=b.hanhDong(0,'vatLy',id);return {core,b,r,s:b.xem()};
+  }
+  try{
+   for(const [id,phi] of [[1,2],[2,3],[3,4],[4,5]]){
+    test('Phí cơ bản ID '+id,()=>ok(HD_V1.phi({canhGioi:4},id,'vatLy',0)===phi));
+    test('Đòn xuyên giáp cộng cơ bản ID '+id,()=>ok(HD_V1.phi({canhGioi:4},id,'vatLy',1)===phi*2));
+    test('Engine trừ thật ID '+id,()=>{const x=don(id),n=id===1?phi:phi*2;ok(x.s.dauSi[0].tnHienTai===1000-n);const l=x.core.xuat().nhatKy.find(v=>v.moDun==='V1.0');ok(l.thucTe===-n&&l.sau===1000-n);});
+   }
+   for(const [id,phi]of [[3,4],[4,5]]){
+    test('Vượt cấp x2 ID '+id,()=>ok(HD_V1.phi({canhGioi:0},id,'vatLy',0)===phi*2));
+    test('Vượt và xuyên cộng dồn ID '+id,()=>{const x=don(id,0);ok(x.s.dauSi[0].tnHienTai===1000-phi*3);const l=x.s.nhatKy.find(v=>v.loai==='trungNe');ok(l.vuot&&l.haoLL===HD_v04Tra('vuKhi',id).haoLLMoiLan*2);});
+   }
+   test('Phàm vẫn mất 2 TN',()=>ok(don(1,0).s.dauSi[0].tnHienTai===998));
+   test('Phép không thu thêm xuyên giáp vật lý',()=>ok(HD_V1.phi({canhGioi:4},2,'phep',9)===3));
+   test('Cạn TN rơi đòn tay, giữ nguyên TN',()=>{const x=don(3,0,1);ok(x.s.dauSi[0].tnHienTai===1);ok(x.core.xuat().nhatKy.some(v=>v.ten==='Thần niệm cạn, chuyển đòn tay'&&v.thucTe===0));});
+   test('Đòn tay không uy lực vũ khí, không LL, không xuyên',()=>{const x=don(3,0,0),l=x.s.nhatKy.find(v=>v.loai==='trungNe');ok(l.vuKhi===null&&l.congVuKhi===0&&l.haoLL===0);ok(x.s.nhatKy.filter(v=>v.loai==='thuongThe').every(v=>v.xuyenGiap===0));ok(bang(x.s.dauSi[0].vuKhi,[3]));});
+   test('Fallback bằng đòn tay cùng seed',()=>{const a=don(3,0,0),b=don(null,0,0);ok(bang(a.s.nhatKy,b.s.nhatKy)&&bang(a.r,b.r));ok(a.core.xem().seed===b.core.xem().seed);});
+   test('Đủ đúng phí không fallback',()=>{const x=don(1,0,2);ok(x.s.dauSi[0].tnHienTai===0);ok(!x.core.xuat().nhatKy.some(v=>v.ten==='Thần niệm cạn, chuyển đòn tay'));});
+   test('Không đủ LL không mất TN',()=>{const c=HD_taoCore(17),b=HD_taoChienDauV04(c,{vuKhi:[2],thanNiem:1000,tnHienTai:100,linhLuc:0,nhomB:[1000,150,900,100,900,150]},{nhomB:[1000,150,1,100,1,150]});b.batDau();let loi=false;try{b.hanhDong(0,'vatLy',2);}catch(e){loi=true;}ok(loi&&b.xem().dauSi[0].tnHienTai===100);});
+   test('Nhóm lò đúng 10 TN và log số thật',()=>{const w=world(),n=w.thanNiem.xem().hienTai;ok(w.thanNiem.nhomLo().hopLe);ok(w.thanNiem.xem().hienTai===n-10&&logTN(w).at(-1).thucTe===-10);});
+   test('Thiếu 10 TN khóa API, không trừ',()=>{const w=world();w.thanNiem.tru(28,'Kiểm thử');ok(!w.thanNiem.nhomLo().hopLe&&w.thanNiem.xem().hienTai===9);});
+   test('Khóa nút có lý do cạnh nút, tự mở khi hồi',()=>{const w=world(),box=document.createElement('div'),nut=document.createElement('button'),lyDo=document.createElement('span');box.append(nut,lyDo);w.thanNiem.tru(28,'Kiểm thử');const huy=w.thanNiem.ganNutLuyenDan(nut,lyDo);ok(nut.disabled&&lyDo.textContent.includes('cần 10 TN')&&nut.nextElementSibling===lyDo);w.thanNiem.hoi(1,'Kiểm thử');ok(!nut.disabled&&lyDo.textContent==='');huy();});
+   test('Tĩnh tọa +2 mỗi phút game',()=>{const w=world();w.thanNiem.tru(20,'Kiểm thử');ok(w.tuLuyen.batDau());w.core.tien(3);ok(w.thanNiem.xem().hienTai===23);ok(logTN(w).filter(v=>v.lyDo==='Tĩnh tọa').every(v=>v.thucTe===2));});
+   test('Hồi tĩnh tọa cắt đúng trần, log thực +1',()=>{const w=world();w.thanNiem.tru(1,'Kiểm thử');w.tuLuyen.batDau();w.core.tien(1);ok(w.thanNiem.xem().hienTai===37&&logTN(w).at(-1).thucTe===1);});
+   test('Ngủ chỉ hồi khi thức, 25% bỏ dư',()=>{const w=world();w.thanNiem.tru(30,'Kiểm thử');w.sinhLy.hanhDong('ngu');w.core.tien(2);ok(w.thanNiem.xem().hienTai===7);w.sinhLy.hanhDong('nghi');ok(w.thanNiem.xem().hienTai===16&&logTN(w).at(-1).thucTe===9);});
+   test('Không ngủ phút nào không hồi khi đổi hành động',()=>{const w=world();w.thanNiem.tru(30,'Kiểm thử');w.sinhLy.hanhDong('ngu');w.sinhLy.hanhDong('nghi');ok(w.thanNiem.xem().hienTai===7);});
+   test('Idle đủ 15 phút mới +1',()=>{const w=world();w.thanNiem.tru(5,'Kiểm thử');w.core.tien(14);ok(w.thanNiem.xem().hienTai===32);w.core.tien(1);ok(w.thanNiem.xem().hienTai===33&&logTN(w).at(-1).thucTe===1);});
+   test('Trong trận không hồi cả ba đường',()=>{const w=world();w.thanNiem.tru(30,'Kiểm thử');w.chiSo.chienDau(true);w.core.tien(30);w.sinhLy.hanhDong('tinhToa');w.core.tien(2);w.sinhLy.hanhDong('ngu');w.core.tien(2);w.sinhLy.hanhDong('nghi');ok(w.thanNiem.hoi(20,'Kiểm thử')===0&&w.thanNiem.xem().hienTai===7);});
+   test('Save cũ thiếu TN đầy trần, giữ toàn bộ field cũ',()=>{const a=world(),s=a.xuat();delete s.thanNiemV1;const b=HD_V09.taoTheGioi(1,s),t=b.xuat();ok(b.thanNiem.xem().hienTai===b.chiSo.xem().thanNiem);delete t.thanNiemV1;ok(bang(s,t));});
+   test('Save mới giữ TN hiện tại và phút idle',()=>{const a=world();a.thanNiem.tru(7,'Kiểm thử');a.core.tien(14);const s=a.xuat(),b=HD_V09.taoTheGioi(1,s);ok(bang(s,b.xuat()));b.core.tien(1);ok(b.thanNiem.xem().hienTai===31);});
+   test('Trần TN nguyên công thức engine',()=>{const w=world();w.chiSo.datTN(100);ok(w.thanNiem.xem().tran===w.chiSo.xem().thanNiem);w.thanNiem.tru(1,'Kiểm thử');ok(w.thanNiem.xem().tran===w.chiSo.xem().thanNiem);});
+   test('Cùng seed cùng số liệu và log',()=>{const a=don(3,0),b=don(3,0);ok(bang(a.s,b.s)&&bang(a.core.xuat(),b.core.xuat()));});
+   test('Tắt module không tiêu TN chiến đấu, không thêm RNG',()=>{const a=don(2);HD_V1.datBat(false);try{const b=don(2);ok(!('tnHienTai'in b.s.dauSi[0]));ok(!b.core.xuat().nhatKy.some(v=>v.moDun==='V1.0'));ok(bang(a.s.nhatKy,b.s.nhatKy)&&a.core.xem().seed===b.core.xem().seed);}finally{HD_V1.datBat(true);}});
+   test('Tắt module miễn phí lò và không hồi mới',()=>{const w=world();w.thanNiem.tru(30,'Kiểm thử');HD_V1.datBat(false);try{ok(w.thanNiem.nhomLo().hopLe&&w.thanNiem.kiemTraLuyenDan().phi===0);w.core.tien(15);ok(w.thanNiem.xem().hienTai===7);}finally{HD_V1.datBat(true);}});
+   const fixture=fn=>{const box=document.createElement('section');box.style.cssText='position:fixed;left:-10000px;width:390px';for(const id of ['hd-v04-resources','hd-v04-header-bars'])box.append(document.getElementById(id).cloneNode(true));box.querySelectorAll('[data-v1-hud]').forEach(n=>n.remove());document.body.append(box);try{fn(box);}finally{box.remove();}};
+   test('HUD nhân vật cùng cấu trúc progress LL, không thanh đôi',()=>fixture(root=>{const w=world();HD_V1_HUD.ve(w,root);const a=root.querySelector('#hd-v03-ll-bar'),b=root.querySelector('#hd-v1-tn-bar');ok(a.tagName===b.tagName&&a.className===b.className&&getComputedStyle(a).accentColor===getComputedStyle(b).accentColor);ok(root.querySelector('#hd-v04-tn-bar').style.display==='none');ok(b.previousElementSibling.textContent==='37 / 37');}));
+   test('HUD header đúng thanh và số hiện tại/trần',()=>fixture(root=>{const w=world();HD_V1_HUD.ve(w,root);const p=root.querySelector('#hd-v1-head-tn');ok(p.querySelector('progress')&&p.querySelector('output').textContent==='37/37'&&p.firstChild.textContent.trim()==='Thần Niệm');}));
+   test('Dưới 20% đỏ, đúng 20% không đỏ',()=>fixture(root=>{const w=world();w.chiSo.datTN(98);w.thanNiem.hoi(100,'Kiểm thử');w.thanNiem.tru(80,'Kiểm thử');HD_V1_HUD.ve(w,root);const p=root.querySelector('#hd-v1-tn-value');ok(p.style.color==='');w.thanNiem.tru(1,'Kiểm thử');HD_V1_HUD.ve(w,root);ok(p.style.color==='rgb(161, 45, 45)');}));
+   test('HUD trận sao đúng row và meter LL, đỏ khi cạn',()=>{const c=document.createElement('div');c.innerHTML='<div class="v05-res"><span>Linh lực</span><output data-num="ll">50/50</output></div><div class="v05-meter ll"><i></i></div>';HD_V1.hudDauSi(c,{thanNiem:100,tnHienTai:19},true);const bar=c.querySelector('[data-v1-tn-bar]');ok(bar.className==='v05-meter ll'&&bar.querySelector('i').style.width==='19%');ok(c.querySelector('[data-num=tn]').style.color==='rgb(161, 45, 45)');HD_V1.hudDauSi(c,{thanNiem:100,tnHienTai:20},true);ok(c.querySelector('[data-num=tn]').style.color==='');});
+   test('NPC cũng trừ phí TN',()=>{const c=HD_taoCore(19),b=HD_taoChienDauV04(c,{nhomB:[1000,150,1,100,1,150]},{nhomB:[1000,150,900,100,900,150],vuKhi:[1],thanNiem:100,tnHienTai:100});b.batDau();ok(b.xem().luot===1);b.hanhDong(1,'vatLy',1);ok(b.xem().dauSi[1].tnHienTai===98);});
+   for(const id of ['an-than','dinh-than','hon-nguyen'])test('Đan '+id+' không hồi TN, giữ hiệu ứng khác',()=>{const w=world();w.thanNiem.tru(20,'Kiểm thử');w.dan.debug.datThieuTN(20);w.chiSo.datLL(1);w.chiSo.datB(0,100);w.dan.cap(id,0,1);ok(w.dan.dung(id,0).hopLe);ok(w.thanNiem.xem().hienTai===17&&w.dan.xem().tnThieu===20);if(id==='hon-nguyen')ok(w.chiSo.xem().linhLuc>1&&w.chiSo.xem().khiHuyet>100);ok(w.dan.du(id,0)===0&&w.dan.xem().khang[id]===1);});
+   test('Tắt module khôi phục hồi TN đan cũ',()=>{const w=world();w.dan.debug.datThieuTN(20);w.dan.cap('an-than',0,1);HD_V1.datBat(false);try{ok(w.dan.dung('an-than',0).hopLe&&w.dan.xem().tnThieu<20);}finally{HD_V1.datBat(true);}});
+   test('Dịch log chỉ lấy số thực CORE',()=>ok(HD_V1.dich({lyDo:'Thức dậy',truoc:4,sau:13,thucTe:9,tran:37})==='Thức dậy: +9 TN; 4 -> 13/37'));
+   test('HUD nhật ký trận hiển thị đúng số CORE',()=>{const root=document.createElement('div');root.innerHTML='<div class="v05-prose"></div>';const x=don(1,0);HD_V1.hudNhatKy(root,x.core.nhatKy());ok(root.querySelector('[data-v1-tn-log]').textContent.includes('-2 TN; 1000 -> 998/1000'));});
+   test('Ngủ tự thức đủ bốn canh hồi đúng một lần',()=>{const w=world();w.thanNiem.tru(30,'Kiểm thử');w.sinhLy.hanhDong('ngu');w.core.tien(479);ok(w.thanNiem.xem().hienTai===7);w.core.tien(1);ok(w.sinhLy.xem().hanhDong==='nghi'&&w.thanNiem.xem().hienTai===16&&w.thanNiem.xem().nguPhut===0);w.sinhLy.hanhDong('ngu');w.sinhLy.hanhDong('nghi');ok(w.thanNiem.xem().hienTai===16);});
+   test('Phút cuối chu thiên vẫn hồi tĩnh tọa',()=>{const a=world();a.tuLuyen.batDau();const s=a.xuat();s.tuLuyen.phien.dai=1;const w=HD_V09.taoTheGioi(1,s);w.thanNiem.tru(10,'Kiểm thử');w.core.tien(1);ok(w.thanNiem.xem().hienTai===29&&w.tuLuyen.xem().phien===null);});
+   test('Đồng bộ TN sau đòn và chuyển đổi lại đấu sĩ',()=>{const w=world();w.chiSo.dieuKhien(1);const f=HD_tuNhanVatV04(w);f.nhomB[2]=900;const b=HD_taoChienDauV04(w.core,f,{nhomB:[1000,150,1,100,1,150]},'trong',{dongBo:x=>w.thanNiem.nhanChienDau(x.tnHienTai)});b.batDau();b.hanhDong(0,'vatLy',1);ok(w.thanNiem.xem().hienTai===35&&HD_tuNhanVatV04(w).tnHienTai===35&&w.xuat().thanNiemV1.hienTai===35);});
+   test('Khung mobile 414 x 896',()=>ok(innerWidth===414&&innerHeight===896));
+  }finally{HD_V1.datBat(truoc);}
+  const r={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds,khung:{rong:innerWidth,cao:innerHeight}};if(inBang)console.table(ds);return r;
+ }
+ // Chạy toàn bộ tại khung mobile: nhóm cũ theo đường tương thích tắt, nhóm mới bật.
+ async function kiemThuTatCa(){const truoc=HD_V1.bat,cu=[];try{HD_V1.datBat(false);for(const n of ['02','03','04','05','06','07','071','072','08','081','082','09','091','092','093','10_TEST']){const r=await window['HD_V'+n].kiemThu({inBang:false});cu.push({nhom:n,dat:r.dat,truot:r.truot});}HD_V1.datBat(true);return {cu,moi:kiemThu({inBang:false})};}finally{HD_V1.datBat(truoc);}}
+ return Object.freeze({kiemThu,kiemThuTatCa});
+})();
+</script>
 </body>
 <!-- V0.9.2 bổ sung chất liệu AI: giấy dó, khung cọ, nét phân cách JPEG nhúng; nền 768px và multiply, không sửa engine hay art/. Chưa nén JPEG do giới hạn xuất canvas của công cụ. -->
 </html>
@@ -2732,3 +2924,9 @@ LỊCH SỬ THAY ĐỔI V0.8.1
 
 <!-- LỊCH SỬ THAY ĐỔI V0.10
 25/10/2026 - Tiến trình 13 tầng mọi cảnh, tốc độ nhân ba; bể EXP theo cảnh, ba đột phá mới qua adapter đan V09. Tẩy tủy chuỗi, TN/LL theo cảnh, Tích cốc vĩnh viễn, tuổi thật và chết hết thọ hardcore; kết phần Hạ giới một lần và kho EXP kỷ niệm. Chỉ index.html trên v05-thu; không main/PR/merge/art/tài liệu. Sửa đúng hai kỳ vọng màu V072 theo V094 đã duyệt, giữ CSS; cập nhật kỳ vọng nhãn phiên bản. -->
+
+<!-- LỊCH SỬ THAY ĐỔI V1.0 - THẦN NIỆM
+25/10/2026 - Module HD_V1 độc lập, có mục lục và hằng số chú thích: TN hiện tại tách khỏi trần V03/V10, giữ nguyên công thức trần. Bốn mẫu vũ khí Phàm/LK/Trúc Cơ/Kim Đan phí 2/3/4/5 theo chủ kho chốt; vượt cấp x2, xuyên giáp vật lý cộng một phí cơ bản. Chỉ một hook đầu đòn V04, thiếu TN rơi đòn tay không uy lực vũ khí/xuyên giáp và không tiêu TN; không thêm RNG. Hồi tĩnh tọa +2/phút game, ngủ +25% trần khi thức (kể cả tự thức bốn canh), idle +1/15 phút; không hồi trong trận. Save V2 cũ giữ mọi trường, thiếu thanNiemV1 mặc định đầy trần; save mới giữ phút dư.
+Theo quyết định A của chủ kho: chỉ mở API kiemTraLuyenDan/nhomLo/ganNutLuyenDan, phí nhóm lò 10 TN và lý do khóa nút cạnh nút; chưa dựng gameplay luyện đan hướng D. Đan V09 chỉ ngừng hồi TN khi bật HD_V1, mọi hiệu ứng khác giữ nguyên; tắt trả đường cũ. HUD nhân vật, trạng thái và trận sao đúng cấu trúc/màu thanh LL, nhãn Thần Niệm; số đỏ dưới 20%, không thanh đôi. Nhật ký chỉ dịch số CORE thực trừ/hồi, không AI tự roll.
+Nhãn hiện hành V1 - V1.0. Bộ kiểm thử HD_V1_TEST dùng seed cố định và thế giới riêng; kiemThuTatCa chạy 734 ca cũ theo đường tắt tương thích (537 + 197 V10) rồi 53 ca V1.0 bật module tại 414 x 896. Giữ fixed-point, EXP 1/10000, phút 1440/ngày, nhân trước chia bỏ dư, bus, nhịp 1150ms, reduced-motion và mọi art/. Chỉ index.html trên v05-thu; không main, PR, merge hay tài liệu. Lịch sử cũ không xóa.
+-->
