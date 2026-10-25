@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MODULE V1.0
+MỤC LỤC MODULE V1.1
+HD_V11: trận xem thử trong khung sandbox opaque, dùng engine/UI V04-V05-V06 thật; snapshot bất biến, không storage thật, gỡ khung hủy toàn bộ timer. Module và kiểm thử V11 cuối body.
 HD_V1: tài nguyên Thần Niệm độc lập trước V09; một hook đầu đòn V04, lưu thanNiemV1, hồi theo phút/bus; HUD và kiểm thử V1.0 cuối body. API nhóm lò 10 TN chưa mở gameplay theo chủ kho chốt. Phí bốn mẫu 2/3/4/5; đan không hồi TN khi module bật.
 V10: bảng đại cảnh trước HD_CAN_BANG; vá đúng sinh lý/tu luyện V02, hệ số tẩy tủy V03 và adapter đột phá V09; UI/kiểm thử độc lập cuối body. Tuổi, thọ và kết truyện dùng save V2 tương thích.
 MÔ ĐUN VÁ HD_V094 (CSS sau hd-v093-style): trạng thái chọn/điều khiển đỏ son #963c2c, chữ kem #fff0d3; nút khóa giữ disabled, nền giấy trầm và chữ nâu đậm, không dùng opacity để làm nhạt chữ. Hover/active/focus và phản hồi chạm iOS rõ ràng. Chỉ trình bày, không đổi engine, điều kiện, listener, save hay chất liệu.
@@ -2090,20 +2091,20 @@ function apply(root,fs){
 const cover=d.getElementById('hd-v06-cover'),article=cover.querySelector('article');
 article.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v07-cover-art'));
 // V0.9.4: nhãn bản phát hành trên cả hai bìa và lời tựa; không đổi kho tranh.
-article.querySelector('.v06-seal').textContent='V1 - V1.0';
+article.querySelector('.v06-seal').textContent='V1 - V1.1';
 // V0.7.1: dùng cùng public kho cảnh và onerror cho trang bìa trong sách.
 const titlePage=d.querySelector('#hd-v06-book .v06-title-page');
 titlePage.querySelector('.v06-art')?.replaceWith(anhCanh('bia','v071-book-art'));
-titlePage.querySelector('.eyebrow').textContent='Một đời cầu đạo · V1.0';
-titlePage.querySelector('.v06-seal').textContent='V1 - V1.0';
-d.querySelector('.v06-preface .v06-seal').textContent='V1 - V1.0';
+titlePage.querySelector('.eyebrow').textContent='Một đời cầu đạo · V1.1';
+titlePage.querySelector('.v06-seal').textContent='V1 - V1.1';
+d.querySelector('.v06-preface .v06-seal').textContent='V1 - V1.1';
 const preload=d.createElement('div');preload.hidden=true;preload.id='hd-v07-kho';preload.setAttribute('aria-hidden','true');
 for(const [key,path]of Object.entries(chanDung))if(key!=='mac-dinh'){
  const img=taoAnh(path,'Kho chân dung '+key);img.dataset.v07Portrait=key;preload.append(img);
 }
 d.getElementById('hd-v06-combat').append(preload);
 apply(d.getElementById('hd-v05-scene'),window.HD_V05.debug.tran()?.xem().dauSi);
-d.querySelector('footer').textContent='V1 - V1.0 · Kho tranh art/ · Engine V0.2–V0.5 giữ nguyên';
+d.querySelector('footer').textContent='V1 - V1.1 · Kho tranh art/ · Engine V0.2–V0.5 giữ nguyên';
 function kiemThu({inBang=true}={}){
  const ds=[],eq=(a,b)=>{if(a!==b)throw Error(String(a)+' khác '+String(b));},ok=x=>{if(!x)throw Error('Không đạt');},test=(ten,fn)=>{try{fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
  for(const [key,path]of Object.entries(chanDung))test('Lookup chân dung '+key,()=>eq(lookup(key),path));
@@ -2114,7 +2115,7 @@ function kiemThu({inBang=true}={}){
  test('onerror chuyển bóng mực đúng một lần',()=>{const img=taoAnh('art/chua-co.jpg','Thử');img.dispatchEvent(new Event('error'));eq(img.getAttribute('src'),bongMuc);eq(img.onerror,null);eq(img.dataset.v07Fallback,'true');});
  test('Tất cả tám tranh có trong DOM, dùng đường tương đối',()=>{for(const path of [...Object.values(canh),...Object.entries(chanDung).filter(([k])=>k!=='mac-dinh').map(([,p])=>p)])ok([...d.querySelectorAll('img.v07-ink')].some(n=>n.dataset.v07Path===path));});
  test('Hai thẻ và tranh giữa không còn tranh SVG cũ',()=>{const root=d.getElementById('hd-v05-scene');eq(root.querySelectorAll('img.v05-face').length,2);eq(root.querySelectorAll('img.v07-battle').length,1);eq(root.querySelectorAll('.v06-stage-person').length,2);});
- test('Bìa giữ chữ và hai nút HTML',()=>{ok(article.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));ok(article.textContent.includes('Một trang giấy dó, một đời cầu đạo.'));ok(d.getElementById('hd-v06-open'));ok(d.getElementById('hd-v06-skip'));eq(article.querySelector('.v06-seal').textContent,'V1 - V1.0');});
+ test('Bìa giữ chữ và hai nút HTML',()=>{ok(article.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));ok(article.textContent.includes('Một trang giấy dó, một đời cầu đạo.'));ok(d.getElementById('hd-v06-open'));ok(d.getElementById('hd-v06-skip'));eq(article.querySelector('.v06-seal').textContent,'V1 - V1.1');});
  test('Select Thế trận vẫn là select gốc',()=>eq(d.getElementById('hd-v04-terrain').tagName,'SELECT'));
  test('Không có ký tự cấm trong DOM nguồn',()=>ok(!/[\p{Script=Han}\p{Script=Cyrillic}\p{Extended_Pictographic}]/u.test(d.documentElement.outerHTML)));
  const result={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};if(inBang)console.table(ds);return result;
@@ -2146,8 +2147,8 @@ async function kiemThu({inBang=true}={}){
  await test('Hai ảnh bìa tải thật, không phải onerror fallback',async()=>{
   for(const img of d.querySelectorAll('img[data-v07-scene="bia"]')){await img.decode();ok(img.naturalWidth>0);ok(!img.dataset.v07Fallback);ok(img.getAttribute('src')==='art/bia.jpg');}
  });
- await test('Nhãn bìa V1.0, giữ chữ HTML và hai nút mở',()=>{
-  const title=d.querySelector('#hd-v06-book .v06-title-page');ok(title.querySelector('h2').textContent.includes('TU TIÊN LỘ V1'));ok(title.querySelector('.eyebrow').textContent.includes('V1.0'));ok(title.querySelector('.v06-seal').textContent.includes('V1.0'));ok(cover.querySelector('h1'));ok($('hd-v06-open'));ok($('hd-v06-skip'));
+ await test('Nhãn bìa V1.1, giữ chữ HTML và hai nút mở',()=>{
+  const title=d.querySelector('#hd-v06-book .v06-title-page');ok(title.querySelector('h2').textContent.includes('TU TIÊN LỘ V1'));ok(title.querySelector('.eyebrow').textContent.includes('V1.1'));ok(title.querySelector('.v06-seal').textContent.includes('V1.1'));ok(cover.querySelector('h1'));ok($('hd-v06-open'));ok($('hd-v06-skip'));
  });
  await test('Khung thẻ chỉ hai nét mực hở, không tua cuốn góc',()=>{
   const frames=d.querySelectorAll('#hd-v05-scene .v05-fighter>.v06-brush-frame');ok(frames.length===2);frames.forEach(f=>{ok(f.classList.contains('v071-ink-frame'));ok(f.querySelectorAll('path').length===2);ok(!f.querySelector('circle,polygon,[fill]:not([fill="none"])'));ok([...f.querySelectorAll('path')].every(p=>!/[zZ]/.test(p.getAttribute('d'))));});
@@ -2320,7 +2321,7 @@ function kiemThu({inBang=true}={}){
  const dau=(c,patch={})=>V.taoDauSi(c,{nhomB:[1000,150,500,100,1000,0],linhLuc:200,linhLucToiDa:200,phuLuc:[1,2,3],...patch});
  const thu=(p,n)=>{const w=W.taoTheGioi(123456),events=[];window.HD_V08.ganCore(w.core,k=>events.push(k));const t=V.taoChienDau(w.core,p(w.core),n(w.core),'trong');t.batDau();return {w,t,events};};
  try{
- test('Hai bìa, lời tựa và footer đều ghi V1.0',()=>{for(const el of [d.querySelector('#hd-v06-cover .v06-seal'),d.querySelector('.v06-title-page .eyebrow'),d.querySelector('.v06-title-page .v06-seal'),d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer')])ok(el.textContent.includes('V1.0'));});
+ test('Hai bìa, lời tựa và footer đều ghi V1.1',()=>{for(const el of [d.querySelector('#hd-v06-cover .v06-seal'),d.querySelector('.v06-title-page .eyebrow'),d.querySelector('.v06-title-page .v06-seal'),d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer')])ok(el.textContent.includes('V1.1'));});
  test('Select gốc có đúng một lựa chọn Trận Mộc',()=>{eq(sel.tagName,'SELECT');eq([...sel.options].filter(x=>x.value==='mocTran').map(x=>x.text),['Trận Mộc']);});
  test('Chọn Trận Mộc chỉ đổi cờ, không trừ phù hay linh lực',()=>{sel.value='mocTran';const c=W.taoTheGioi(123456).core,p=dau(c),before=structuredClone(p);V.debug.chonTranMoc(p);before.hieuUng.mocTran=true;eq(p,before);});
  test('Trận Mộc trực tiếp phát đúng một tran-ky ở hiệp một',()=>{sel.value='mocTran';const r=thu(c=>V.debug.chonTranMoc(dau(c)),c=>dau(c,{nhomB:[1000,150,150,100,150,0]}));eq(r.t.xem().hiep,1);eq(r.events,['tran-ky']);r.t.hanhDong(0,'vatLy');eq(r.events,['tran-ky']);});
@@ -2466,7 +2467,7 @@ const style=d.createElement('style');style.id='hd-v09-style';style.textContent='
 const panel=d.createElement('article');panel.id='hd-v09';panel.className='card';panel.innerHTML='<h3>Đan Dược</h3><p class="v09-meta">D theo loại: 30 suy yếu / 60 thương tạng / 90 nguy kịch / 100 tử vong. Chỉ dùng ngoài trận. Có Hoàn Sinh dùng được trong túi sẽ tự cứu về D60.</p><p id="hd-v09-status"></p><label>Cột Thanh Độc tác động<select id="hd-v09-target"></select></label><div id="hd-v09-inventory"></div><p id="hd-v09-msg" role="status" aria-live="polite"></p><details><summary>Cột độc, kháng dược và thời gian hồi</summary><div id="hd-v09-columns" class="v09-cols"></div></details><div id="hd-v09-effects"></div><p class="v09-meta">Mỗi đại cảnh dùng tự động 1 đan tương ứng khi đủ điều kiện: Trúc Cơ, Ngưng Kim, Tụ Anh, Hóa Thần; giảm 10 độ khó, độc và kháng theo V09. Trưởng Sinh không thuộc gameplay.</p>';
 $('hd-tu-luyen').after(panel);
 for(const r of V.registry.filter(x=>!x.chiRegistry))$('hd-v09-target').append(new Option(r.ten,r.id));
-const debug=d.createElement('fieldset');debug.id='hd-v09-debug';debug.innerHTML='<legend>Gỡ lỗi Đan Dược V1.0</legend><label>Loại đan<select id="hd-v09-type"></select></label><label>Phẩm chất<select id="hd-v09-quality"></select></label><label>Số viên<input id="hd-v09-count" type="number" min="1" max="100000" step="1" value="1"></label><button type="button" id="hd-v09-grant">Cấp đan vào túi</button><button type="button" id="hd-v09-tests">Kiểm thử 456 hồi quy và V091</button><pre id="hd-v09-tests-out" role="status"></pre>';
+const debug=d.createElement('fieldset');debug.id='hd-v09-debug';debug.innerHTML='<legend>Gỡ lỗi Đan Dược V1.1</legend><label>Loại đan<select id="hd-v09-type"></select></label><label>Phẩm chất<select id="hd-v09-quality"></select></label><label>Số viên<input id="hd-v09-count" type="number" min="1" max="100000" step="1" value="1"></label><button type="button" id="hd-v09-grant">Cấp đan vào túi</button><button type="button" id="hd-v09-tests">Kiểm thử 456 hồi quy và V091</button><pre id="hd-v09-tests-out" role="status"></pre>';
 $('hd-debug').append(debug);for(const r of V.registry.filter(x=>!x.chiRegistry))$('hd-v09-type').append(new Option(r.ten,r.id));V.pham.forEach((p,i)=>$('hd-v09-quality').append(new Option(p.ten,i)));
 function quality(){const co=V.registry.find(r=>r.id===$('hd-v09-type').value).coPham;$('hd-v09-quality').disabled=!co;if(!co)$('hd-v09-quality').value='0';}
 $('hd-v09-type').onchange=quality;quality();
@@ -2526,7 +2527,7 @@ test('6. Bốn phẩm có badge riêng trên nút',()=>{const labels=[];for(let 
 test('6b. Đơn phẩm không có phẩm giả',()=>{const b=d.createElement('button');V.nutDan(b,HD_V09.bienThe('tich-coc'));eq(b.querySelector('.v091-badge').textContent,'Đơn phẩm');});
 test('SVG mực có path và cùng màu currentColor',()=>['clock','note','person','lotus','book','potion','sword','gear'].forEach(k=>{const s=V.icon(k);ok(s.querySelector('path').getAttribute('d'));eq(s.getAttribute('aria-hidden'),'true');eq(s.querySelector('path').getAttribute('stroke'),'currentColor');}));
 test('Icon render ở các khối chính',()=>{V.apply();ok(d.querySelectorAll('.v091-icon').length>=15);for(const sel of ['#hd-v06-cover','#hd-v06-book','#page-character','#page-training','#hd-debug'])ok(d.querySelector(sel+' .v091-icon'),sel);});
-test('Bìa, tựa, footer V1.0',()=>['#hd-v06-cover .v06-seal','.v06-title-page .eyebrow','.v06-title-page .v06-seal','.v06-preface .v06-seal','footer','#hd-v09-debug legend'].forEach(sel=>ok(d.querySelector(sel).textContent.includes('V1.0'),sel)));
+test('Bìa, tựa, footer V1.1',()=>['#hd-v06-cover .v06-seal','.v06-title-page .eyebrow','.v06-title-page .v06-seal','.v06-preface .v06-seal','footer','#hd-v09-debug legend'].forEach(sel=>ok(d.querySelector(sel).textContent.includes('V1.1'),sel)));
 test('Không tràn ngang viewport thực',()=>{ok(d.documentElement.scrollWidth<=innerWidth,'scrollWidth '+d.documentElement.scrollWidth+' / '+innerWidth);const main=d.getElementById('main');ok(main.scrollWidth<=main.clientWidth,'main tràn ngang');});
 test('Nút đang hiện có vùng chạm ít nhất 48px',()=>{for(const b of d.querySelectorAll('button')){const r=b.getBoundingClientRect();if(r.width&&r.height)ok(r.height>=48,b.textContent+' cao '+r.height);}});
 test('Glyph nut cu duoc thay bang SVG',()=>{const scan=d.createTreeWalker(d.body,NodeFilter.SHOW_TEXT);let n;while((n=scan.nextNode()))if(!n.parentElement.closest('script,style,svg,pre,textarea'))ok(!/[\u2630\u21bb\u2715]/.test(n.nodeValue));});
@@ -2561,8 +2562,8 @@ const materialStyle=d.createElement('style');materialStyle.id='hd-v092-material'
 const brushStyle=d.createElement('style');brushStyle.id='hd-v092-handpaint';brushStyle.textContent=":root{--v092-hand-frame:url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cdefs%3E%3Cfilter%20id%3D%22r%22%20x%3D%22-12%25%22%20y%3D%22-12%25%22%20width%3D%22124%25%22%20height%3D%22124%25%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%22.14%20.22%22%20numOctaves%3D%223%22%20seed%3D%2292%22%20result%3D%22n%22%2F%3E%3CfeDisplacementMap%20in%3D%22SourceGraphic%22%20in2%3D%22n%22%20scale%3D%222.7%22%2F%3E%3CfeGaussianBlur%20stdDeviation%3D%22.13%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23493520%22%20stroke-linecap%3D%22round%22%20filter%3D%22url(%23r)%22%3E%3Cpath%20opacity%3D%22.18%22%20stroke-width%3D%228%22%20d%3D%22M9%2018Q5%206%2019%207L48%208%2077%206%20104%208Q116%206%20113%2021L114%2048%20112%2078%20113%20103Q116%20115%20101%20113L75%20114%2049%20112%2019%20114Q5%20117%207%20102L6%2076%208%2046Z%22%2F%3E%3Cpath%20opacity%3D%22.78%22%20stroke-width%3D%223.6%22%20d%3D%22M8%2019Q5%206%2020%207L47%208%2078%206%20103%208Q115%206%20113%2021L114%2047%20112%2078%20113%20103Q115%20115%20101%20113L76%20114%2048%20112%2019%20114Q5%20116%207%20102L6%2076%208%2046Z%22%2F%3E%3Cpath%20opacity%3D%22.43%22%20stroke-width%3D%221.1%22%20d%3D%22M12%2022Q10%2012%2022%2012L45%2013%2074%2011%2099%2013Q110%2011%20108%2024L109%2052%20107%2081%20108%2099Q110%20109%2098%20108L70%20109%2042%20107%2023%20109Q10%20111%2012%2097L11%2070%2013%2042%22%2F%3E%3Cpath%20opacity%3D%22.38%22%20stroke-width%3D%221.4%22%20d%3D%22M9%2013L34%2010M56%209L92%2010M111%2030L110%2065M112%2088L110%20103M85%20111L57%20110M34%20112L19%20111M10%2088L9%2057%22%2F%3E%3Cpath%20stroke%3D%22%23f1dfb6%22%20opacity%3D%22.7%22%20stroke-width%3D%22.8%22%20d%3D%22M21%207L37%207M58%208L69%207M112%2039L113%2049M112%2083L112%2091M62%20113L75%20113M8%2073L7%2085%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E\");--v092-hand-rule:url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%2012%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20fill%3D%22%234d3823%22%20opacity%3D%22.72%22%20d%3D%22M0%204L25%202%2046%204%2089%201%20130%203%20178%202%20221%204%20270%202%20320%203%20368%201%20410%204%20455%202%20498%203%20546%201%20600%204%20590%207%20552%206%20509%209%20460%207%20411%2010%20370%208%20326%209%20280%207%20230%209%20182%207%20130%209%2086%207%2040%209%200%207Z%22%2F%3E%3Cpath%20stroke%3D%22%23e8d5ae%22%20opacity%3D%22.65%22%20d%3D%22M30%204L80%204M120%205L165%204M220%206L248%205M300%204L347%204M400%205L428%206M490%204L555%204%22%2F%3E%3Cpath%20stroke%3D%22%236a5033%22%20opacity%3D%22.3%22%20d%3D%22M1%2010L157%2010M264%2011L470%2010M505%2011L597%2010%22%2F%3E%3C%2Fsvg%3E\")}\n/* Viền cọ chín lát: nét dày mỏng, khuyết mực và mép xơ tĩnh; không lọc chữ, không thay DOM hay engine. */\n.v06-page,.v06-cover,.v06-dialog,.v092-route,.card,.v092-empty,.v092-oc,.drawer,.v06-live-log{border:9px solid transparent!important;border-image:var(--v092-hand-frame) 18 stretch!important;border-radius:0!important;outline:0!important;box-shadow:none!important}\n.v06-page:before,.v06-page:after,.v06-cover:before,.v06-dialog:before,.card:before,.card:after,.v092-empty:before{border:0!important;box-shadow:none!important;outline:0!important}\n.v06-page,.v092-route{background-image:var(--v092-fibre),radial-gradient(ellipse at 10% 13%,#aa7a3430,transparent 60%),radial-gradient(ellipse at 94% 88%,#79552b1b,transparent 52%),linear-gradient(96deg,#dfc99b55,#f1e2bd88 48%,#dec69744)!important}\n.card,.v092-empty{background-image:var(--v092-fibre),radial-gradient(ellipse at 4% 8%,#9e70351d,transparent 58%),linear-gradient(110deg,#f7ecd0c9,#e7d5afc9)!important}\n.v092-route>.page-head{border:0!important;position:relative;padding:24px 12px 28px!important}.v092-route>.page-head:after{content:'';position:absolute;inset:auto 0 0;height:7px;background:var(--v092-hand-rule) center/100% 100% no-repeat;pointer-events:none}\n.card>h3,.v092-registry>h3{border:0!important;background-image:var(--v092-brush);background-size:100% 100%;padding:7px 12px;color:#f8ecd0;max-width:100%;text-shadow:0 1px #251b14}\n.card>h3 .v091-icon{color:inherit}.portrait,.v092-oc,.v092-intro,.stat,th,td,.kv>div{border-bottom-style:solid;border-bottom-color:transparent;border-image:var(--v092-hand-rule) 0 0 12 0 stretch;border-bottom-width:3px}\nbutton:not(#bottom-nav button):not([data-v072]),select,.v09-pill,.v091-pill{border:5px solid transparent!important;border-image:var(--v092-hand-frame) 18 stretch!important;border-radius:0!important;box-shadow:none!important;background-image:var(--v092-fibre),linear-gradient(110deg,#f4e7c9,#ead8b2)}\nbutton:disabled{opacity:.55}button.v06-primary{background-color:#903d2b!important;background-image:var(--v092-fibre)!important;color:#fff0d3!important}\n#bottom-nav.bottom-nav{border:0!important;background-image:var(--v092-fibre),linear-gradient(100deg,#d4bc8c,#efe0b9 48%,#d8c194)!important;box-shadow:0 -3px 9px #55361920}\n#bottom-nav.bottom-nav:before{height:9px!important;top:-4px!important;background:var(--v092-hand-rule) center/100% 100% no-repeat!important;filter:none!important}\n#bottom-nav button{border:0!important;border-image:none!important;background:transparent!important}#bottom-nav button[aria-current=page]{background:radial-gradient(ellipse,#953a2624,transparent 70%)!important}\n.v092-nav-icon{filter:url(#hd-v092-rough)!important}.v092-ring{stroke-dasharray:83 2 19 1 56 3;stroke-linecap:round;opacity:.84}.v092-nav-icon path{stroke-linecap:round;stroke-linejoin:round;opacity:.9}\n.v092-verse{font-family:'Dancing Script',Georgia,serif!important;font-size:1.8rem!important;border:0!important;line-height:1.85!important;letter-spacing:.025em!important;margin:28px 0 34px!important;max-width:100%}.v092-verse p{line-height:1.85!important}.v092-preface{border-image:var(--v092-hand-frame) 18 stretch!important}.v092-preface h3{background:none!important;color:#47301d!important}.v06-seal,.seal{border-color:#963b2c!important;filter:url(#hd-v092-soft-ink)}\nprogress{filter:url(#hd-v092-soft-ink)}@media(max-width:480px){.v06-page,.v092-route{padding:16px 12px!important}.card{padding:15px 10px!important}.v092-empty{padding:25px 12px!important}.v092-verse{font-size:1.7rem!important}.v092-preface{padding:36px 18px!important}.v092-route>.page-head{min-height:150px}.v092-oc{padding:12px 6px!important}}\n";d.head.append(brushStyle);
 const inkDefs=d.createElementNS('http://www.w3.org/2000/svg','svg');inkDefs.setAttribute('width','0');inkDefs.setAttribute('height','0');inkDefs.setAttribute('aria-hidden','true');inkDefs.style.position='absolute';inkDefs.innerHTML='<defs><filter id="hd-v092-rough" x="-6%" y="-6%" width="112%" height="112%"><feTurbulence type="fractalNoise" baseFrequency=".075" numOctaves="3" seed="92" result="grain"/><feDisplacementMap in="SourceGraphic" in2="grain" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="hd-v092-soft-ink"><feTurbulence type="fractalNoise" baseFrequency=".19" numOctaves="2" seed="92" result="grain"/><feDisplacementMap in="SourceGraphic" in2="grain" scale=".9" xChannelSelector="R" yChannelSelector="G"/></filter></defs>';d.body.append(inkDefs);
 function icon(k){const marks={character:'<circle cx="32" cy="18" r="5" fill="currentColor"/><path d="M28 26Q32 23 36 26L39 37 49 43 43 47 32 40 21 47 15 43 25 37Z" fill="currentColor"/><path d="M26 28L20 38 14 40M38 28L44 38 50 40M19 48Q32 53 45 48"/>',sect:'<path d="M12 29Q22 27 32 17Q42 27 52 29L44 31H20ZM16 39Q23 38 32 31Q41 38 48 39H16M19 40V50M45 40V50M26 40V50M38 40V50M14 51H50M25 24V20M39 24V20M31 15V11"/>',training:'<path d="M32 10A22 22 0 1 0 32 54A11 11 0 0 0 32 32A11 11 0 0 1 32 10Z" fill="currentColor"/><circle cx="32" cy="21" r="3" fill="#e9d9b9"/><circle cx="32" cy="43" r="3" fill="currentColor"/>',world:'<path d="M10 49L24 24 29 32 38 14 54 49ZM17 44L24 30 25 39M30 43L38 21 40 34 45 42M12 52Q28 47 51 53M43 14L49 11"/>',system:'<path d="M27 12H37L38 18 43 21 49 19 54 28 49 32 49 37 54 41 49 49 43 47 38 50 37 55H27L26 50 21 47 15 49 10 41 15 37 15 32 10 28 15 19 21 21 26 18Z" fill="currentColor"/><circle cx="32" cy="34" r="9" fill="#e9d9b9"/>'};return '<svg class="v092-nav-icon" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="v092-ring" d="M50 8Q24-6 9 18Q-3 44 19 58Q45 72 59 47Q69 20 50 8M47 5Q22-3 7 22M60 25Q65 50 44 60" opacity=".7"/>'+marks[k]+'</g></svg>';}
-function empty(id,title,parent=$('page-world')){const e=d.createElement('article');e.id=id;e.className='v092-empty';e.innerHTML=icon('world')+'<p class="eyebrow">Cổ quyển còn phong ấn</p><h3>'+title+'</h3><span class="seal">CHƯA KHAI MỞ</span><p>Hệ thống chưa được triển khai trong V1.0. Chưa có thao tác hay gameplay tại đây.</p>';parent.append(e);return e;}
-function page(id,title){const e=d.createElement('div');e.id='page-'+id;e.className='v092-route';e.hidden=true;e.innerHTML='<div class="page-head"><div><p class="eyebrow">Hồng Đức tu tiên lộ</p><h2 tabindex="-1">'+title+'</h2></div><span class="seal">V1.0</span></div>';main.insertBefore(e,main.querySelector('footer'));return e;}
+function empty(id,title,parent=$('page-world')){const e=d.createElement('article');e.id=id;e.className='v092-empty';e.innerHTML=icon('world')+'<p class="eyebrow">Cổ quyển còn phong ấn</p><h3>'+title+'</h3><span class="seal">CHƯA KHAI MỞ</span><p>Hệ thống chưa được triển khai trong V1.1. Chưa có thao tác hay gameplay tại đây.</p>';parent.append(e);return e;}
+function page(id,title){const e=d.createElement('div');e.id='page-'+id;e.className='v092-route';e.hidden=true;e.innerHTML='<div class="page-head"><div><p class="eyebrow">Hồng Đức tu tiên lộ</p><h2 tabindex="-1">'+title+'</h2></div><span class="seal">V1.1</span></div>';main.insertBefore(e,main.querySelector('footer'));return e;}
 const sect=page('sect','Tông Môn'),world=page('world','Giang Hồ');
 const se=empty('hd-v092-sect','Thất đại tông môn',sect);se.querySelector('.v092-nav-icon').outerHTML=icon('sect');const ul=d.createElement('ul');ul.style.textAlign='left';se.append(ul);sectors.forEach(t=>{const li=d.createElement('li');li.textContent=t;ul.append(li);});
 const log=$('hd-log').closest('article'),debug=$('hd-debug'),toggle=$('hd-debug-toggle'),save=$('hd-save');
@@ -2576,11 +2577,11 @@ const reg=d.createElement('article');reg.id='hd-v092-registry';reg.className='ca
 for(const [key,title]of [['vuKhi','Vũ Khí'],['congPhap','Công Pháp'],['phuLuc','Phù Lục']]){const el=d.createElement('details');const s=d.createElement('summary');s.textContent=title;const pre=d.createElement('pre');pre.textContent=JSON.stringify(HD_V04_DU_LIEU[key],null,2);el.append(s,pre);reg.append(el);} $('page-training').append(reg);
 const combatLink=d.createElement('button');combatLink.type='button';combatLink.textContent='Xem cửa sổ chiến đấu';combatLink.onclick=()=>window.HD_V06.debug.openModal();$('page-training').append(combatLink);
 const sheet=$('hd-v03-sheet'),oc=d.createElement('div');oc.className='v092-oc';const portrait=window.HD_V07.taoAnh(window.HD_V07.lookup('kiem-si'),'Chân dung OC hiện hành');oc.append(portrait);const ocText=d.createElement('div');ocText.innerHTML='<p class="eyebrow">Bản mệnh - một đời cầu đạo</p><h3></h3><p></p>';oc.append(ocText);oc.classList.add('card');sheet.before(oc);function syncOC(){const state=window.HD_V03.theGioi.chiSo.xem();ocText.querySelector('h3').textContent=state.ten||'Vô Danh';ocText.lastElementChild.textContent=$('hd-realm').textContent;}syncOC();V.theGioi.core.nghe('capNhat',syncOC);
-const pf=d.querySelector('.v06-preface');pf.classList.add('v092-preface');pf.querySelectorAll('p,hr').forEach(e=>e.remove());const verse=d.createElement('blockquote');verse.className='v092-verse';preface.forEach(t=>{const p=d.createElement('p');p.textContent=t;verse.append(p);});pf.insertBefore(verse,pf.querySelector('.v06-seal'));pf.querySelector('.v06-seal').textContent='V1 - V1.0';
-$('drawer').querySelector('.seal').innerHTML='V1 - V1.0';const note=$('drawer').querySelector('.notice');note.textContent='Lõi tu luyện, sinh lý, chiến đấu và Đan Dược đã triển khai. Các hệ chưa dựng được ghi rõ là chưa khai mở.';
+const pf=d.querySelector('.v06-preface');pf.classList.add('v092-preface');pf.querySelectorAll('p,hr').forEach(e=>e.remove());const verse=d.createElement('blockquote');verse.className='v092-verse';preface.forEach(t=>{const p=d.createElement('p');p.textContent=t;verse.append(p);});pf.insertBefore(verse,pf.querySelector('.v06-seal'));pf.querySelector('.v06-seal').textContent='V1 - V1.1';
+$('drawer').querySelector('.seal').innerHTML='V1 - V1.1';const note=$('drawer').querySelector('.notice');note.textContent='Lõi tu luyện, sinh lý, chiến đấu và Đan Dược đã triển khai. Các hệ chưa dựng được ghi rõ là chưa khai mở.';
 // Đồng bộ chú giải mục lục với đích mới, không để nhãn kinh tế/cốt truyện cũ gây hiểu nhầm.
 for(const b of d.querySelectorAll('#hd-v06-book nav button')){const label=b.firstChild?.textContent?.trim()||b.textContent.trim();const sub=b.querySelector('small,span:last-child');if(!sub)continue;if(label.startsWith('Pháp Bảo')||label.startsWith('Kỳ Ngộ'))sub.textContent='chưa khai mở';if(label.startsWith('Tư Trang'))sub.textContent='Trang bị hiện có';if(label.startsWith('Công Pháp'))sub.textContent='Thanh ghi mẫu';}
-settings.querySelector('h2').textContent='CÀI ĐẶT';const version=d.createElement('article');version.id='hd-v092-version';version.className='card';version.innerHTML='<h3>V1 - V1.0</h3><p>Thanh điều hướng năm mục, mục lục nối đúng nơi, lời tựa mới và icon đan viên. Save cũ tương thích; engine V02-V05 và luật Đan Dược V09 giữ nguyên.</p>';settings.append(version);
+settings.querySelector('h2').textContent='CÀI ĐẶT';const version=d.createElement('article');version.id='hd-v092-version';version.className='card';version.innerHTML='<h3>V1 - V1.1</h3><p>Thanh điều hướng năm mục, mục lục nối đúng nơi, lời tựa mới và icon đan viên. Save cũ tương thích; engine V02-V05 và luật Đan Dược V09 giữ nguyên.</p>';settings.append(version);
 // Luu lai khung V01 nhu tu lieu lich su, khong de loi ghi chu cu phu dinh save that.
 for(const card of [...settings.querySelectorAll(':scope > .card')]){if(card.textContent.includes('Chưa có save nhân vật')){const box=d.createElement('details');box.className='card';box.innerHTML='<summary>Khung lưu / tải V01 - tư liệu lịch sử</summary><p>Khung này được giữ để đối chiếu; lưu thật và tự nạp hiện hành nằm ở đầu trang.</p>';card.before(box);box.append(card);}}
 
@@ -2639,8 +2640,8 @@ async function kiemThu({inBang=true,nguon=null}={}){
  await test('Năm nút chiến đấu tiếp tục disabled',()=>{const a=[...d.querySelectorAll('#hd-v05-scene .v05-actions button')];eq(a.length,5);ok(a.every(b=>b.disabled));});
  await test('Không còn pseudo khung phủ trên bìa',()=>{cover.hidden=false;eq(getComputedStyle(cover,'::after').display,'none');eq(getComputedStyle(cover,'::after').content,'none');});
  await test('Bounding box mọi khung phủ: không mép ngang cắt vùng dưới tranh',()=>{cover.hidden=false;cover.scrollTop=0;const art=cover.querySelector('img'),a=art.getBoundingClientRect();ok(a.width>0&&a.height>0);const band={top:a.top+a.height*.6,bottom:a.bottom-8};for(const el of [cover,...cover.querySelectorAll('*')]){if(el.closest('.v06-cover-actions')||el===art)continue;for(const p of ['::before','::after']){const s=getComputedStyle(el,p);if(s.display==='none'||s.content==='none'||s.content==='normal')continue;const r=el.getBoundingClientRect(),bt=parseFloat(s.borderTopWidth)||0,bb=parseFloat(s.borderBottomWidth)||0;for(const [edge,w] of [[r.top,bt],[r.bottom,bb]])if(w&&r.left<a.right&&r.right>a.left)ok(edge<=band.top||edge>=band.bottom,el.tagName+p+' mép '+edge);}}});
- await test('Bìa giữ tranh, tiêu đề, triện V1 và hai nút',()=>{const a=cover.querySelector('img');ok(a.getAttribute('data-v07-path')==='art/bia.jpg');ok(cover.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));eq(cover.querySelector('.v06-seal').textContent,'V1 - V1.0');ok($('hd-v06-open')&&$('hd-v06-skip'));});
- await test('Nhãn Lời tựa, footer, Sổ tay đều V1.0',()=>{for(const el of [d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer'),d.querySelector('#drawer .seal')])ok(el.textContent.includes('V1.0'));});
+ await test('Bìa giữ tranh, tiêu đề, triện V1 và hai nút',()=>{const a=cover.querySelector('img');ok(a.getAttribute('data-v07-path')==='art/bia.jpg');ok(cover.querySelector('h1').textContent.includes('TU TIÊN LỘ V1'));eq(cover.querySelector('.v06-seal').textContent,'V1 - V1.1');ok($('hd-v06-open')&&$('hd-v06-skip'));});
+ await test('Nhãn Lời tựa, footer, Sổ tay đều V1.1',()=>{for(const el of [d.querySelector('.v06-preface .v06-seal'),d.querySelector('footer'),d.querySelector('#drawer .seal')])ok(el.textContent.includes('V1.1'));});
  await test('Hai câu thơ và Dancing Script giữ nguyên',()=>{eq([...d.querySelectorAll('.v092-verse p')].map(e=>e.textContent),window.HD_V092.preface);ok(getComputedStyle(d.querySelector('.v092-verse')).fontFamily.includes('Dancing'));});
  await test('Nav vẫn đủ năm trang và bù đáy nội dung',()=>{eq(d.querySelectorAll('#bottom-nav>button').length,5);ok(parseFloat(getComputedStyle(d.body).paddingBottom)>=$('bottom-nav').getBoundingClientRect().height);});
  await test('Khung không tràn ngang, nút hiện tối thiểu 48px',()=>{cover.hidden=true;window.HD_V092.go('training','',false);ok(d.documentElement.scrollWidth<=innerWidth+1);for(const b of d.querySelectorAll('button')){const r=b.getBoundingClientRect();if(r.width&&r.height)ok(r.height>=48,b.id+' cao '+r.height);}});
@@ -2839,6 +2840,166 @@ window.HD_V1_TEST=(()=>{
  return Object.freeze({kiemThu,kiemThuTatCa});
 })();
 </script>
+<script>
+/*
+MÔ ĐUN HD_V11 - XEM THỬ TRẬN CHIẾN V1.1, 25/10/2026.
+MỤC LỤC MODULE: 1 Hằng số; 2 Trận mẫu qua API V04/V05; 3 Khung cách ly;
+4 Nút Tu Luyện và vòng đời; 5 Kiểm thử độc lập ở module kế tiếp.
+THIẾT KẾ ĐÃ CHỐT: V02-V05 giữ nguyên từng ký tự. Chủ kho chọn khung sandbox
+cách ly: dùng chính index.html hiện hành trong iframe sandbox chỉ allow-scripts,
+KHÔNG allow-same-origin, không storage, không quyền điều hướng cửa sổ cha.
+Không sao chép hay viết lại engine. Cả hai bên dùng bộ chọn tự động V05, driver
+V05 1150ms, factory V04, thanh TN và số đỏ thật của HD_V1, cửa sổ thật V06.
+Bản sao xuat() trước trận chỉ gửi riêng cho đúng contentWindow của khung; bus
+CORE trong khung phục vụ render, không phát sự kiện lên CORE thật. Cùng snapshot
+và seed cho cùng kết quả. Hai đấu sĩ mẫu là dữ liệu diễn tập, không luật gameplay:
+TN bắt đầu 8/37 để đòn vũ khí thật hạ xuống dưới 20%, không ép roll hay giả log.
+Thế giới thật không bị sửa rồi ghi đè phục hồi: chỉ giữ snapshot bất biến, tạm
+dừng tốc độ qua điều khiển UI sẵn có, trả tốc độ sau khi đóng. Đan, EXP, máu,
+TN, LL, vũ khí, phù, seed và cờ hardcore thật không đi qua bất kỳ callback ghi nào.
+Snapshot storage chỉ đọc để đối chiếu, tuyệt đối không setItem/removeItem save.
+Đóng sớm, kết thúc, lỗi hay pagehide đều gỡ iframe: hủy toàn bộ realm và mọi timer
+kể cả timer hiệu ứng V05/V06 không có hook hủy. Timer chờ khung ở cha luôn được
+hủy cùng listener. Thông điệp chỉ nhận từ đúng contentWindow, không tin dữ liệu
+message để ghi save. Không mở lại khung hay lặp callback cũ sau khi dừng.
+*/
+window.HD_V11=(()=>{
+ 'use strict';
+ const d=document,V=window.HD_V04,F=window.HD_V05;
+ const C=Object.freeze({KENH:'HD_V11_SANDBOX',THAM_SO:'hd-v11',GIA_TRI:'sandbox',
+  CHO_KHUNG_MS:15000, // Chỉ giới hạn chờ tải khung, không giới hạn hiệp engine.
+  TN_TRAN:37,TN_MAU:8, // Dữ liệu mẫu: 8/37 trên 20%, đòn Phàm phí 2 còn 6/37 đỏ.
+  NHOM_B:Object.freeze([1000,300,350,100,450,100]), // Đấu sĩ diễn tập, thang B gốc.
+  VU_KHI:1,CONG_PHAP:1}); // Mã Phàm và công pháp vật lý có sẵn; không thêm registry.
+ const copy=structuredClone,by=id=>d.getElementById(id);
+ function docKho(){const r={};try{for(const k of [HD_CAN_BANG.KHOA_LUU,HD_CAN_BANG.KHOA_CHET])r[k]=localStorage.getItem(k);}catch(e){r.khongDocDuoc=true;}return r;}
+ function taoTran(save,{root,hen,huy,doi=()=>{},xong=()=>{}}={}){
+  const snapshot=copy(save),w=HD_V09.taoTheGioi(snapshot.core.seed,snapshot);
+  const p={...V.tuNhanVat(w),ten:'Đạo hữu - trận xem thử',nhomB:[...C.NHOM_B],tranKhiHuyet:1000,
+   canhGioi:0,tang:1,thanNiem:C.TN_TRAN,tnHienTai:C.TN_MAU,tnDangChiem:0,congPhap:C.CONG_PHAP,
+   vuKhi:[C.VU_KHI],phuLuc:[1,2,3],linhLuc:100,linhLucToiDa:100,SL:[1,1],
+   hieuUng:{chayMau:false,lanh:0,dot:0,anThan:0,mocTran:false,nang:false},daHien:[],daKichHoat:[]};
+  const n={...copy(p),ten:'NPC giả - trận xem thử',tnHienTai:C.TN_TRAN,phuLuc:[1]};
+  let fight,clock,off=null,ended=false,started=false,view=null,fx=null;
+  const ket=lyDo=>{if(ended)return;ended=true;clock?.stop();doi('kết thúc');xong({lyDo,nhatKy:fight?.xem().nhatKy||[]});};
+  if(root){view=F.debug.taoView(root);HD_V06.debug.polish(root);fx=HD_V06.debug.presenter(root);window.HD_V072?.apply?.(root);}
+  function ve(){const z=fight.xem();if(view){view.render(z,z.dauSi,'trong');HD_V07.apply(root,z.dauSi);fx.consume(z);HD_V1.hudNhatKy(root,w.core.nhatKy());root.querySelector('.v05-caption').textContent='Trận xem thử - tự động V0.5 - không ảnh hưởng save thật';}doi(z);}
+  fight=V.taoChienDau(w.core,p,n,'trong',{ketThuc:()=>queueMicrotask(()=>{ve();ket('Trận xem thử đã kết thúc');})});
+  clock=F.debug.taoNhip(()=>fight,{...(hen?{later:hen}:{}),...(huy?{cancel:huy}:{}),
+   onStep:a=>{view?.light(a.kind);ve();},onError:e=>ket('Trận xem thử dừng: '+e.message)});
+  off=w.core.nghe('chienDauV04',()=>{if(started&&!ended)queueMicrotask(()=>{if(!ended)ve();});});
+  function batDau(){if(started)return;started=true;w.core.ghi('Trận xem thử',{moDun:'V1.1',sandbox:true});fight.batDau();ve();clock.kick();}
+  function dung(){if(ended){off?.();off=null;return;}clock.stop();off?.();off=null;fight.dung();ket('Đã dừng trận xem thử');}
+  return Object.freeze({batDau,dung,xem:()=>fight.xem(),buoc:()=>{if(!ended){const a=F.debug.buoc(fight);ve();return a;}},snapshot:()=>copy(snapshot),core:()=>w.core.xuat(),dang:()=>started&&!ended});
+ }
+ function taoKhung({host=d.body,url=location.href,laySave=()=>V.theGioi.xuat(),kho=docKho,
+  tamDung=()=>null,phucHoi=()=>{},doi=()=>{},tao=()=>d.createElement('iframe'),hen=setTimeout,huy=clearTimeout}={}){
+  let frame=null,timer=null,off=null,truoc=null,truocKho=null,tocDo=null,lan=0,ketQua=null;
+  function xem(){return {dang:!!frame,phien:lan,ketQua:copy(ketQua)};}
+  function dung(lyDo='Đã dừng trận xem thử'){
+   if(!frame)return;lan++;if(timer!==null)huy(timer);timer=null;off?.();off=null;
+   const cu=frame;frame=null;cu.remove();
+   const nguyen=JSON.stringify(laySave())===JSON.stringify(truoc),khoNguyen=JSON.stringify(kho())===JSON.stringify(truocKho);
+   phucHoi(tocDo);ketQua={lyDo,nguyen,khoNguyen};doi(xem());
+  }
+  function batDau(){if(frame)return;
+   truoc=copy(laySave());truocKho=copy(kho());tocDo=tamDung();ketQua=null;const ma=++lan;
+   frame=tao();frame.id='hd-v11-frame';frame.title='Trận xem thử cách ly - engine và giao diện thật';
+   frame.setAttribute('sandbox','allow-scripts');frame.setAttribute('referrerpolicy','no-referrer');
+   const u=new URL(url,location.href);u.searchParams.set(C.THAM_SO,C.GIA_TRI);u.hash='';frame.src=u.href;
+   frame.style.cssText='position:fixed;inset:0;width:100%;height:100%;border:0;background:#e8dcc0;z-index:2400';
+   const nhan=e=>{if(!frame||ma!==lan||e.source!==frame.contentWindow||e.data?.kenh!==C.KENH)return;
+    if(e.data.loai==='sanSang'){if(timer!==null)huy(timer);timer=null;frame.contentWindow.postMessage({kenh:C.KENH,loai:'batDau',save:truoc},'*');}
+    else if(e.data.loai==='ketThuc')dung('Trận xem thử đã kết thúc; trạng thái thật giữ nguyên');};
+   window.addEventListener('message',nhan);off=()=>window.removeEventListener('message',nhan);
+   host.append(frame);timer=hen(()=>{if(ma===lan)dung('Không tải được khung xem thử; chưa thay đổi save thật');},C.CHO_KHUNG_MS);doi(xem());
+  }
+  return Object.freeze({batDau,dung,toggle:()=>frame?dung():batDau(),xem});
+ }
+ const laCon=(new URL(location.href).searchParams.get(C.THAM_SO)===C.GIA_TRI||!!d.querySelector('meta[name="hd-v11-sandbox"]'))&&window.parent!==window;
+ if(laCon){
+  // Trong opaque origin, storage game không thể đụng save cha. Không gắn nút cha lần nữa.
+  const style=d.createElement('style');style.textContent='body> :not(#hd-v06-combat){display:none!important}#hd-v06-combat{display:flex!important;z-index:1!important}#hd-v04-arena{display:none!important}#hd-v11-scene{display:block}#hd-v06-combat .v06-dialog{padding-bottom:90px}.v06-dialog-head{position:relative}';d.head.append(style);
+  const dialog=by('hd-v06-combat').querySelector('.v06-dialog'),root=d.createElement('div'),log=d.createElement('div');
+  root.id='hd-v11-scene';log.className='v06-live-log';log.setAttribute('role','log');log.setAttribute('aria-label','Nhật ký trận xem thử');
+  dialog.append(root,log);by('hd-v06-modal-title').textContent='TRẬN XEM THỬ - SANDBOX';HD_V06.debug.openModal();
+  let run=null,nhanXong=false;const xong=()=>window.parent.postMessage({kenh:C.KENH,loai:'ketThuc'},'*');
+  by('hd-v06-close').addEventListener('click',xong);d.addEventListener('keydown',e=>{if(e.key==='Escape')xong();});
+  window.addEventListener('message',e=>{if(nhanXong||e.source!==window.parent||e.data?.kenh!==C.KENH||e.data.loai!=='batDau')return;nhanXong=true;
+   try{run=taoTran(e.data.save,{root,doi:z=>{if(typeof z!=='object')return;log.replaceChildren(...z.nhatKy.map(x=>{const p=d.createElement('p');p.textContent='[Trận xem thử] '+F.debug.van(x,z.dauSi);return p;}));log.scrollTop=log.scrollHeight;window.parent.postMessage({kenh:C.KENH,loai:'buoc',hiep:z.hiep,dang:z.dang,tn:z.dauSi[0].tnHienTai,doSo:root.querySelector('[data-num=tn]')?.style.color,soLog:z.nhatKy.length},'*');},xong});run.batDau();}catch(error){log.textContent='Trận xem thử không mở được: '+error.message;xong();}});
+  window.parent.postMessage({kenh:C.KENH,loai:'sanSang',storageBiChan:docKho().khongDocDuoc===true},'*');
+  return Object.freeze({C,taoTran,taoKhung,laCon:true});
+ }
+ const row=d.createElement('div'),nut=d.createElement('button'),chu=d.createElement('p');
+ row.id='hd-v11-row';row.className='hd-v04';nut.id='hd-v11-toggle';nut.type='button';nut.textContent='Xem thử trận chiến';nut.setAttribute('aria-pressed','false');
+ chu.id='hd-v11-status';chu.setAttribute('role','status');chu.textContent='Trận xem thử cách ly - không cộng EXP, không tiêu hao hay xóa save thật.';row.append(nut,chu);by('hd-v082-row').after(row);
+ const style=d.createElement('style');style.id='hd-v11-style';style.textContent='#hd-v11-row{margin-top:12px;padding-top:10px;border-top:1px dashed #80705888}#hd-v11-toggle{font-size:.85rem;min-height:44px;white-space:normal;max-width:100%}#hd-v11-status{font-size:.78rem;margin-top:8px}#hd-v11-toggle[data-dang="true"]{position:fixed;z-index:2402;right:12px;bottom:max(12px,env(safe-area-inset-bottom));max-width:calc(100vw - 24px);box-shadow:0 2px 9px #2b211855}';d.head.append(style);
+ const speed=by('hd-speed');
+ const session=taoKhung({tamDung:()=>{const old={value:speed.value,disabled:speed.disabled};speed.value='0';speed.dispatchEvent(new Event('change'));speed.disabled=true;return old;},
+  phucHoi:old=>{speed.value=old.value;speed.disabled=old.disabled;speed.dispatchEvent(new Event('change'));},
+  doi:s=>{nut.dataset.dang=String(s.dang);nut.setAttribute('aria-pressed',String(s.dang));nut.textContent=s.dang?'Dừng xem thử':'Xem thử trận chiến';
+   chu.textContent=s.dang?'Đang xem trận thử cách ly; có thể bấm Dừng xem thử bất cứ lúc nào.':s.ketQua?s.ketQua.lyDo+(s.ketQua.nguyen&&s.ketQua.khoNguyen?' - Đã đối chiếu snapshot và save: nguyên trạng.':' - Trạng thái thật đã thay đổi ngoài trận xem thử; không ghi đè save.'):'Trận xem thử cách ly.';}});
+ nut.addEventListener('click',()=>{if(!session.xem().dang&&F.debug.tran()?.xem().dang){chu.textContent='Kết thúc trận thật trước khi mở trận xem thử để không ngắt nhịp trận thật.';return;}if(window.HD_V082?.debug.xem().dang)by('hd-v082-toggle').click();session.toggle();});
+ window.addEventListener('pagehide',()=>session.dung());
+ return Object.freeze({C,taoTran,taoKhung,batDau:session.batDau,dung:session.dung,xem:session.xem,laCon:false});
+})();
+</script>
+<script>
+/* KIỂM THỬ HD_V11: snapshot/save, bus, driver thật, dữ liệu mẫu và iframe opaque.
+Không sửa timer toàn cục, không thay RNG và không ghi save nhân vật. */
+window.HD_V11_TEST=(()=>{
+ 'use strict';
+ async function kiemThu({inBang=true,nguon=null}={}){
+  const ds=[],V=HD_V11,d=document,ok=(x,m='Không đạt')=>{if(!x)throw Error(m);},eq=(a,b)=>ok(JSON.stringify(a)===JSON.stringify(b));
+  const test=async(ten,fn)=>{try{await fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
+  const world=()=>HD_V09.taoTheGioi(20261025),same=x=>JSON.stringify(x);
+  function fixture(){const w=world(),save=w.xuat(),before=same(save),q=new Map();let id=0,end=0;
+   const t=V.taoTran(save,{hen:fn=>{q.set(++id,fn);return id;},huy:i=>q.delete(i),xong:()=>end++});
+   const tick=()=>{const x=q.entries().next().value;if(x){q.delete(x[0]);x[1]();}};
+   return {w,save,before,q,t,tick,end:()=>end};}
+  function frameFixture(){const host=d.createElement('div'),q=new Map(),state={save:world().xuat(),kho:{save:'nguyên trạng',chet:null}},view=[];let id=0,restore=0,frame;
+   const s=V.taoKhung({host,laySave:()=>state.save,kho:()=>state.kho,tamDung:()=>7,phucHoi:n=>{eq(n,7);restore++;},doi:x=>view.push(x),hen:fn=>{q.set(++id,fn);return id;},huy:i=>q.delete(i),tao:()=>{frame=d.createElement('div');Object.defineProperty(frame,'contentWindow',{value:window});return frame;}});
+   const msg=(data,source=window)=>window.dispatchEvent(new MessageEvent('message',{source,data:{kenh:V.C.KENH,...data}}));
+   return {host,q,state,s,view,msg,frame:()=>frame,restore:()=>restore};}
+  await test('Nút ở Tu Luyện, cạnh hàng xem thử V082',()=>{const b=d.getElementById('hd-v11-toggle');ok(b&&b.closest('#hd-tu-luyen'));eq(d.getElementById('hd-v082-row').nextElementSibling.id,'hd-v11-row');eq(b.textContent,'Xem thử trận chiến');});
+  await test('Nút có nhãn tiếng Việt, trạng thái ban đầu và vùng chạm',()=>{const b=d.getElementById('hd-v11-toggle');eq(b.getAttribute('aria-pressed'),'false');ok(parseFloat(getComputedStyle(b).minHeight)>=44);});
+  await test('Bắt đầu được trận thật V04 với NPC giả',()=>{const f=fixture();f.t.batDau();ok(f.t.xem().dang);ok(f.t.xem().dauSi[1].ten.includes('NPC giả'));f.t.dung();});
+  await test('Driver V05 chỉ tạo một lịch đánh',()=>{const f=fixture();f.t.batDau();f.t.batDau();eq(f.q.size,1);f.t.dung();});
+  await test('Nhịp driver thật tạo log đòn từ engine',()=>{const f=fixture();f.t.batDau();const n=f.t.xem().nhatKy.length;f.tick();ok(f.t.xem().nhatKy.length>n);f.t.dung();});
+  await test('Snapshot toàn bộ không bị sửa khi khởi động/dừng',()=>{const f=fixture();f.t.batDau();f.tick();f.t.dung();eq(same(f.save),f.before);eq(f.w.xuat(),f.save);eq(f.t.snapshot(),f.save);});
+  await test('Dừng sớm hủy driver và không còn timer đánh',()=>{const f=fixture();f.t.batDau();f.tick();f.t.dung();eq(f.q.size,0);ok(!f.t.dang());});
+  await test('Callback cũ không đánh thêm sau dừng',()=>{const f=fixture();f.t.batDau();const stale=[...f.q.values()][0];f.t.dung();const n=f.t.xem().nhatKy.length;stale();eq(f.t.xem().nhatKy.length,n);});
+  await test('Dừng lặp chỉ kết thúc một lần',()=>{const f=fixture();f.t.batDau();f.t.dung();f.t.dung();eq(f.end(),1);});
+  await test('Không EXP, không TN/LL/máu/vũ khí/phù/đan thật thay đổi',()=>{const f=fixture();f.t.batDau();for(let i=0;i<12&&f.t.xem().dang;i++)f.tick();f.t.dung();eq(f.w.xuat(),f.save);});
+  await test('Không thể chết hardcore trong thế giới thật',()=>{const f=fixture();f.t.batDau();for(let i=0;i<300&&f.t.xem().dang;i++)f.tick();eq(f.w.core.xem().daChet,false);eq(f.w.xuat(),f.save);f.t.dung();});
+  await test('Kết thúc tự nhiên hủy driver',async()=>{const f=fixture();f.t.batDau();for(let i=0;i<300&&f.t.xem().dang;i++)f.tick();await Promise.resolve();ok(!f.t.xem().dang);eq(f.q.size,0);eq(f.end(),1);});
+  await test('Cùng snapshot và seed cho cùng toàn bộ log/kết quả',()=>{const a=fixture(),b=fixture();a.t.batDau();b.t.batDau();for(let i=0;i<300&&(a.t.xem().dang||b.t.xem().dang);i++){a.tick();b.tick();}eq(a.t.xem(),b.t.xem());a.t.dung();b.t.dung();});
+  await test('CORE sandbox có nhãn trận xem thử',()=>{const f=fixture();f.t.batDau();ok(f.t.core().nhatKy.some(x=>x.ten==='Trận xem thử'&&x.sandbox));f.t.dung();});
+  await test('TN mẫu bị trừ thật qua đòn vũ khí V1.0',()=>{const f=fixture();f.t.batDau();for(let i=0;i<20&&f.t.xem().dauSi[0].tnHienTai>=8;i++)f.tick();ok(f.t.xem().dauSi[0].tnHienTai<8);ok(f.t.core().nhatKy.some(x=>x.moDun==='V1.0'));f.t.dung();});
+  await test('View V05 thật hiện thanh TN và số đỏ dưới 20%',()=>{const f=fixture(),root=d.createElement('div');const t=V.taoTran(f.save,{root,hen:()=>1,huy:()=>{}});t.batDau();for(let i=0;i<20&&t.xem().dauSi[0].tnHienTai>=8;i++)t.buoc();ok(root.querySelector('[data-v1-tn-bar]'));eq(root.querySelector('[data-num=tn]').style.color,'rgb(161, 45, 45)');ok(root.querySelector('.v05-caption').textContent.includes('Trận xem thử'));t.dung();});
+  await test('Khung chỉ allow-scripts, không same-origin hay điều hướng',()=>{const f=frameFixture();f.s.batDau();eq(f.frame().getAttribute('sandbox'),'allow-scripts');ok(f.frame().src.includes('hd-v11=sandbox'));f.s.dung();});
+  await test('Đóng khung gỡ DOM và hủy timer chờ tải',()=>{const f=frameFixture();f.s.batDau();eq(f.q.size,1);f.s.dung();eq(f.host.childElementCount,0);eq(f.q.size,0);eq(f.restore(),1);});
+  await test('Save trước/sau khung nguyên byte và snapshot nguyên trạng',()=>{const f=frameFixture(),s=same(f.state);f.s.batDau();f.s.dung();eq(same(f.state),s);ok(f.s.xem().ketQua.nguyen&&f.s.xem().ketQua.khoNguyen);});
+  await test('Thông điệp sai cửa sổ bị bỏ qua',()=>{const f=frameFixture();f.s.batDau();f.msg({loai:'ketThuc'},null);ok(f.s.xem().dang);f.s.dung();});
+  await test('Thông điệp kết thúc đúng khung phục hồi và gỡ khung',()=>{const f=frameFixture();f.s.batDau();f.msg({loai:'ketThuc'});ok(!f.s.xem().dang);eq(f.restore(),1);eq(f.q.size,0);});
+  await test('Callback tải cũ không ảnh hưởng phiên mới',()=>{const f=frameFixture();f.s.batDau();const stale=[...f.q.values()][0];f.s.dung();f.s.batDau();stale();ok(f.s.xem().dang);f.s.dung();});
+  await test('Hết thời gian tải vẫn giữ save và gỡ khung',()=>{const f=frameFixture();f.s.batDau();[...f.q.values()][0]();ok(!f.s.xem().dang);ok(f.s.xem().ketQua.nguyen);});
+  await test('Nhận sẵn sàng hủy timer chờ tải',()=>{const f=frameFixture();f.s.batDau();f.msg({loai:'sanSang'});eq(f.q.size,0);f.s.dung();});
+  await test('Nhãn hiển thị V1 - V1.1',()=>{ok(d.querySelector('footer').textContent.includes('V1 - V1.1'));ok(d.querySelector('#hd-v06-cover .v06-seal').textContent.includes('V1.1'));});
+  await test('Viewport iPhone 11 414 x 896',()=>{eq(innerWidth,414);eq(innerHeight,896);});
+  if(nguon!==null)await test('Bấm nút thật mở khung opaque, tự đánh/TN đỏ và dừng giữ save',async()=>{
+   const nut=d.getElementById('hd-v11-toggle'),realBefore=same(HD_V04.theGioi.xuat()),speed=d.getElementById('hd-speed'),oldSpeed=speed.value;
+   let frame,seenReady=false;
+   const observer=new MutationObserver(rows=>{for(const row of rows)for(const node of row.addedNodes){if(node.nodeType===1&&node.id==='hd-v11-frame'){frame=node;frame.srcdoc=nguon.replace('<head>','<head><base href="'+d.baseURI+'"><meta name="hd-v11-sandbox" content="true">');}}});
+   observer.observe(d.body,{childList:true});
+   try{await new Promise((resolve,reject)=>{let timer;const stop=()=>{clearTimeout(timer);window.removeEventListener('message',msg);};const msg=e=>{if(e.source!==frame?.contentWindow||e.data?.kenh!==V.C.KENH)return;if(e.data.loai==='sanSang')seenReady=e.data.storageBiChan===true;if(e.data.loai==='buoc'&&e.data.tn<8){try{ok(seenReady);ok(e.data.soLog>1);eq(e.data.doSo,'rgb(161, 45, 45)');eq(nut.textContent,'Dừng xem thử');eq(nut.getAttribute('aria-pressed'),'true');eq(speed.value,'0');stop();resolve();}catch(x){stop();reject(x);}}};window.addEventListener('message',msg);timer=setTimeout(()=>{stop();reject(Error('Không nhận được nhịp thật/TN đỏ từ khung'));},V.C.CHO_KHUNG_MS+10000);nut.click();});}finally{observer.disconnect();if(V.xem().dang)nut.click();}
+   ok(frame&&!frame.isConnected);eq(nut.textContent,'Xem thử trận chiến');eq(nut.getAttribute('aria-pressed'),'false');eq(speed.value,oldSpeed);eq(same(HD_V04.theGioi.xuat()),realBefore);ok(V.xem().ketQua.nguyen&&V.xem().ketQua.khoNguyen);
+  });
+  const r={dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds,khung:{rong:innerWidth,cao:innerHeight}};if(inBang)console.table(ds);return r;
+ }
+ return Object.freeze({kiemThu});
+})();
+</script>
 </body>
 <!-- V0.9.2 bổ sung chất liệu AI: giấy dó, khung cọ, nét phân cách JPEG nhúng; nền 768px và multiply, không sửa engine hay art/. Chưa nén JPEG do giới hạn xuất canvas của công cụ. -->
 </html>
@@ -2930,3 +3091,5 @@ LỊCH SỬ THAY ĐỔI V0.8.1
 Theo quyết định A của chủ kho: chỉ mở API kiemTraLuyenDan/nhomLo/ganNutLuyenDan, phí nhóm lò 10 TN và lý do khóa nút cạnh nút; chưa dựng gameplay luyện đan hướng D. Đan V09 chỉ ngừng hồi TN khi bật HD_V1, mọi hiệu ứng khác giữ nguyên; tắt trả đường cũ. HUD nhân vật, trạng thái và trận sao đúng cấu trúc/màu thanh LL, nhãn Thần Niệm; số đỏ dưới 20%, không thanh đôi. Nhật ký chỉ dịch số CORE thực trừ/hồi, không AI tự roll.
 Nhãn hiện hành V1 - V1.0. Bộ kiểm thử HD_V1_TEST dùng seed cố định và thế giới riêng; kiemThuTatCa chạy 734 ca cũ theo đường tắt tương thích (537 + 197 V10) rồi 53 ca V1.0 bật module tại 414 x 896. Giữ fixed-point, EXP 1/10000, phút 1440/ngày, nhân trước chia bỏ dư, bus, nhịp 1150ms, reduced-motion và mọi art/. Chỉ index.html trên v05-thu; không main, PR, merge hay tài liệu. Lịch sử cũ không xóa.
 -->
+
+<!-- LỊCH SỬ THAY ĐỔI V1.1 25/10/2026 - Thêm nút Xem thử trận chiến ở Tu Luyện cạnh Xem thử các cảnh; dùng thật factory V04, tự động/driver/view V05, modal V06, TN/số đỏ V1.0. Chủ kho chốt khung sandbox opaque allow-scripts, giữ nguyên V02-V05; đóng gỡ toàn bộ realm/timer. Snapshot và save thật không bị ghi, không EXP/tiêu hao/chết thật; khôi phục tốc độ UI sau kết thúc hoặc dừng. Nhãn hiện hành V1 - V1.1 và kỳ vọng nhãn trong hồi quy cập nhật tương ứng, kiểm thử HD_V11_TEST; chỉ index.html trên v05-thu, art/ và tài liệu không đổi. -->
