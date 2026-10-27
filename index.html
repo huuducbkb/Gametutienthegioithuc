@@ -1,4 +1,39 @@
 <!DOCTYPE html>
+<!-- MỤC LỤC MÔ ĐUN V1.10
+HD_V110: công cụ admin tập trung cuối body; cờ HD_V110.bat, hai nhóm nút có mô tả, một runner tổng tuần tự và HD_V110_TEST. Nền kiểm thử cô lập, khôi phục cờ finally; không đổi gameplay/save/RNG.
+V1.9: chế độ tương thích trong sáu nút hồi quy V02/V03/V04/V05/V06/V09 và HD_V09.kiemThu; lưu cờ HD_V1, tắt trước test cũ, khôi phục trong finally. Không đổi engine hay kỳ vọng test.
+HD_V18: HD_V082 đang chạy ghim trên nav đo thật và safe-area; idle giữ trong luồng dưới nav, đệm Tu Luyện theo nav runtime; checkpoint A cắt lớp cảnh chỉ trong preview; HD_V18_TEST gồm idle/cuộn/chạm, cuối body.
+HD_V17 (dòng 3610): tranh phòng đấu giá sau khối #hd-v16 và hộp thoại #hd-v16-dialog; CSS, hợp đồng trình bày và HD_V17_TEST cuối body; không sửa bộ máy V16.
+HD_V16: giá Phường Thị theo mùa và Phiên Đấu Giá Đan seed riêng; lớp bọc trước HD_giaoDien, giao diện/nút thử/HD_V16_TEST cuối body; cầu quyết toán tùy chọn V14.
+HD_V15: thân phận ba loại, xuất thân một lần, nhập bảy tông một chiều; hai kênh bán đan trong HD_V14, giao diện và kiểm thử HD_V15_TEST cuối body. Giữ khóa bản lưu cũ; bổ sung thanPhanV15.
+HD_V14: đăng ký 21 dược liệu/29 đơn, ví hạ nguyên, lò theo phút trò chơi, quầy tạm và bán hai kênh V1.5; lớp bọc trước HD_giaoDien, giao diện/HD_V14_TEST cuối body. Chưa mở đấu giá, năm cửa giữ khóa.
+HD_V13: bảng đăng ký năm cửa, vị trí độc lập, lịch thế giới và điểm nối bốn mùa; kiểm thử HD_V13_TEST.
+HD_V12: thu nút tròn 48px, hàng 108px, vùng Dừng 84px; CSS và kiểm thử hình học cuối body.
+HD_V11: trận xem thử trong khung cô lập nguồn gốc cô lập, dùng bộ máy/giao diện V04-V05-V06 thật; bản chụp dữ liệu bất biến, không storage thật, gỡ khung hủy toàn bộ bộ hẹn giờ. Module và kiểm thử V11 cuối body.
+HD_V1: tài nguyên Thần Niệm độc lập trước V09; một điểm nối đầu đòn V04, lưu thanNiemV1, hồi theo phút/luồng sự kiện; HUD và kiểm thử V1.0 cuối body. API nhóm lò 10 TN chưa mở cơ chế chơi theo chủ kho chốt. Phí bốn mẫu 2/3/4/5; đan không hồi TN khi module bật.
+V10: bảng đại cảnh trước HD_CAN_BANG; vá đúng sinh lý/tu luyện V02, hệ số tẩy tủy V03 và adapter đột phá V09; giao diện/kiểm thử độc lập cuối body. Tuổi, thọ và kết truyện dùng bản lưu V2 tương thích.
+MÔ ĐUN VÁ HD_V094 (CSS sau hd-v093-style): trạng thái chọn/điều khiển đỏ son #963c2c, chữ kem #fff0d3; nút khóa giữ vô hiệu hóa, nền giấy trầm và chữ nâu đậm, không dùng opacity để làm nhạt chữ. Hover/active/focus và phản hồi chạm iOS rõ ràng. Chỉ trình bày, không đổi bộ máy, điều kiện, bộ lắng nghe, bản lưu hay chất liệu.
+MÔ ĐUN VÁ HD_V093: nền đỏ riêng nút tĩnh tọa vô hiệu hóa; bỏ khung giả bìa cắt tranh; V082 hiển thị thật mỗi cảnh 4000ms và nghỉ 600ms, tùy chọn thời lượng V08 chỉ dùng khi xem thử. Giữ bộ máy V02-V05, Đan Dược, bản lưu và ba chất liệu AI. Kiểm thử V093 cuối file.
+MÔ ĐUN TRÌNH BÀY HD_V092: điều hướng năm mục cố định; mục lục nối đúng nội dung; lời tựa hai câu thơ Hán Việt; phông Việt tập con; ba JPEG giấy/khung/nét mực AI nhúng; icon đan viên. Chỉ sắp xếp DOM, giữ nguyên bộ máy, bản lưu, RNG, nhịp và luồng sự kiện. Kiểm thử V092 cuối file.
+MÔ ĐUN TRÌNH BÀY HD_V091: SVG mực nâu, bố cục giấy dó toàn game, nhãn Đan Dược và kiểm thử giao diện độc lập. Không đổi bộ máy/bản lưu/RNG/luồng sự kiện.
+MÔ ĐUN ĐAN DƯỢC HD_V09: trước HD_giaoDien, bảng đăng ký hai trục, lớp bọc công khai bản chụp dữ liệu/luồng sự kiện; giao diện và kiểm thử V09 ở script cuối. Engine V02-V05/V08/V082 giữ nguyên.
+MÔ ĐUN XEM THỬ CẢNH V082 (script cuối, CSS hd-v082-style): nút trực tiếp ở Tu Luyện, công khai V08, mười cảnh hiển thị 4000ms, nghỉ 600ms theo nhịp 4600ms, công tắc dừng và kiểm thử cô lập.
+VÁ GIAO DIỆN V081: nhãn bìa V0.8.1 trong V07/V071; chọn Trận Mộc trực tiếp ở giao diện V04 và bộ dựng NPC, ánh xạ hieuUng.mocTran sẵn có, không sửa bộ máy. Module kiểm thử V081.kiemThu. Nút tải V0.1 là khung cố ý khóa; V02/V03 đã tự tải khi mở trang, giữ nguyên hardcore.
+MÔ ĐUN CẢNH HOẠT ĐỘNG V08 (script thứ mười, CSS hd-v08-style): bảng đăng ký mười cảnh, onerror bóng mực V07, overlay 2000ms có reduced-motion, HD_V08.hienCanh/ganCore/kiemThu. Dùng phù lá dung-phu; ve-phu chỉ luyện chế phù chưa dựng. Engine giữ nguyên trừ một dòng phát luồng sự kiện đầu hiệp một có Trận Mộc.
+MÔ ĐUN NĂM NÚT MỰC V072 (script thứ chín, CSS hd-v072-style): viền mực vẽ tay, vết hoe sau bốn icon, triện đỏ son phẳng chữ kem Latin có dấu hai dòng; công khai HD_V072.apply/kiemThu. Không đổi công khai API/event luồng sự kiện, nhịp hay hành vi.
+MÔ ĐUN VÁ TRÌNH BÀY V071 (script thứ tám, CSS hd-v071-style): bìa sách JPEG qua HD_V07, viền mực hở góc không tua cuốn, năm nút giấy dó giữ nguyên trạng thái tự diễn; kiểm thử HD_V071.kiemThu. Bốn script đầu giữ nguyên từng ký tự.
+MÔ ĐUN KHO CHÂN DUNG VÀ KHO CẢNH V07 (script thứ bảy): bảng đăng ký art/, dự phòng onerror, cấu hình loại/ngoại hình, bìa JPEG và kiểm thử V07.
+VÁ TRÌNH BÀY V06: mốc thời gian theo vị trí log (CORE không có stt); hình SVG đổi JPEG; giữ đủ 40 kiểm thử V06. CSS V07: select giấy dó, ảnh multiply, bìa cuộn dọc.
+TINH CHỈNH CONCEPT V06: giấy xuyên chỉ loang, viền cọ SVG, chân dung nhiều lớp kiếm sĩ/giáp vàng, tranh trận trúc và gợn sóng, nút dọc và nhật ký mốc thời gian giao diện. Bổ sung trong script V06, không thay script V02-V05.
+MÔ ĐUN GIAO DIỆN SÁCH V06 (script thứ năm) và KIỂM THỬ V06 (script thứ sáu): bìa, sách ba trang thích ứng, mục lục ánh xạ tab cũ; hộp thoại đối đầu và chuyển động CSS/SVG từ công khai event V04 (tám hệ, vật lý, né, phù, bỏ chạy, chí mạng). Giữ nguyên bốn script/bộ máy cũ.
+MÔ ĐUN GIAO DIỆN CHIẾN ĐẤU V05 và KIỂM THỬ V05 - khối script thứ tư cuối body. Các số dòng V02/V03/V04 bên dưới là mốc của bản V0.4.
+Khung giao diện V0.1 được giữ nguyên; giao tiếp qua hàm công khai và luồng sự kiện CORE.
+MÔ ĐUN THANH GHI V02 - dòng 207.
+MÔ ĐUN CORE V02 - dòng 242.
+MÔ ĐUN THỜI GIAN V02 - dòng 296.
+MÔ ĐUN SINH LÝ V02 - dòng 315.
+MÔ ĐUN TU LUYỆN V02 - dòng 375.
+--><!DOCTYPE html>
 <!--
 MỤC LỤC MÔ ĐUN V1.10
 HD_V110: công cụ admin tập trung cuối body; cờ HD_V110.bat, hai nhóm nút có mô tả, một runner tổng tuần tự và HD_V110_TEST. Nền kiểm thử cô lập, khôi phục cờ finally; không đổi gameplay/save/RNG.
