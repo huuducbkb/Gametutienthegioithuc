@@ -4600,7 +4600,8 @@ window.HD_V113_TEST=(()=>{'use strict';
  }
  const map=d.createElement('section');map.id='hd-v114-map';map.setAttribute('aria-label','Gia tộc trong sơ đồ Thế Giới');const h=d.createElement('h3');h.textContent='Gia tộc';map.append(h,p('Ba phủ chỉ mở cảnh, không dịch chuyển nhân vật.'));for(const c of V.CANH)map.append(nut(c.ten,()=>HD_V113.mo(c.ma)));$('hd-v113')?.append(map);
  $('hd-v113-draft').textContent='Candidate V1.14 staging: 41 tranh cảnh cũ và ba phủ gia tộc, chờ nghiệm thu; chưa phát hành.';
- d.querySelectorAll('.v113-version').forEach(e=>{e.hidden=true;const v=d.createElement('small');v.className='v114-version';v.textContent='Hiện hành V1.14 staging - 3 đại gia tộc';e.after(v);});
+ d.querySelectorAll('.v113-version').forEach(e=>{e.hidden=true;e.style.setProperty('display','none','important');const v=d.createElement('small');v.className='v114-version';v.textContent='Hiện hành V1.14 staging - 3 đại gia tộc';e.after(v);});
+ d.querySelectorAll('[title]').forEach(e=>{if(e.title.includes('phiên bản hiện hành V1.13'))e.title=e.title.replace('phiên bản hiện hành V1.13','phiên bản hiện hành V1.14 staging');});
  $('hd-v114-test').onclick=async()=>{const bt=$('hd-v114-test'),out=$('hd-v114-test-output');bt.disabled=true;out.textContent='Đang chạy HD_V114 trong nền cô lập...';try{const r=await HD_V110.chay('HD_V114');out.textContent=r.map(x=>x.id+': '+x.dat+' PASS / '+x.truot+' FAIL'+x.danhSach.filter(t=>t.ketQua==='FAIL').map(t=>'\n'+t.ten+': '+t.loi).join('')).join('\n');}catch(e){out.textContent=e.message;}finally{bt.disabled=false;}};
  w.core.nghe('giaTocV114ThayDoi',render);w.core.nghe('thanPhanV15ThayDoi',render);w.core.nghe('chet',render);render();if(G.canChon())moChon();
  window.HD_V114_UI=Object.freeze({moChon,dong,render});
@@ -4609,7 +4610,7 @@ window.HD_V113_TEST=(()=>{'use strict';
 
 <script id="hd-v114-tests">
 /* HD_V114_TEST: seed co dinh, doi tuong rieng, khong dung save nguoi choi.
- Fixture HD_V113 chi giu registry V1.13 de giu nguyen 243 ca lich su;
+ Fixture HD_V113 chi giu registry V1.13 de giu nguyen cac ca lich su;
  bo nay kiem tra registry V1.14 that (46 canh), khong giam ky vong cu. */
 window.HD_V114_TEST=(()=>{'use strict';
  async function kiemThu({inBang=true,nguon=''}={}){const V=HD_V114,C=V.C,d=document,ds=[],co=HD_V1.bat,save=JSON.stringify(HD_V02.theGioi.xuat()),storage=JSON.stringify(Object.entries(localStorage)),route=HD_V092.current(),cover=d.getElementById('hd-v06-cover'),coverCu=cover.hidden;
@@ -4621,7 +4622,7 @@ window.HD_V114_TEST=(()=>{'use strict';
  await t('Fixed-point nhân trước chia sau bỏ dư và giới hạn số',()=>{eq(V.tinh(7999,125),9998);eq(V.tinh(8000,110),8800);eq(C.TRAN,1000000);for(const n of [-1,.1,NaN,Infinity]){let loi=false;try{V.tinh(n);}catch(e){loi=true;}ok(loi);}});
  for(const [i,m]of C.NGUONG.entries())await t('Ranh giới bậc '+C.BAC[i],()=>{eq(V.bac(m),i);if(i)eq(V.bac(m-1),i-1);eq(V.bac(Math.min(m+1,C.TRAN)),i);});
  for(const h of V.HO){
-  await t('Chọn '+h.ten+' một lần, không thưởng khởi đầu',()=>{const w=tao(),truoc=w.xuat();ok(w.giaTocV114.chon(h.ma).hopLe);ok(!w.giaTocV114.chon(V.HO.find(x=>x.ma!==h.ma).ma).hopLe);const s=w.xuat();eq(s.giaTocV114.ho,h.ma);for(const q of Object.values(s.giaTocV114.quanHe))eq(q.diem,0);delete s.giaTocV114;delete truoc.giaTocV114;delete s.thanPhanV15;delete truoc.thanPhanV15;eq(s,truoc);});
+  await t('Chọn '+h.ten+' một lần, không thưởng khởi đầu',()=>{const w=tao(),truoc=w.xuat();ok(w.giaTocV114.chon(h.ma).hopLe);ok(!w.giaTocV114.chon(V.HO.find(x=>x.ma!==h.ma).ma).hopLe);const s=w.xuat();eq(s.giaTocV114.ho,h.ma);for(const q of Object.values(s.giaTocV114.quanHe))eq(q.diem,0);delete s.giaTocV114;delete truoc.giaTocV114;delete s.thanPhanV15;delete truoc.thanPhanV15;eq(s.core.nhatKy.map(x=>x.ten),['Xác nhận xuất thân','Chọn gia tộc gốc']);s.core.nhatKy=[];eq(s,truoc);});
   await t('Giữ gốc '+h.ten+' sau nhập tông và tải lại',()=>{const w=tao();ok(w.giaTocV114.chon(h.ma).hopLe);ok(w.thanPhan.nhapTong(HD_V15.TONG[0]).hopLe);eq(w.thanPhan.xem().loai,'de-tu-tong-mon');eq(tao(w.xuat()).giaTocV114.xem().ho,h.ma);});
   await t('Hoạt động chính '+h.ten+' +80, phụ +40, trần chung 100',()=>{const n=nen();n.chinh(h.ma);eq(n.g.xem().quanHe[h.ma].diem,8000);n.phu(h.ma);eq(n.g.xem().quanHe[h.ma].diem,10000);for(let i=0;i<10;i++)n.chinh(h.ma);eq(n.g.xem().quanHe[h.ma].diem,10000);n.ngay(2);n.phu(h.ma);eq(n.g.xem().quanHe[h.ma].diem,14000);});
   await t('Hoạt động phụ '+h.ten+' không tính lời hẹn',()=>{const n=nen();ok(n.g.nhan(h.ma).hopLe);for(let i=1;i<=12;i++){n.ngay(i);n.phu(h.ma);}eq(n.g.xem().quanHe[h.ma].hen.dem,0);});
@@ -4835,4 +4836,5 @@ Hiệu chỉnh theo phương án A: bìa reflow không chồng chữ; Test HD_V1
 
 <!-- LỊCH SỬ THAY ĐỔI V1.14
 29/10/2026 - HD_V114 theo checkpoint chủ kho: Đỗ thị/Tần thị/Vương thị; chọn họ một lần không thưởng khởi đầu, giữ gốc khi nhập tông; save giaTocV114 chứa điểm riêng, bộ đếm ngày, hẹn và seed tất định. Hoạt động chính 80/phụ40, trần ngày100 sau hệ số; bậc0/500/1500/3500/7000, trần tổng10000 điểm hiển thị; lưu nhân100, UI nguyên. Hệ số thành viên100/110/125/140/160%. Đặc quyền chỉ tin/đối thoại/khu tiếp khách/chuyện Lão tổ. Hẹn tự nguyện30 ngày,12 hoạt động chính có ghi điểm, tới hạn+500/-300 sàn0, một lần. Save cũ thế gia hỏi chọn, đóng tạm và hỏi lại; gốc chờ chọn không mất khi nhập tông. Ba JPEG Squoosh1024x768 dưới250KB; registry46 bản ghi,44 tranh art/canh, Gia tộc trong Thế Giới. UI Tông Môn, nút HD_V114_TEST tại tính năng, không admin; API/event bus công khai, không RNG/storage/API engine mới, không thay kinh tế. Fixture chỉ HD_V113 giữ43 bản ghi cũ để nguyên ca/kỳ vọng, HD_V114_TEST kiểm tra registry46 thực. Chỉ v114-staging; chưa gộp main, chưa phát hành, không sửa ghi chú công việc.
+Bổ sung kiểm định candidate: ẩn nhãn V1.13 bằng display ưu tiên và cập nhật title staging; kiểm tra không thưởng khởi đầu loại riêng hai dòng nhật ký xác nhận, vẫn so sánh toàn bộ tài nguyên/seed và save còn lại.
 -->
