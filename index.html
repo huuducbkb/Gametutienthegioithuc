@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MÔ ĐUN V1.11
+MỤC LỤC MÔ ĐUN V1.12
+HD_V112: Thiên tượng 1A + 2B, seed riêng thời tiết/dị tượng; API chỉ-cộng HD_V111 theo ngoại lệ 2A; UI 5B một khối Thế Giới, save riêng và HD_V112_TEST. Nút test nằm trong Thiên tượng; game thật không dựng admin, fixture lịch sử chỉ cho HD_V110/HD_V111. Chốt 28/10/2026.
 HD_V111: danh tiếng fixed-point, nguồn sự kiện công khai, lời hẹn 30 ngày, seed riêng và save tương thích; lớp ghép trước HD_giaoDien; UI/HD_V111_TEST cuối body. Thiết kế cả bảy A được chủ kho chốt 27/10/2026.
 HD_V110: công cụ admin tập trung cuối body; cờ HD_V110.bat, hai nhóm nút có mô tả, một runner tổng tuần tự và HD_V110_TEST. Nền kiểm thử cô lập, khôi phục cờ finally; không đổi gameplay/save/RNG.
 V1.9: chế độ tương thích trong sáu nút hồi quy V02/V03/V04/V05/V06/V09 và HD_V09.kiemThu; lưu cờ HD_V1, tắt trước test cũ, khôi phục trong finally. Không đổi engine hay kỳ vọng test.
@@ -1843,17 +1844,69 @@ window.HD_V111=(function(){
   });
   w.core.nghe('phut',()=>{dongHo();hetHan();});
   function xem(){const x=cp(s);for(const k of ['tong','ho']){const b=bac(s[key(k)]);x[k]={bac:b,ten:(k==='tong'?C.TONG:C.HO)[b],diem:s[key(k)],keTiep:b===4?null:C.NGUONG[b+1]*100,nhanLai:s.lanNhan[k]===null?now():s.lanNhan[k]+C.HAN};}x.coTong=coTong();x.conSong=conSong();x.chienDau=!!w.chiSo.xem().chienDau;return x;}
-  return Object.freeze({xem,xuat:()=>cp(s),hien,nhan,bo});
+
+  // Ngoại lệ 2A chốt 28/10/2026: chỉ cộng thưởng dị tượng, không trừ điểm.
+  function thuongDiTuong(n){if(![200,1000].includes(n))return {hopLe:false,lyDo:'Mức thưởng dị tượng không hợp lệ'};if(!conSong()||w.chiSo.xem().chienDau)return {hopLe:false,lyDo:'Cần còn sống, ngoài trận'};const k=coTong()?'tong':'ho',x=Math.min(n,C.TRAN-s[key(k)]);cong(k,x);if(x)s.hoatDong[k]=now();doi();return {hopLe:true,diem:x,loai:k};}
+  return Object.freeze({xem,xuat:()=>cp(s),hien,nhan,bo,thuongDiTuong});
  }
  function taoTheGioi(hat=20261022,save){const w=HD_V16.taoTheGioi(hat,save),danhTiengV111=tao(w,save?.danhTiengV111);return Object.freeze({...w,danhTiengV111,xuat:()=>({...w.xuat(),danhTiengV111:danhTiengV111.xuat()})});}
  return Object.freeze({C,tinh,bac,bam,loiDan,tao,taoTheGioi});
+})();
+
+
+/* HD_V112 - Thiên tượng, thiết kế 1A + 2B chốt 28/10/2026.
+ Thời tiết chỉ trình bày; miền seed độc lập, không tiêu RNG CORE.
+ Dị tượng: ngày 86-90, 60% có; e dè +2, liều lĩnh 40% +10, 60% +0.
+ Ngoại lệ 2A: API chỉ-cộng nằm trong HD_V111; không API trừ điểm.
+ Phạt chỉ văn bản, không linh thạch/đan/vật phẩm, không sửa engine cũ.
+ Fixed-point 100, nhân trước chia sau bỏ dư, sàn 0/trần 10000 điểm.
+ Save riêng, không khóa storage mới; không truy thưởng save cũ. */
+window.HD_V112=(()=>{'use strict';
+ const cp=structuredClone,C=Object.freeze({DON_VI:100,NGAY:1440,MUA:90,CUA:86,CO:60,THANH:40});
+ const mua=['Xuân','Hạ','Thu','Đông'];
+ const thoiTiet=Object.freeze([
+ [['Mưa phùn',45,'Mưa bụi vương trên ngọn trúc, sơn môn chìm trong sắc xuân.'],['Âm u',30,'Mây thấp phủ triền non, tiếng chuông xa lẫn vào hơi ẩm.'],['Trời quang',15,'Ánh xuân rọi qua tán lá, núi biếc hiện bên chân trời.'],['Sương mỏng',10,'Sương bạc lững lờ, đường đá thoắt ẩn thoắt hiện.']],
+ [['Nắng gắt',55,'Nắng như lửa đổ xuống thềm đá, ve ngân giữa rừng sâu.'],['Nắng nhẹ',20,'Ánh dương trải vàng trên mái điện, gió đưa hương cỏ núi.'],['Mưa rào',20,'Mưa lớn gõ mái hiên, màn nước che mờ vách núi.'],['Âm u',5,'Mây sẫm tụ bên đỉnh núi, hơi nóng còn vương trên đá.']],
+ [['Hanh khô',50,'Gió thu lùa qua lá úa, bụi mỏng bay trên cổ đạo.'],['Trời quang',30,'Trời cao trong vắt, bóng nhạn khuất dần sau núi.'],['Âm u',15,'Mây xám trôi chậm, rừng xa khoác sắc tiêu sơ.'],['Mưa nhẹ',5,'Mưa thu thấm áo, tiếng lá rơi lặng giữa sân.']],
+ [['Tuyết rơi',40,'Tuyết trắng phủ thềm, dấu chân cô lữ chìm dần trong gió.'],['Giá rét',35,'Hàn phong rít qua khe núi, băng mỏng đọng bên mái điện.'],['Trời quang lạnh',15,'Nắng nhạt soi nền tuyết, trời đông lặng như gương.'],['Sương giá',10,'Sương kết trắng đầu cỏ, núi xa mờ giữa khí lạnh.']]
+ ].map(a=>Object.freeze(a.map(x=>Object.freeze(x)))));
+ const diTuong=Object.freeze([
+ ['Ngũ Sắc Vân Hà','Mây năm sắc tụ trên đỉnh cổ phong, ánh sáng chập chờn giữa tầng không.'],
+ ['Tinh Vũ Dạ Không','Vệt sao rơi soi sáng khe núi, tia bạc lặng lẽ tan trong đêm.'],
+ ['Linh Vụ Cổ Động','Sương linh khí cuộn quanh cửa động phủ, tiếng gió như vọng từ thuở trước.'],
+ ['Hàn Quang Tuyết Cốc','Ánh lạnh chập chờn dưới lớp tuyết, hàn quang soi sâu vào lòng cốc.']
+ ].map(x=>Object.freeze(x)));
+ const so=(n,min=0)=>{if(!Number.isSafeInteger(n)||n<min)throw Error('Số thiên tượng không hợp lệ');return n;};
+ function bam(...xs){let h=2166136261;for(const x of xs){for(const ch of String(x))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;h=Math.imul(h^255,16777619)>>>0;}return h;}
+ function rut(goc,mien,k,n){so(n,1);return bam(goc,'HD_V112',mien,k)%n;}
+ function lich(ngay){so(ngay,1);const ky=Math.floor((ngay-1)/90);return {ngay,ky,mua:ky%4,ngayMua:(ngay-1)%90+1};}
+ function tiet(goc,ngay){const l=lich(ngay),ds=thoiTiet[l.mua];let r=rut(goc,'thoi-tiet',ngay,100),i=0;while(i<ds.length-1&&r>=ds[i][1])r-=ds[i++][1];return {...l,ten:ds[i][0],moTa:ds[i][2],muaTen:mua[l.mua],chiSo:i};}
+ function hen(goc,ky){so(ky);return {ky,co:rut(goc,'di-tuong/co',ky,100)<60,batDau:86+rut(goc,'di-tuong/ngay',ky,5),thanhCong:rut(goc,'di-tuong/ket-qua',ky,100)<40,ten:diTuong[ky%4][0],moTa:diTuong[ky%4][1]};}
+ function tao(w,raw){const ngay=()=>Math.floor(w.core.xem().phut/1440)+1,goc=w.core.xem().goc;
+  let s=raw==null?{phienBan:1,ky:lich(ngay()).ky,ketQua:null,truoc:null}:cp(raw),ban=false;
+  if(s.phienBan!==1||!Number.isSafeInteger(s.ky)||s.ky<0||s.ky>lich(ngay()).ky)throw Error('Save dị tượng không hợp lệ');
+  function kiem(q,ky){if(q===null)return;if(!q||q.ky!==ky||!['e-de','lieu-linh','het-han'].includes(q.nhanh)||!Number.isSafeInteger(q.diem)||q.diem<0||q.diem>1000||!['tong','ho',null].includes(q.loai)||typeof q.vanBan!=='string')throw Error('Kết quả dị tượng không hợp lệ');}
+  kiem(s.ketQua,s.ky);if(s.truoc!==null)kiem(s.truoc,s.ky-1);
+  function dongBo(){const ky=lich(ngay()).ky;if(ky>s.ky){s.truoc=ky===s.ky+1?(s.ketQua||{ky:s.ky,nhanh:'het-han',diem:0,loai:null,vanBan:'Cửa sổ đã khép; dị tượng tan đi, không thưởng.'}):{ky:ky-1,nhanh:'het-han',diem:0,loai:null,vanBan:'Mùa trước đã qua; không truy thưởng.'};s.ky=ky;s.ketQua=null;}}
+  function xem(){dongBo();const l=lich(ngay()),h=hen(goc,l.ky);return {thoiTiet:tiet(goc,l.ngay),diTuong:{...h,ngayMua:l.ngayMua,mo:h.co&&l.ngayMua>=h.batDau&&l.ngayMua<=90&&!s.ketQua,ketQua:cp(s.ketQua),truoc:cp(s.truoc)}};}
+  function chon(nhanh){if(ban)return {hopLe:false,lyDo:'Đang xử lý dị tượng'};if(!['e-de','lieu-linh'].includes(nhanh))return {hopLe:false,lyDo:'Lựa chọn không hợp lệ'};const c=w.core.xem();if(c.daChet||w.chiSo.xem().chienDau)return {hopLe:false,lyDo:'Cần còn sống, ngoài trận'};const x=xem().diTuong;if(!x.mo)return {hopLe:false,lyDo:'Không có dị tượng đang mở'};
+   ban=true;try{const thanhCong=nhanh==='e-de'||x.thanhCong,diem=thanhCong?(nhanh==='e-de'?200:1000):0,loai=w.thanPhan.xem().loai==='de-tu-tong-mon'?'tong':'ho';
+    const r=diem?w.danhTiengV111.thuongDiTuong(diem):{hopLe:true,diem:0,loai};if(!r.hopLe)return r;
+    s.ketQua={ky:s.ky,nhanh,diem:r.diem,loai:r.loai,vanBan:thanhCong?(nhanh==='e-de'?'Giữ khoảng cách, ghi chép thận trọng; lời tường thuật được ghi nhận.':'Vượt qua màn dị quang, mang về kiến văn hiếm có; thanh danh được ghi nhận.'):'Dị tượng tan vỡ, lời tường thuật không được tin nhận; chuyến mạo hiểm trở thành công cốc.'};
+    w.core.ghi('Dị tượng mùa cuối',{moDun:'HD_V112',nhanh,thanhCong,diem:r.diem,loai:r.loai});w.core.phat('thienTuongV112ThayDoi');return {hopLe:true,thanhCong,...cp(s.ketQua)};
+   }finally{ban=false;}}
+  w.core.nghe('phut',dongBo);
+  return Object.freeze({xem,chon,xuat:()=>{dongBo();return cp(s);}});
+ }
+ function taoTheGioi(hat=20261022,save){const w=HD_V111.taoTheGioi(hat,save),diTuongV112=tao(w,save?.diTuongV112);return Object.freeze({...w,diTuongV112,xuat:()=>({...w.xuat(),thoiTietV112:diTuongV112.xem().thoiTiet,diTuongV112:diTuongV112.xuat()})});}
+ return Object.freeze({C,thoiTiet,diTuong,bam,rut,lich,tiet,hen,tao,taoTheGioi});
 })();
 
 (function HD_giaoDien(){
  const C=HD_CAN_BANG;
  let duLieu=null,canhBao='';
  try{const raw=localStorage.getItem(C.KHOA_LUU);if(raw)duLieu=JSON.parse(raw);if(localStorage.getItem(C.KHOA_CHET))canhBao='Hành trình trước đã đạo tiêu và bị xóa. Đây là hành trình mới.';}catch(e){canhBao='Không đọc được lưu cục bộ; đang chơi trong phiên.';}
- let w;try{w=HD_V111.taoTheGioi(C.HAT_GIONG,duLieu);}catch(e){w=HD_V111.taoTheGioi();canhBao='Lưu không tương thích; không tự ghi đè. '+e.message;}
+ let w;try{w=HD_V112.taoTheGioi(C.HAT_GIONG,duLieu);}catch(e){w=HD_V112.taoTheGioi();canhBao='Lưu không tương thích; không tự ghi đè. '+e.message;}
  let tocDo=0,choDung=false,choHanhDong=null;
  const el=id=>document.getElementById(id),tao=(tag,attrs={})=>{const e=document.createElement(tag);Object.assign(e,attrs);return e;};
  const css=tao('style',{textContent:'.hd-v02{overflow-wrap:anywhere}.hd-v02 p{margin-bottom:8px}.hd-v02 .hd-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.hd-v02 .hd-row button{flex:1;min-width:95px}.hd-v02 label{display:block;font-size:.85rem;margin:8px 0}.hd-v02 select,.hd-v02 input{width:100%;min-height:44px;font:inherit;background:#f6ecd4;color:var(--ink);border:1px solid var(--line);padding:7px}.hd-v02 progress{display:block;width:100%;height:12px;accent-color:var(--red)}.hd-v02 .hd-bar{margin:9px 0}.hd-v02 .hd-bar span{display:flex;justify-content:space-between;font-size:.85rem}.hd-v02 pre{white-space:pre-wrap;font:inherit;font-size:.76rem;max-height:230px;overflow:auto;border-top:1px dashed var(--line);padding-top:8px}.hd-v02 details{margin:12px 0}.hd-v02 summary{cursor:pointer;min-height:44px;padding:8px}.hd-v02 [hidden]{display:none!important}.hd-v02 .hd-small{font-size:.78rem;color:#695b48}.hd-v02 .hd-danger{border:2px solid var(--red);padding:10px}.hd-v02 .hd-clock{font-size:.82rem}.hd-v02 output{font-variant-numeric:tabular-nums}'});document.head.append(css);
@@ -3959,6 +4012,7 @@ window.HD_V110=(()=>{'use strict';
  ];
  const danhMuc=Object.freeze(duLieu.map(([id,api,bat,moTa],i)=>Object.freeze({id,api,bat,moTa,nhom:i<15?0:1})));
  const boV111=Object.freeze({id:'HD_V111',api:'HD_V111_TEST',bat:true,moTa:'Uy tín, danh vọng, trần ngày, lời hẹn, seed và save tương thích.',nhom:1});
+ const boV112=Object.freeze({id:'HD_V112',api:'HD_V112_TEST',bat:true,moTa:'Thiên tượng: thời tiết, cửa sổ, seed, lựa chọn thưởng, save và cờ finally.',nhom:1});
  let hien=true,khoi=null,runner=null;
  async function goiTrongNen(m,nguon,realm=window){
   const cu=realm.HD_V1.bat;
@@ -3978,7 +4032,7 @@ window.HD_V110=(()=>{'use strict';
   Object.defineProperty(window,'localStorage',{value:khoBoNho()});
   Object.defineProperty(window,'sessionStorage',{value:khoBoNho()});
   addEventListener('message',async e=>{if(e.source!==parent||e.data?.kenh!=='HD_V110_NEN'||e.data.loai!=='chay')return;
-   const m=HD_V110.danhMuc.find(x=>x.id===e.data.id)||(e.data.id==='HD_V111'?HD_V110.boV111:null),cover=document.getElementById('hd-v06-cover'),coverCu=cover?.hidden;
+   const m=HD_V110.danhMuc.find(x=>x.id===e.data.id)||(e.data.id==='HD_V111'?HD_V110.boV111:e.data.id==='HD_V112'?HD_V110.boV112:null),cover=document.getElementById('hd-v06-cover'),coverCu=cover?.hidden;
    try{if(m.id==='V18'&&cover)cover.hidden=true;const r=await HD_V110.goiTrongNen(m,e.data.nguon);parent.postMessage({kenh:'HD_V110_NEN',loai:'xong',r},'*');}
    catch(x){parent.postMessage({kenh:'HD_V110_NEN',loai:'loi',loi:x.message},'*');}
    finally{if(cover)cover.hidden=coverCu;}
@@ -3989,7 +4043,7 @@ window.HD_V110=(()=>{'use strict';
   const f=d.createElement('iframe');f.className='hd-v110-frame';f.title='Nền kiểm thử '+m.id;
   f.setAttribute('sandbox','allow-scripts');f.setAttribute('aria-hidden','true');f.tabIndex=-1;
   const base=d.createElement('base');base.href=d.baseURI;
-  const boot='<script>'+khoBoNho.toString()+';('+nen.toString()+')();<'+ '/script>';
+  const boot='<script>window.__HD_V112_FIXTURE_ADMIN='+JSON.stringify(['HD_V110','HD_V111'].includes(m.id))+';'+khoBoNho.toString()+';('+nen.toString()+')();<'+ '/script>';
   f.srcdoc=nguon.replace('<head>','<head>'+base.outerHTML+boot);
   let timer,nhan;
   try{return await new Promise((resolve,reject)=>{
@@ -4021,18 +4075,23 @@ window.HD_V110=(()=>{'use strict';
   const out=d.createElement('pre');out.id='hd-v110-output';out.setAttribute('role','status');out.setAttribute('aria-live','polite');out.textContent='Chưa chạy kiểm thử.';a.append(out);
   a.addEventListener('click',e=>{const b=e.target.closest('button[data-v110]');if(!b||!a.contains(b))return;run.chay(b.dataset.v110).catch(x=>{out.textContent='Không chạy được: '+x.message;});});return a;
  }
- function ve(z){if(!khoi)return;khoi.querySelectorAll('button[data-v110],button[data-v111]').forEach(b=>{b.disabled=z.dang;});khoi.setAttribute('aria-busy',String(z.dang));
+ function ve(z){if(!khoi)return;khoi.querySelectorAll('button[data-v110],button[data-v111],button[data-v112]').forEach(b=>{b.disabled=z.dang;});khoi.setAttribute('aria-busy',String(z.dang));
   const lines=z.ketQua.map(r=>r.id+': '+r.dat+' PASS / '+r.truot+' FAIL'+r.danhSach.filter(x=>x.ketQua==='FAIL').map(x=>'\n  '+x.ten+': '+(x.loi||x.lyDo||'Không đạt')).join(''));
   if(z.dang)lines.push('Đang chạy '+(z.bo||'nguồn')+'...');else if(z.ketQua.length)lines.push('Tổng: '+z.ketQua.reduce((n,r)=>n+r.dat,0)+' PASS / '+z.ketQua.reduce((n,r)=>n+r.truot,0)+' FAIL');
   khoi.querySelector('#hd-v110-output').textContent=lines.join('\n')||'Chưa chạy kiểm thử.';
  }
  if(!window.HD_V11?.laCon){
   const style=d.createElement('style');style.id='hd-v110-legacy';style.textContent=CU.map(id=>'#'+id).join(',')+'{display:none!important}';d.head.append(style);
-  runner=taoRunner({doi:ve,boThem:[boV111]});khoi=taoKhoi(runner);d.getElementById('page-system').append(khoi);
+  runner=taoRunner({doi:ve,boThem:[boV111,boV112]});
+  // V1.12: chỉ dựng thành phần lịch sử trong hai nền hồi quy; game thật không có admin.
+  CU.forEach(id=>d.getElementById(id)?.remove());
+  if(window.__HD_V112_FIXTURE_ADMIN){khoi=taoKhoi(runner);d.getElementById('page-system').append(khoi);
   // HD_V111 nối sau 26 bộ cũ; giữ danhMuc và fixture runner V1.10 nguyên hợp đồng.
   const row=d.createElement('div'),b=d.createElement('button'),p=d.createElement('small');row.className='v110-item v111-admin';b.type='button';b.dataset.v111='HD_V111';b.textContent='Test HD_V111';p.id='hd-v111-test-desc';p.className='v110-desc';p.textContent=boV111.moTa;b.setAttribute('aria-describedby',p.id);row.append(b,p);khoi.querySelectorAll('details')[1].append(row);b.addEventListener('click',()=>runner.chay('HD_V111').catch(e=>{khoi.querySelector('#hd-v110-output').textContent=e.message;}));
  }
- return Object.freeze({danhMuc,boV111,goiTrongNen,taoRunner,taoKhoi,
+ }
+
+ return Object.freeze({danhMuc,boV111,boV112,goiTrongNen,taoRunner,taoKhoi,
   get bat(){return hien;},set bat(x){hien=!!x;if(khoi)khoi.hidden=!hien;},
   chay:id=>runner.chay(id),xem:()=>runner?.xem()||{dang:false,ketQua:[]}});
 })();
@@ -4176,6 +4235,88 @@ window.HD_V111_TEST=(function(){
    if(nguon)await t('Nguồn mới không sửa mã bộ test cũ bằng thay kỳ vọng',()=>{ok(nguon.includes('TN 14'));ok(nguon.includes('id="hd-v111-tests"'));});
   }finally{HD_V1.datBat(flag);}
   await t('Thế giới sống, storage và cờ không đổi sau suite',()=>{eq(JSON.stringify(HD_V02.theGioi.xuat()),live);eq(JSON.stringify(Object.entries(localStorage)),storage);eq(HD_V1.bat,flag);});
+  if(inBang)console.table(ds);return {dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};
+ }
+ return Object.freeze({kiemThu});
+})();
+</script>
+
+
+<style id="hd-v112-style">
+#hd-v112{overflow-wrap:anywhere;min-width:0}.v111-version[hidden],#hd-v112 button[hidden]{display:none!important}#hd-v112 button{display:block;width:100%;min-height:48px;margin:8px 0;white-space:normal}#hd-v112 p{margin:8px 0}.v112-version{display:block;color:#963c2c;font-weight:bold;font-size:.8rem}
+/* V1.12: chữ bìa trong luồng, không đè nhãn hiện hành lên eyebrow tuyệt đối cũ. */
+#hd-v06-book .v06-title-page>.eyebrow,#hd-v06-book .v06-title-page>h2,#hd-v06-book .v06-title-page>.v06-seal,#hd-v06-book .v06-title-page>.v112-version{position:relative;inset:auto;transform:none;display:block;margin:12px auto;max-width:calc(100% - 28px);width:auto}
+#hd-v112-test-output{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
+</style>
+<script id="hd-v112-ui">
+/* UI 5B: một khối Thiên tượng, không overlay, không đổi năm nav. */
+(()=>{'use strict';const d=document,w=HD_V02.theGioi,F=w.diTuongV112;if(!F)return;
+ const a=d.createElement('article');a.id='hd-v112';a.className='card';a.innerHTML='<h3>Thiên tượng</h3><p id="hd-v112-weather"></p><p id="hd-v112-desc"></p><p class="muted">Thời tiết chỉ trình bày, không đổi giá, luyện công hay chiến đấu.</p><h4>Dị tượng mùa cuối</h4><p id="hd-v112-event"></p><p id="hd-v112-rules">Mỗi mùa có 60% xuất hiện một dị tượng, bắt đầu ngày 86-90 và hết hạn cuối ngày 90. E dè: chắc chắn +2 điểm. Liều lĩnh: 40% +10 điểm, 60% +0 và hậu quả văn bản; không trừ điểm. Thưởng chặn trần 10.000.</p><p id="hd-v112-route"></p><button type="button" id="hd-v112-safe">E dè: quan sát từ xa, ghi lại dị tượng</button><button type="button" id="hd-v112-risk">Liều lĩnh: tiến vào trung tâm dị tượng</button><p id="hd-v112-result" role="status" aria-live="polite"></p><button type="button" id="hd-v112-test" aria-describedby="hd-v112-test-desc">Test HD_V112</button><p id="hd-v112-test-desc">Kiểm thử Thiên tượng trong nền cô lập, không dùng save thật.</p><pre id="hd-v112-test-output" role="status" aria-live="polite">Chưa chạy kiểm thử.</pre>';
+ const cal=d.getElementById('hd-v13-calendar');if(cal)cal.after(a);else d.getElementById('page-world').append(a);
+ const $=id=>d.getElementById(id);
+ $('hd-v112-test').addEventListener('click',async()=>{const b=$('hd-v112-test'),out=$('hd-v112-test-output');b.disabled=true;out.textContent='Đang chạy HD_V112...';try{const rows=await HD_V110.chay('HD_V112');out.textContent=rows.map(r=>r.id+': '+r.dat+' PASS / '+r.truot+' FAIL'+r.danhSach.filter(x=>x.ketQua==='FAIL').map(x=>'\n'+x.ten+': '+x.loi).join('')).join('\n');}catch(e){out.textContent='Không chạy được: '+e.message;}finally{b.disabled=false;}});
+ function ve(){const z=F.xem(),h=z.diTuong,c=w.core.xem();$('hd-v112-weather').textContent='Mùa '+z.thoiTiet.muaTen+' - ngày '+h.ngayMua+'/90: '+z.thoiTiet.ten;$('hd-v112-desc').textContent=z.thoiTiet.moTa;
+  $('hd-v112-event').textContent=h.mo?h.ten+': '+h.moTa:h.ketQua?'Dị tượng mùa này đã kết thúc.':h.ngayMua<86?'Chưa đến cửa sổ dị tượng mùa cuối.':'Chưa có dị tượng đang mở.';
+  $('hd-v112-route').textContent=w.thanPhan.xem().loai==='de-tu-tong-mon'?'Thưởng vào uy tín tông môn.':'Thưởng vào danh vọng giang hồ.';
+  for(const id of ['hd-v112-safe','hd-v112-risk']){$(id).hidden=!h.mo;$(id).disabled=!h.mo||c.daChet||!!w.chiSo.xem().chienDau;}
+  $('hd-v112-result').textContent=h.ketQua?h.ketQua.vanBan+' Nhận '+(h.ketQua.diem/100)+' điểm.':h.truoc?h.truoc.vanBan:'';
+ }
+ function lam(n){const r=F.chon(n);if(r.hopLe)HD_V02.luu();ve();if(!r.hopLe)$('hd-v112-result').textContent=r.lyDo;}
+ $('hd-v112-safe').addEventListener('click',()=>lam('e-de'));$('hd-v112-risk').addEventListener('click',()=>lam('lieu-linh'));
+ for(const k of ['capNhat','thienTuongV112ThayDoi','thanPhanV15ThayDoi'])w.core.nghe(k,ve);
+ // Giữ các triện và kỳ vọng legacy, bổ sung nhãn phiên bản hiện hành riêng.
+ d.querySelectorAll('[title]').forEach(e=>{if(e.title==='Triện kế thừa V1.10; phiên bản hiện hành V1.11')e.title='Triện kế thừa V1.10; phiên bản hiện hành V1.12';});
+ d.querySelectorAll('.v111-version').forEach(e=>{e.hidden=true;const v=d.createElement('small');v.className='v112-version';v.textContent='Hiện hành V1.12 - Thời tiết và dị tượng mùa cuối';e.after(v);});
+ ve();
+})();
+</script>
+<script id="hd-v112-tests">
+/* HD_V112_TEST: seed cố định, fixture riêng, cờ phục hồi finally, không storage thật. */
+window.HD_V112_TEST=(()=>{'use strict';const V=HD_V112;
+ function fixture(seed=11220261028,ngay=1,tong=false,raw=null,u=0){let p=(ngay-1)*1440,dead=false,combat=false;const bus=new Map(),logs=[];
+  const core={xem:()=>({phut:p,goc:seed,seed,daChet:dead}),nghe:(k,f)=>{if(!bus.has(k))bus.set(k,[]);bus.get(k).push(f);},phat:(k,x)=>{for(const f of bus.get(k)||[])f(x);},ghi:(ten,x)=>logs.push({ten,...x})};
+  const w={core,thanPhan:{xem:()=>({loai:tong?'de-tu-tong-mon':'tan-tu'})},chiSo:{xem:()=>({chienDau:combat})},dan:{du:()=>0,rut:()=>false}};
+  let r=HD_V111.tao(w).xuat();r.uyTin=r.danhVong=u;w.danhTiengV111=HD_V111.tao(w,r);const F=V.tao(w,raw);
+  return {w,F,logs,den:n=>{p=(n-1)*1440;core.phat('phut');},chet:()=>{dead=true;},tran:()=>{combat=true;}};
+ }
+ async function kiemThu({inBang=true,nguon=''}={}){const ds=[],flag=HD_V1.bat,admin=HD_V110.bat,live=JSON.stringify(HD_V02.theGioi.xuat()),store=JSON.stringify(Object.entries(localStorage));
+  const ok=(x,m='Không đạt')=>{if(!x)throw Error(m);},eq=(a,b)=>ok(JSON.stringify(a)===JSON.stringify(b),JSON.stringify(a)+' khác '+JSON.stringify(b)),t=async(ten,f)=>{try{await f();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
+  function tim(ky,tc){for(let seed=112000;seed<122000;seed++){const h=V.hen(seed,ky);if(h.co&&(tc===undefined||h.thanhCong===tc))return seed;}throw Error('Thiếu seed fixture');}
+  try{HD_V1.datBat(false);
+   for(let m=0;m<4;m++){
+    await t('Bảng thời tiết mùa '+m+' đủ 4 trạng thái, tổng 100',()=>{eq(V.thoiTiet[m].length,4);eq(V.thoiTiet[m].reduce((n,x)=>n+x[1],0),100);});
+    for(const seed of [1,11220261028,20261028,4294967295])await t('Thời tiết deterministic mùa '+m+' seed '+seed,()=>{for(let n=m*90+1;n<=(m+1)*90;n++){const a=V.tiet(seed,n);eq(a,V.tiet(seed,n));eq(a.mua,m);ok(V.thoiTiet[m].some(x=>x[0]===a.ten&&x[2]===a.moTa));}});
+    await t('Bốn trạng thái mùa '+m+' đều có thể xuất hiện',()=>{const found=new Set();for(let s=0;s<1000;s++)found.add(V.tiet(s,m*90+1).chiSo);eq(found.size,4);});
+    await t('Cửa sổ đúng từng ngày mùa '+m,()=>{const seed=tim(m),h=V.hen(seed,m),z=fixture(seed,m*90+1);for(let n=1;n<=90;n++){z.den(m*90+n);eq(z.F.xem().diTuong.mo,n>=h.batDau&&n>=86&&n<=90);}z.den((m+1)*90+1);ok(z.F.xem().diTuong.truoc.nhanh==='het-han');});
+    await t('Lịch đúng ranh giới mùa '+m,()=>{eq(V.lich(m*90+1).ngayMua,1);eq(V.lich((m+1)*90).ngayMua,90);eq(V.lich((m+1)*90+1).ngayMua,1);});
+   }
+   await t('Tỉ lệ cấu hình thời tiết đúng thiết kế',()=>eq(V.thoiTiet.map(a=>a.map(x=>x[1])),[[45,30,15,10],[55,20,20,5],[50,30,15,5],[40,35,15,10]]));
+   await t('Tên bốn dị tượng',()=>eq(V.diTuong.map(x=>x[0]),['Ngũ Sắc Vân Hà','Tinh Vũ Dạ Không','Linh Vụ Cổ Động','Hàn Quang Tuyết Cốc']));
+   await t('Seed có/không và đủ năm ngày bắt đầu',()=>{const co=new Set(),ngay=new Set(),ket=new Set();for(let s=112000;s<113000;s++){const h=V.hen(s,0);co.add(h.co);ngay.add(h.batDau);ket.add(h.thanhCong);eq(h,V.hen(s,0));}eq(co.size,2);eq(ngay.size,5);eq(ket.size,2);});
+   await t('Miền seed riêng và ngưỡng 60/40',()=>{for(let s=112000;s<112200;s++){const h=V.hen(s,0);eq(h.co,V.rut(s,'di-tuong/co',0,100)<60);eq(h.thanhCong,V.rut(s,'di-tuong/ket-qua',0,100)<40);eq(h.batDau,86+V.rut(s,'di-tuong/ngay',0,5));}ok(V.bam(1,'HD_V112','thoi-tiet',90)!==V.bam(1,'HD_V112','di-tuong/co',90));});
+   await t('Mùa không có thì không nhận dù ngày 90',()=>{let seed=112000;while(V.hen(seed,0).co)seed++;const z=fixture(seed,90);ok(!z.F.xem().diTuong.mo);ok(!z.F.chon('e-de').hopLe);eq(z.w.danhTiengV111.xem().danhVong,0);});
+   for(const tong of [false,true])for(const nhanh of ['e-de','lieu-linh'])for(const tc of [false,true])await t('Thưởng/phạt '+[tong,nhanh,tc],()=>{const seed=tim(0,tc),z=fixture(seed,90,tong),r=z.F.chon(nhanh),diem=nhanh==='e-de'?200:tc?1000:0;ok(r.hopLe);eq(r.diem,diem);const f=z.w.danhTiengV111.xem();eq(f.uyTin,tong?diem:0);eq(f.danhVong,tong?0:diem);ok(!z.F.chon(nhanh).hopLe);eq(z.logs.length,1);eq(z.w.core.xem().seed,seed);if(!diem)ok(r.vanBan.includes('công cốc'));});
+   for(const n of [999900,1000000])await t('Trần 10000 điểm '+n,()=>{const z=fixture(tim(0,true),90,true,null,n);const r=z.F.chon('lieu-linh');eq(r.diem,1000000-n);eq(z.w.danhTiengV111.xem().uyTin,1000000);});
+   for(const n of [-200,0,100,1.5,NaN,Infinity,1001])await t('API chỉ-cộng từ chối '+n,()=>{const z=fixture();ok(!z.w.danhTiengV111.thuongDiTuong(n).hopLe);eq(z.w.danhTiengV111.xem().uyTin,0);eq(z.w.danhTiengV111.xem().danhVong,0);});
+   for(const stop of ['chet','tran'])await t('Chặn lựa chọn khi '+stop,()=>{const z=fixture(tim(0),90);z[stop]();ok(!z.F.chon('e-de').hopLe);eq(z.F.xuat().ketQua,null);});
+   await t('Lựa chọn sai không thưởng',()=>{const z=fixture(tim(0),90);ok(!z.F.chon('sai').hopLe);eq(z.F.xuat().ketQua,null);});
+   await t('Roundtrip đã chọn không lặp',()=>{const seed=tim(0),z=fixture(seed,90);z.F.chon('e-de');const raw=z.F.xuat(),b=fixture(seed,90,false,raw);eq(b.F.xuat(),raw);ok(!b.F.chon('lieu-linh').hopLe);});
+   await t('Hết hạn lưu và khôi phục',()=>{const seed=tim(0),z=fixture(seed,90);z.den(91);const raw=z.F.xuat(),b=fixture(seed,91,false,raw);eq(b.F.xuat(),raw);eq(raw.truoc.nhanh,'het-han');ok(!b.F.xem().diTuong.mo);});
+   await t('Save cũ không phá, không truy thưởng',()=>{const old=HD_V111.taoTheGioi(11220261028).xuat(),a=V.taoTheGioi(11220261028,old).xuat();delete a.thoiTietV112;delete a.diTuongV112;eq(a,old);});
+   await t('Save mới cả hai trường roundtrip',()=>{const w=V.taoTheGioi(11220261028),a=w.xuat();eq(V.taoTheGioi(11220261028,a).xuat(),a);});
+   await t('Thời tiết không đổi dữ liệu engine và RNG',()=>{const w=V.taoTheGioi(11220261028),a=w.xuat();for(let n=1;n<=360;n++)V.tiet(11220261028,n);for(let i=0;i<10;i++)w.diTuongV112.xem();eq(w.xuat(),a);});
+   await t('API thưởng không đổi giá/luyện công/chiến đấu/túi',()=>{const w=HD_V111.taoTheGioi(11220261028),a=w.xuat();w.danhTiengV111.thuongDiTuong(200);const b=w.xuat();delete a.danhTiengV111;delete b.danhTiengV111;eq(b,a);});
+   await t('UI một khối Thiên tượng trong Thế Giới',()=>{const a=document.getElementById('hd-v112');ok(a);ok(a.closest('#page-world'));eq(document.querySelectorAll('#hd-v112').length,1);eq(a.querySelector('h3').textContent,'Thiên tượng');eq(a.querySelectorAll('button').length,3);});
+   await t('Nhãn hiện hành V1.12, nhãn cũ ẩn thật',()=>{ok([...document.querySelectorAll('.v112-version')].length>=3);for(const e of document.querySelectorAll('.v111-version'))eq(getComputedStyle(e).display,'none');for(const e of document.querySelectorAll('[title]'))ok(!e.title.includes('hiện hành V1.11'));});
+   await t('Nút dị tượng ẩn thật ngoài cửa sổ',()=>{const h=HD_V02.theGioi.diTuongV112.xem().diTuong;for(const e of document.querySelectorAll('#hd-v112-safe,#hd-v112-risk')){eq(e.hidden,!h.mo);eq(getComputedStyle(e).display==='none',!h.mo);}});
+   await t('Thiên tượng có nút riêng và mô tả',()=>{const b=document.querySelector('#hd-v112 #hd-v112-test');ok(b);eq(b.textContent,'Test HD_V112');ok(document.getElementById(b.getAttribute('aria-describedby')));});
+   await t('Game thật không dựng admin và nút cũ',()=>{eq(document.querySelectorAll('#hd-v110,#hd-tests,#hd-v03-tests,#hd-v04-tests,#hd-v05-tests,#hd-v06-tests,#hd-v09-tests,[data-v110],[data-v111]').length,0);});
+   await t('Chữ bìa không chồng nhãn hiện hành',()=>{for(const root of [document.querySelector('.v06-title-page'),document.querySelector('#hd-v06-cover article')]){const a=root.querySelector('.v112-version').getBoundingClientRect(),b=root.querySelector('.eyebrow').getBoundingClientRect(),c=root.querySelector('h1,h2').getBoundingClientRect();const cham=r=>Math.min(a.right,r.right)>Math.max(a.left,r.left)&&Math.min(a.bottom,r.bottom)>Math.max(a.top,r.top);ok(!cham(b)&&!cham(c));}});
+   await t('Runner tổng nối HD_V112 sau HD_V111',async()=>{const seen=[],r=HD_V110.taoRunner({boThem:[HD_V110.boV111,HD_V110.boV112],layNguon:async()=>'',goi:async m=>{seen.push(m.id);return {dat:1,truot:0,danhSach:[]};}});await r.chay('tat-ca');eq(seen.slice(-3),['HD_V110','HD_V111','HD_V112']);});
+   await t('Cầu runner phục hồi cờ khi lỗi',async()=>{const realm={HD_V1:{bat:true,datBat(x){this.bat=x;}},HD_V112_TEST:{kiemThu:async()=>{throw Error('fixture');}}};try{await HD_V110.goiTrongNen(HD_V110.boV112,'',realm);}catch(e){}eq(realm.HD_V1.bat,true);});
+   if(nguon)await t('Nguồn có module/test/lịch sử, không storage mới',()=>{ok(nguon.includes('HD_V112 - Thiên tượng'));ok(nguon.includes('id="hd-v112-tests"'));ok(nguon.includes('LỊCH SỬ THAY ĐỔI V1.12'));ok(!/localStorage\.(?:getItem|setItem)\(['"](?:thoiTietV112|diTuongV112)/.test(nguon));});
+  }finally{HD_V1.datBat(flag);HD_V110.bat=admin;}
+  await t('Finally: cờ, save thật, storage giữ nguyên',()=>{eq(HD_V1.bat,flag);eq(HD_V110.bat,admin);eq(JSON.stringify(HD_V02.theGioi.xuat()),live);eq(JSON.stringify(Object.entries(localStorage)),store);});
   if(inBang)console.table(ds);return {dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};
  }
  return Object.freeze({kiemThu});
@@ -4342,4 +4483,9 @@ Chỉ index.html, không PR/merge/main/tài liệu. Chưa nghiệm thu iPhone v�
 
 <!-- LỊCH SỬ THAY ĐỔI V1.11
 27/10/2026: chủ kho chốt bảy phương án A trước code. Thêm HD_V111 qua API công khai, nguồn uy tín/danh vọng có trần, lời hẹn tự nguyện 30 ngày và thưởng/phạt theo bậc; fixed-point, seed riêng, không buff engine cũ. Save thêm danhTiengV111, save cũ 0 không truy thưởng. UI Tông Môn riêng và tóm tắt Nhân Vật; giữ bảy tông và CHƯA KHAI MỞ. Test HD_V111 nối sau HD_V110 trong iframe storage riêng, cờ Thần Niệm khôi phục finally; cờ HD_V110 không vào save. Không đổi ca/kỳ vọng hồi quy cũ, nhịp 1150ms, reduced-motion hay 24 JPG. Các triện kế thừa V1.10 giữ hợp đồng test, có nhãn hiện hành V1.11 riêng. Chưa nghiệm thu iPhone vật lý.
+-->
+
+<!-- LỊCH SỬ THAY ĐỔI V1.12
+Hiệu chỉnh theo phương án A: bìa reflow không chồng chữ; Test HD_V112 và kết quả riêng trong Thiên tượng; bỏ admin DOM thật. Giữ nguyên 1387 ca cũ, fixture thành phần lịch sử chỉ cho HD_V110/HD_V111; ba ca UI HD_V112 đổi theo giao diện mới, thêm hai ca kiểm tra. Console: await HD_V110.chay('tat-ca'); hoặc chay('HD_V110'), chay('HD_V111'), chay('HD_V112').
+28/10/2026 - HD_V112 theo checkpoint 1A + 2B; thời tiết thuần trình bày, 16 trạng thái theo mùa và seed ngày riêng. Dị tượng 60% mùa, bắt đầu ngày 86-90, e dè +2; liều lĩnh 40% +10 / 60% +0 và hậu quả văn bản. API chỉ-cộng thuongDiTuong thuộc HD_V111 theo ngoại lệ 2A chủ kho duyệt, không API engine/trừ điểm. Save thoiTietV112/diTuongV112, không storage mới hay truy thưởng. UI 5B: một khối Thiên tượng trong Thế Giới, nút xếp dọc; nút HD_V112_TEST nằm ngay Thiên tượng và API tổng nối sau HD_V111. Giữ nguyên ca/kỳ vọng cũ, engine, 7 tông, Thần Niệm, giá mùa, đấu giá, CHƯA KHAI MỞ, 24 JPG, nhịp và reduced-motion. Chỉ staging; chưa phát hành v05-thu, không PR/merge/main/art/tài liệu. Chưa nghiệm thu iPhone vật lý.
 -->
