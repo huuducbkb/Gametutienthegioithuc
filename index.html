@@ -4347,6 +4347,14 @@ window.HD_V112_TEST=(()=>{'use strict';const V=HD_V112;
 .v113-version{display:block;position:static!important;margin:8px 0;line-height:1.5;font-size:.85rem;max-width:100%;overflow-wrap:anywhere;color:#963c2c}
 .v112-version{display:none!important}
 @media(prefers-reduced-motion:reduce){#hd-v113-panel *,.v113-chip{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Sơ đồ cây HTML: trục dọc nối từng điện, không dùng ảnh hoặc engine. */
+#hd-v113-panel .v113-map{display:block;position:relative}
+#hd-v113-panel .v113-map>p{position:relative;margin:0;border:2px solid #715737}
+#hd-v113-panel .v113-map>p::after{content:"";position:absolute;left:12px;top:100%;height:14px;border-left:2px solid #715737}
+#hd-v113-panel .v113-map-branches{margin:12px 0 0 12px;padding:0 0 0 16px;border-left:2px solid #715737}
+#hd-v113-panel .v113-map-branches button{margin:0 0 12px;position:relative}
+#hd-v113-panel .v113-map-branches button::before{content:"";position:absolute;right:100%;top:50%;width:18px;border-top:2px solid #715737}
 </style>
 <script id="hd-v113-module">
 /*
@@ -4376,7 +4384,7 @@ window.HD_V113=(()=>{'use strict';
   'cong-phap':['Xem bảng công pháp hiện hữu','training','hd-v092-registry'],
   'tu-luyen':['Đến khối Tu Luyện','training','hd-tu-luyen'],
   'dien-vo':['Đến khu luyện công hiện hữu','training','hd-v11-row'],
-  'the-gioi':['Xem Thế Giới hiện hữu','world','hd-v13-calendar']
+  'the-gioi':['Xem Thế Giới hiện hữu','world','hd-v13-world']
  });
  const cacTong=[
   ['hoang-phong-coc','Hoàng Phong Cốc','Cốc núi sâu giữa sương và lá vàng, điện gỗ tựa vách đá.'],
@@ -4421,12 +4429,12 @@ window.HD_V113=(()=>{'use strict';
   fig.append(img,cap);panel.append(fig);img.src=c.anh;
   const p=d.createElement('p');p.textContent=c.moTa;panel.append(p);
   if(c.cha)panel.append(taoNut('Về sơn môn '+registry[c.cha].ten,()=>mo(c.cha)));
-  const con=ds.filter(x=>x.cha===c.ma);if(con.length){const map=d.createElement('section');map.className='v113-map';map.setAttribute('aria-label','Sơ đồ '+c.ten);const g=d.createElement('p');g.textContent=c.ten+' - các lối nối điện đường';map.append(g);for(const x of con)map.append(taoNut(x.ten.split(' - ')[0],()=>mo(x.ma)));panel.append(map);}
+  const con=ds.filter(x=>x.cha===c.ma);if(con.length){const map=d.createElement('section');map.className='v113-map';map.setAttribute('aria-label','Sơ đồ '+c.ten);const g=d.createElement('p');g.textContent=c.ten+' - các lối nối điện đường';map.append(g);const nhanh=d.createElement('div');nhanh.className='v113-map-branches';for(const x of con)nhanh.append(taoNut(x.ten.split(' - ')[0],()=>mo(x.ma)));map.append(nhanh);panel.append(map);}
   const a=d.createElement('section');a.setAttribute('aria-label','Chức năng hiện hữu');for(const k of c.nut){const z=diem[k];if(!z)continue;const b=taoNut(z[0],()=>toi(k));if(!$(z[2])){b.disabled=true;b.title='Khối hiện hữu chưa sẵn sàng';}a.append(b);}panel.append(a,taoNut('Đóng cảnh',dong));canKhung();panel.scrollTop=0;h.focus({preventScroll:true});return true;
  }
  // Ghép dài trước, có ranh giới chữ; không lồng nút và không viết HTML từ văn kể.
  const ten=ds.flatMap(c=>[c.ten,...c.biDanh].map(n=>({n,ma:c.ma}))).sort((a,b)=>b.n.length-a.n.length);
- const escape=s=>s.replace(/[.*+?^$()|[\]\\]/g,'\\</body>');
+ const escape=s=>[...s].map(c=>'^$.*+?()[]{}|'.includes(c)||c.charCodeAt(0)===92?String.fromCharCode(92)+c:c).join('');
  const mau=new RegExp('(?<![\\p{L}\\p{N}])('+ten.map(x=>escape(x.n)).join('|')+')(?![\\p{L}\\p{N}])','giu');
  function phanDoan(text){const s=String(text),out=[];let last=0;for(const m of s.matchAll(mau)){if(m.index>last)out.push({text:s.slice(last,m.index)});const k=ten.find(x=>x.n.toLocaleLowerCase('vi')===m[0].toLocaleLowerCase('vi'));out.push({text:m[0],ma:k.ma});last=m.index+m[0].length;}if(last<s.length)out.push({text:s.slice(last)});return out;}
  function ganChip(root){if(!root)return 0;const walker=d.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){return n.parentElement?.closest('button,a,script,style,textarea,.v06-log-time,#hd-v113-panel')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT;}}),nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);let count=0;
@@ -4438,7 +4446,7 @@ window.HD_V113=(()=>{'use strict';
  addEventListener('keydown',e=>{if(e.key==='Escape'&&panel&&!panel.hidden){e.preventDefault();dong();}});
  addEventListener('click',e=>{if(e.target.closest?.('#bottom-nav button,#drawer-nav button,#system-button'))dong();},true);
  addEventListener('resize',canKhung);if(window.ResizeObserver&&$('bottom-nav'))new ResizeObserver(canKhung).observe($('bottom-nav'));
- const block=d.createElement('article');block.id='hd-v113';block.className='card';block.innerHTML='<h3>Hệ cảnh và kho ảnh</h3><p id="hd-v113-draft">Khung staging chưa nghiệm thu: còn chờ ảnh điện đường. Chưa phải bản phát hành.</p><p>Cảnh chỉ minh họa. Tên cảnh trong văn kể là nút mở ảnh; đóng cảnh để trở về văn bản. Chỉ tải ảnh khi mở, không thêm save hoặc cơ chế chơi.</p><details><summary>Sổ cảnh minh họa</summary><div class="v113-list"></div></details><button id="hd-v113-test" type="button" aria-describedby="hd-v113-test-desc">Test HD_V113</button><p id="hd-v113-test-desc">Kiểm thử hệ cảnh trong nền cô lập, không dùng save thật.</p><pre id="hd-v113-test-output" role="status" aria-live="polite">Chưa chạy kiểm thử.</pre>';
+ const block=d.createElement('article');block.id='hd-v113';block.className='card';block.innerHTML='<h3>Hệ cảnh và kho ảnh</h3><p id="hd-v113-draft">Candidate staging đủ 41 ảnh, chờ nghiệm thu. Chưa phải bản phát hành.</p><p>Cảnh chỉ minh họa. Tên cảnh trong văn kể là nút mở ảnh; đóng cảnh để trở về văn bản. Chỉ tải ảnh khi mở, không thêm save hoặc cơ chế chơi.</p><details><summary>Sổ cảnh minh họa</summary><div class="v113-list"></div></details><button id="hd-v113-test" type="button" aria-describedby="hd-v113-test-desc">Test HD_V113</button><p id="hd-v113-test-desc">Kiểm thử hệ cảnh trong nền cô lập, không dùng save thật.</p><pre id="hd-v113-test-output" role="status" aria-live="polite">Chưa chạy kiểm thử.</pre>';
  for(const c of ds.filter(x=>!x.cha))block.querySelector('.v113-list').append(taoNut(c.ten,()=>mo(c.ma)));
  $('page-world')?.append(block);
  $('hd-v113-test')?.addEventListener('click',async()=>{const b=$('hd-v113-test'),out=$('hd-v113-test-output');b.disabled=true;out.textContent='Đang chạy HD_V113...';try{const r=await HD_V110.chay('HD_V113');out.textContent=r.map(x=>x.id+': '+x.dat+' PASS / '+x.truot+' FAIL'+x.danhSach.filter(t=>t.ketQua==='FAIL').map(t=>'\n'+t.ten+': '+t.loi).join('')).join('\n');}catch(e){out.textContent=e.message;}finally{b.disabled=false;}});
@@ -4657,5 +4665,5 @@ Hiệu chỉnh theo phương án A: bìa reflow không chồng chữ; Test HD_V1
 -->
 
 <!-- LỊCH SỬ THAY ĐỔI V1.13
-28/10/2026 - HD_V113 độc lập, registry mở gồm bảy tông, bốn điện trung tính, 28 điện riêng, hai hoạt động và hai lối hệ cũ. Chip tên có dấu trong văn kể V05/V06 mở khung ảnh lười tải, mô tả, sơ đồ HTML và nút đến chức năng hiện hữu. Không thêm cơ chế ngự kiếm/trồng trọt/đọc kinh, không mua bán tự động, không đổi engine, save, RNG/seed, Thần Niệm, kinh tế V1.6 hay nhịp. Không trường save mới. Test HD_V113 nằm trong khối cảnh Thế Giới; runner công khai nối thêm sau HD_V112, giữ nguyên ca/kỳ vọng cũ. Nhãn hiện hành V1.13 riêng, legacy giữ hợp đồng. Chỉ staging; chỉ hoàn chỉnh và chạy hồi quy khi đủ 41 ảnh. Chưa phát hành v05-thu; chưa nghiệm thu iPhone vật lý.
+28/10/2026 - HD_V113 độc lập, registry mở gồm bảy tông, bốn điện trung tính, 28 điện riêng, hai hoạt động và hai lối hệ cũ. Chip tên có dấu trong văn kể V05/V06 mở khung ảnh lười tải, mô tả, sơ đồ HTML và nút đến chức năng hiện hữu. Không thêm cơ chế ngự kiếm/trồng trọt/đọc kinh, không mua bán tự động, không đổi engine, save, RNG/seed, Thần Niệm, kinh tế V1.6 hay nhịp. Không trường save mới. Test HD_V113 nằm trong khối cảnh Thế Giới; runner công khai nối thêm sau HD_V112, giữ nguyên ca/kỳ vọng cũ. Nhãn hiện hành V1.13 riêng, legacy giữ hợp đồng. Chỉ staging; đủ 41 ảnh. Sửa escape chip, nối sơ đồ cây HTML và đích Thế Giới hiện hữu; chạy hồi quy candidate trước checkpoint. Chưa phát hành v05-thu; chưa nghiệm thu iPhone vật lý.
 -->
