@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
-MỤC LỤC MÔ ĐUN V1.14
+MỤC LỤC MÔ ĐUN V1.15
+HD_V115: Khám vật ba phủ, sổ kiến văn 0–3 trong phiên; event bus riêng, không thay save hay engine; test tại khối cảnh.
 HD_V114: Ba đại gia tộc; factory ghép V112, save giaTocV114, điểm cố định nhân 100, UI Tông Môn, ba phủ trong registry V113; chỉ staging. Test tại Gia tộc, không admin.
 HD_V113: Hệ cảnh và kho ảnh; registry mở, chip văn kể, ảnh chỉ tải khi mở, sơ đồ HTML tông môn; không thêm save/API engine. Nút test ngay khối cảnh Thế Giới.
 HD_V112: Thiên tượng 1A + 2B, seed riêng thời tiết/dị tượng; API chỉ-cộng HD_V111 theo ngoại lệ 2A; UI 5B một khối Thế Giới, save riêng và HD_V112_TEST. Nút test nằm trong Thiên tượng; game thật không dựng admin, fixture lịch sử chỉ cho HD_V110/HD_V111. Chốt 28/10/2026.
@@ -4663,6 +4664,68 @@ window.HD_V114_TEST=(()=>{'use strict';
  }return Object.freeze({kiemThu});})();
 </script>
 
+
+<!-- HD_V115: tương tác kiến văn trong ba cảnh, chỉ giữ trong phiên. -->
+<style id="hd-v115-style">
+.v115-box{min-width:0;margin:14px 0;padding:12px;border:1px solid #7a654e;background:linear-gradient(130deg,#f4ead4,#d9c9a8);color:#2b2118}.v115-box h4{margin:0 0 6px}.v115-box p{margin:6px 0}.v115-box button{max-width:100%;white-space:normal;overflow-wrap:anywhere;margin:3px}.v115-box pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:12rem;overflow:auto}.v115-actions{display:grid;grid-template-columns:1fr;gap:3px}.v115-book{border-top:1px dashed #807058;margin-top:8px;padding-top:8px}@media(prefers-reduced-motion:reduce){.v115-box *{animation:none!important;transition:none!important}}
+</style>
+<script id="hd-v115-module">
+/* HD_V115 - CO CHE MOI TRONG CANH, scope B da duyet 29/10/2026.
+ MUC LUC MODULE: 1 du lieu mo; 2 may trang thai va event bus rieng;
+ 3 ghep panel V113 qua API cong khai; 4 kiem thu seed co dinh.
+ Khong sua engine, save, storage, RNG, kinh te hay diem quan he.
+ Toan bo tien do chi o bo nho cua trang, tai lai se mat. */
+window.HD_V115=(()=>{'use strict';
+ const danhMuc=Object.freeze({
+  'do-thi--phu':Object.freeze({ten:'Đỗ thị phủ',vat:Object.freeze(['Xem dược liệu','Đối chiếu sổ','Xem lò']),van:'Dược liệu được chọn cẩn thận, ghi rõ trong sổ rồi mới đưa tới lò. Giữ lửa bắt đầu bằng sự tỉ mỉ.'}),
+  'tan-thi--phu':Object.freeze({ten:'Tần thị phủ',vat:Object.freeze(['Xem hàng','Đối chiếu sổ','Xem bến']),van:'Hàng được kiểm, sổ được so rồi chuyến thuyền mới rời bến. Chữ tín nằm trong từng việc nhỏ.'}),
+  'vuong-thi--phu':Object.freeze({ten:'Vương thị phủ',vat:Object.freeze(['Xem sân','Đọc lễ','Xem cờ']),van:'Qua sân, hiểu lễ rồi ngắm cờ: sự trang nghiêm bắt đầu từ cách đối đãi với người.'})
+ });
+ const ket='Ba dấu kiến văn cùng nhắc một điều: cẩn trọng, giữ tín và biết lễ đều bắt đầu từ hành động nhỏ.';
+ function tao(){const tien={},dau=new Set(),bus=new EventTarget();for(const ma of Object.keys(danhMuc))tien[ma]=0;
+  const xem=ma=>({ma,buoc:tien[ma]??null,daDat:dau.has(ma),soDau:dau.size,dau:[...dau],tongKet:dau.size===Object.keys(danhMuc).length?ket:null});
+  function chon(ma,i){const c=danhMuc[ma];if(!c||!Number.isInteger(i)||i<0||i>=c.vat.length)return {hopLe:false,lyDo:'Dấu hiệu không hợp lệ'};if(dau.has(ma))return {hopLe:false,lyDo:'Đã nhận dấu kiến văn'};
+   if(i!==tien[ma]){tien[ma]=0;bus.dispatchEvent(new CustomEvent('thayDoi',{detail:{ma,loai:'sai'}}));return {hopLe:true,dung:false,...xem(ma)};}
+   tien[ma]++;if(tien[ma]===c.vat.length){dau.add(ma);bus.dispatchEvent(new CustomEvent('thayDoi',{detail:{ma,loai:'hoanThanh'}}));return {hopLe:true,dung:true,...xem(ma)};}
+   bus.dispatchEvent(new CustomEvent('thayDoi',{detail:{ma,loai:'tiep'}}));return {hopLe:true,dung:true,...xem(ma)};
+  }
+  function nghe(fn){bus.addEventListener('thayDoi',fn);return ()=>bus.removeEventListener('thayDoi',fn);}
+  return Object.freeze({xem,chon,nghe});
+ }
+ const phien=tao();return Object.freeze({danhMuc,ket,tao,phien});
+})();
+window.HD_V115_TEST=(()=>{'use strict';
+ async function kiemThu(){const ds=[],V=HD_V115,seed=1152026;const ok=(v,m='Không đạt')=>{if(!v)throw Error(m);},eq=(a,b)=>ok(JSON.stringify(a)===JSON.stringify(b),JSON.stringify(a)+' khác '+JSON.stringify(b));const t=async(ten,fn)=>{try{await fn();ds.push({ten,ketQua:'PASS'});}catch(e){ds.push({ten,ketQua:'FAIL',loi:e.message});}};
+ const ma=Object.keys(V.danhMuc);await t('Seed fixture cố định',()=>eq(seed,1152026));await t('Ba phủ đăng ký đúng',()=>eq(ma,['do-thi--phu','tan-thi--phu','vuong-thi--phu']));
+ for(const id of ma){await t(id+' tồn tại trong V113',()=>ok(HD_V113.registry[id]));await t(id+' dữ liệu bất biến',()=>{ok(Object.isFrozen(V.danhMuc[id]));ok(Object.isFrozen(V.danhMuc[id].vat));eq(V.danhMuc[id].vat.length,3)});
+  await t(id+' thứ tự đúng nhận một dấu',()=>{const f=V.tao();for(let i=0;i<3;i++)ok(f.chon(id,i).dung);eq(f.xem(id).soDau,1);ok(f.xem(id).daDat)});
+  await t(id+' sai trở lại bước đầu',()=>{const f=V.tao();f.chon(id,0);const r=f.chon(id,2);eq(r.dung,false);eq(r.buoc,0);eq(r.soDau,0)});
+  await t(id+' ngăn nhận trùng',()=>{const f=V.tao();for(let i=0;i<3;i++)f.chon(id,i);ok(!f.chon(id,0).hopLe);eq(f.xem(id).soDau,1)});
+  await t(id+' thử lại sau sai',()=>{const f=V.tao();f.chon(id,2);for(let i=0;i<3;i++)ok(f.chon(id,i).dung);eq(f.xem(id).soDau,1)});
+ }
+ await t('Không nhận mã cảnh lạ',()=>ok(!V.tao().chon('la',0).hopLe));await t('Không nhận chỉ số ngoài miền',()=>{const f=V.tao();for(const i of [-1,3,1.5,'0',null])ok(!f.chon(ma[0],i).hopLe)});
+ await t('Nhận ba dấu thứ tự tùy ý',()=>{const f=V.tao();for(const id of [ma[2],ma[0],ma[1]])for(let i=0;i<3;i++)f.chon(id,i);eq(f.xem(ma[0]).soDau,3);eq(f.xem(ma[0]).tongKet,V.ket)});
+ await t('Chưa đủ dấu không mở tổng kết',()=>{const f=V.tao();for(let i=0;i<3;i++)f.chon(ma[0],i);eq(f.xem(ma[0]).tongKet,null)});
+ await t('Phiên mới độc lập và rỗng',()=>{const a=V.tao(),b=V.tao();for(let i=0;i<3;i++)a.chon(ma[0],i);eq(b.xem(ma[0]).soDau,0);eq(b.xem(ma[0]).buoc,0)});
+ await t('Event bus báo đúng và hủy nghe',()=>{const f=V.tao(),events=[],off=f.nghe(e=>events.push(e.detail.loai));f.chon(ma[0],0);f.chon(ma[0],2);off();f.chon(ma[0],0);eq(events,['tiep','sai'])});
+ await t('Không lộ mảng dấu nội bộ',()=>{const f=V.tao();const x=f.xem(ma[0]);x.dau.push(ma[0]);eq(f.xem(ma[0]).soDau,0)});
+ await t('Khối tính năng có test tại cảnh',()=>{const p=document.querySelector('#hd-v113-panel .v115-box');ok(p&&p.querySelector('[data-v115-test]'))});
+ await t('Không tràn khung đang mở',()=>{const p=document.querySelector('#hd-v113-panel'),b=p?.querySelector('.v115-box'),nav=document.getElementById('bottom-nav');ok(p&&b&&nav);const r=p.getBoundingClientRect(),n=nav.getBoundingClientRect();ok(r.left>=0&&r.right<=innerWidth&&r.bottom<=n.top);ok(b.scrollWidth<=b.clientWidth+1)});
+ await t('Có reduced motion',()=>ok(document.getElementById('hd-v115-style').textContent.includes('prefers-reduced-motion:reduce')));
+ return {dat:ds.filter(x=>x.ketQua==='PASS').length,truot:ds.filter(x=>x.ketQua==='FAIL').length,danhSach:ds};}
+ return Object.freeze({kiemThu});})();
+(()=>{'use strict';const d=document,V=HD_V115;let box=null,maHien=null,tin='';
+ function dongBo(){const x=window.HD_V113?.xem(),p=d.getElementById('hd-v113-panel');if(!x?.mo||!p||!V.danhMuc[x.ma]){box=null;maHien=null;return;}if(box?.isConnected&&maHien===x.ma)return;maHien=x.ma;box=d.createElement('section');box.className='v115-box';box.setAttribute('aria-label','Khám vật và sổ kiến văn');const fig=p.querySelector('figure');if(fig)fig.after(box);else p.append(box);tin='';ve();}
+ function ve(){if(!box?.isConnected||!maHien)return;const ma=maHien,c=V.danhMuc[ma],s=V.phien.xem(ma);box.replaceChildren();const h=d.createElement('h4');h.textContent='Khám vật và sổ kiến văn';const intro=d.createElement('p');intro.textContent='Chọn ba dấu hiệu theo thứ tự. Sai thì bắt đầu lại; gợi ý và tiến độ chỉ giữ trong phiên.';box.append(h,intro);
+ const hint=d.createElement('p');hint.textContent='Gợi ý: '+c.vat.join(' → ')+'.';box.append(hint);const st=d.createElement('p');st.setAttribute('role','status');st.textContent=s.daDat?'Đã nhận dấu kiến văn tại '+c.ten+'.':(tin||'Bước '+(s.buoc+1)+' / 3');box.append(st);
+ const actions=d.createElement('div');actions.className='v115-actions';c.vat.forEach((name,i)=>{const b=d.createElement('button');b.type='button';b.textContent=name;b.disabled=s.daDat;b.addEventListener('click',()=>{const r=V.phien.chon(ma,i);tin=r.dung?'Đúng dấu. Tiếp tục.':'Chưa đúng thứ tự. Bắt đầu lại.';ve();});actions.append(b)});box.append(actions);
+ if(s.daDat){const p=d.createElement('p');p.textContent=c.van;box.append(p)}const book=d.createElement('div');book.className='v115-book';const p=d.createElement('p');p.textContent='Sổ kiến văn: '+s.soDau+' / 3 dấu. Tải lại trang sẽ mất tiến độ.';book.append(p);for(const id of Object.keys(V.danhMuc)){const item=d.createElement('p');item.textContent=V.danhMuc[id].ten+': '+(s.dau.includes(id)?'Đã nhận':'Chưa nhận');book.append(item)}if(s.tongKet){const q=d.createElement('p');q.textContent=s.tongKet;book.append(q)}box.append(book);
+ const bt=d.createElement('button'),out=d.createElement('pre');bt.type='button';bt.dataset.v115Test='';bt.textContent='Test HD_V115';out.setAttribute('role','status');out.textContent='Chưa chạy kiểm thử.';bt.addEventListener('click',async()=>{bt.disabled=true;try{const r=await HD_V115_TEST.kiemThu();out.textContent='HD_V115: '+r.dat+' PASS / '+r.truot+' FAIL'+r.danhSach.filter(x=>x.ketQua==='FAIL').map(x=>'\n'+x.ten+': '+x.loi).join('')}catch(e){out.textContent='Không chạy được: '+e.message}finally{bt.disabled=false}});box.append(bt,out);
+ const reg=d.createElement('button'),ro=d.createElement('pre');reg.type='button';reg.textContent='Test hồi quy toàn bộ';ro.setAttribute('role','status');ro.textContent='Chưa chạy hồi quy.';reg.addEventListener('click',async()=>{reg.disabled=true;try{const all=await HD_V110.chay('tat-ca');for(const id of ['HD_V111','HD_V112','HD_V113','HD_V114'])all.push(...await HD_V110.chay(id));const lines=all.map(r=>r.id+': '+r.dat+' PASS / '+r.truot+' FAIL'+r.danhSach.filter(x=>x.ketQua==='FAIL').map(x=>'\n  '+x.ten+': '+x.loi).join(''));lines.push('Tổng: '+all.reduce((n,r)=>n+r.dat,0)+' PASS / '+all.reduce((n,r)=>n+r.truot,0)+' FAIL');ro.textContent=lines.join('\n')}catch(e){ro.textContent='Không chạy được: '+e.message}finally{reg.disabled=false}});box.append(reg,ro);
+ }
+ new MutationObserver(dongBo).observe(d.body,{childList:true,subtree:true});dongBo();
+})();
+</script>
 </body>
 
 <!-- V0.9.2 bổ sung chất liệu AI: giấy dó, khung cọ, nét phân cách JPEG nhúng; nền 768px và multiply, không sửa bộ máy hay art/. Chưa nén JPEG do giới hạn xuất canvas của công cụ. -->
@@ -4838,3 +4901,5 @@ Hiệu chỉnh theo phương án A: bìa reflow không chồng chữ; Test HD_V1
 29/10/2026 - HD_V114 theo checkpoint chủ kho: Đỗ thị/Tần thị/Vương thị; chọn họ một lần không thưởng khởi đầu, giữ gốc khi nhập tông; save giaTocV114 chứa điểm riêng, bộ đếm ngày, hẹn và seed tất định. Hoạt động chính 80/phụ40, trần ngày100 sau hệ số; bậc0/500/1500/3500/7000, trần tổng10000 điểm hiển thị; lưu nhân100, UI nguyên. Hệ số thành viên100/110/125/140/160%. Đặc quyền chỉ tin/đối thoại/khu tiếp khách/chuyện Lão tổ. Hẹn tự nguyện30 ngày,12 hoạt động chính có ghi điểm, tới hạn+500/-300 sàn0, một lần. Save cũ thế gia hỏi chọn, đóng tạm và hỏi lại; gốc chờ chọn không mất khi nhập tông. Ba JPEG Squoosh1024x768 dưới250KB; registry46 bản ghi,44 tranh art/canh, Gia tộc trong Thế Giới. UI Tông Môn, nút HD_V114_TEST tại tính năng, không admin; API/event bus công khai, không RNG/storage/API engine mới, không thay kinh tế. Fixture chỉ HD_V113 giữ43 bản ghi cũ để nguyên ca/kỳ vọng, HD_V114_TEST kiểm tra registry46 thực. Chỉ v114-staging; chưa gộp main, chưa phát hành, không sửa ghi chú công việc.
 Bổ sung kiểm định candidate: ẩn nhãn V1.13 bằng display ưu tiên và cập nhật title staging; kiểm tra không thưởng khởi đầu loại riêng hai dòng nhật ký xác nhận, vẫn so sánh toàn bộ tài nguyên/seed và save còn lại. Hoàn tác bố cục theo feb922e sau nghiệm thu chưa đạt; hoàn tác setup focus Cài Đặt, giữ assertion gốc; 12 ca UI bổ sung kiểm tra bố cục Thế Giới đã khôi phục, không đổi cơ chế.
 -->
+
+<!-- LỊCH SỬ THAY ĐỔI V1.15: Thêm HD_V115 scope B trong ba phủ; sổ và thử thách chỉ trong phiên, không thay save, storage, RNG, kinh tế hay quan hệ. Candidate staging, chưa phát hành. -->
