@@ -51,6 +51,17 @@ File theo dõi công việc do Boba ghi và cập nhật sau mỗi bản, để 
   - Số ảnh khởi đầu mỗi nhóm nhân vật: đề xuất 2-3 ảnh cho mỗi nhóm trang phục.
   - Tên file trong nhóm: đánh số thứ tự (nhan-vat-1) linh hoạt; đặt theo tên NPC (ai-linh.jpg) tra thẳng nhưng khóa cứng nhân vật; hoặc dùng lai, NPC có tên có thư mục riêng, NPC quần chúng theo trang phục và số.
 
+### V2.0 - AI dẫn chuyện (31/10/2026, ĐANG THIẾT KẾ, CHƯA CODE)
+
+- Quyết định kiến trúc: dùng AI dẫn chuyện khi game chạy, thay thế quyết định ngày 30/10/2026 là "khung cố định, không AI runtime".
+- API và key: gọi Gemini và OpenRouter; thiết kế cho phép nhập NHIỀU key cho mỗi nhà cung cấp. Key chỉ lưu trong localStorage trên máy người chơi, KHÔNG BAO GIỜ đưa lên repo; tự xoay vòng key và chuyển sang key khác khi key lỗi hoặc hết hạn.
+- LUẬT CỨNG: AI chỉ xuất lời văn và hành động; mọi tính toán trúng đòn, sát thương, EXP, linh thạch, thương tích và chết sống do các module engine tính rồi trả kết quả cho AI diễn đạt. Chế độ hardcore chết mất save do engine quyết định, AI không có quyền cứu.
+- Chương 1 giữ làm khung xương: module V1.16 đã commit trên nhánh v116-staging, commit 41e1b485; giữ 6 nút C1-MO, C1-01, C1-02, C1-03, C1-04, C1-KT. Mốc ngày, 3 lựa chọn, thưởng, tuyến và save giữ như đã code; AI chỉ phụ trách văn dẫn chuyện quanh khung đó.
+- Không có key hoặc mất mạng: game vẫn chơi được bằng văn bản chốt sẵn như bản hiện tại; AI là lớp trên, không bắt buộc.
+- Hành động tự do trong khung chương 1: người chơi có thể gõ hành động; AI kể phần thử, engine làm trọng tài quyết được mất. Thưởng lớn như đan, linh thạch, uy tín và khóa tuyến chỉ xảy ra ở các nút chốt; gõ tự do không xin thêm được.
+- Giao diện chuyện kiểu text như game cũ: đoạn văn liền mạch, lựa chọn đánh số, ô nhập và SYSTEM LOGS. Khi gặp cảnh chiến đấu hoặc tu luyện, gọi màn hình combat hoặc luyện công cùng ảnh minh họa tương ứng; xong quay về chế độ đọc.
+- Việc tiếp theo: code module AI dẫn chuyện trên nhánh staging, không phải main; hồi quy đầy đủ với AI mô phỏng để test không tốn tiền key; trình nghiệm thu tổng một lượt.
+
 ## LINK
 - Repo: https://github.com/huuducbkb/Gametutienthegioithuc
 - Commit V1.10: https://github.com/huuducbkb/Gametutienthegioithuc/commit/ec448f1d394ec2f0fa595f65482dfc59432c9e80
