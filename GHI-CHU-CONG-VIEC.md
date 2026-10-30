@@ -41,6 +41,16 @@ File theo dõi công việc do Boba ghi và cập nhật sau mỗi bản, để 
 - Nhãn "CHƯA KHAI MỞ" tab Tông Môn: chủ kho chưa có ý tưởng (27/10/2026).
 - Hướng đã chốt: A (V0.10), B (Thần Niệm), D (gameplay); bỏ C.
 
+### Kế hoạch tái cấu trúc thư mục ảnh để AI kể chuyện
+
+- Nguyên tắc: XÂY CỐT TRUYỆN TRƯỚC. Cần biết game kể chuyện gì, nhân vật gặp ai và ở cảnh nào mới xác định được ảnh cảnh, nhân vật và trang phục cần có. Cốt truyện quyết định danh sách ảnh; cấu trúc art phục vụ tra cứu khi kể.
+- Khung thư mục dự kiến: art/canh (44 ảnh cảnh hiện có); art/tu-luyen; art/luyen-dan; art/luyen-khi; art/nhan-vat-nam; art/nhan-vat-nu với các thư mục con trang-phuc-xanh, trang-phuc-do...; art/vat-pham.
+- Ví dụ tra cứu: khi nhân vật gặp NPC nữ mặc trang phục xanh, AI tra art/nhan-vat-nu/trang-phuc-xanh/ và chọn một ảnh trong đó.
+- Ba điểm chưa chốt, chờ chủ kho quyết:
+  - 44 ảnh cảnh hiện có: chuyển vào art/canh hay giữ nguyên chỗ cũ. Nếu chuyển, phải sửa đường dẫn trong index.html cùng lúc, hồi quy và commit riêng có approval card duyệt.
+  - Số ảnh khởi đầu mỗi nhóm nhân vật: đề xuất 2-3 ảnh cho mỗi nhóm trang phục.
+  - Tên file trong nhóm: đánh số thứ tự (nhan-vat-1) linh hoạt; đặt theo tên NPC (ai-linh.jpg) tra thẳng nhưng khóa cứng nhân vật; hoặc dùng lai, NPC có tên có thư mục riêng, NPC quần chúng theo trang phục và số.
+
 ## LINK
 - Repo: https://github.com/huuducbkb/Gametutienthegioithuc
 - Commit V1.10: https://github.com/huuducbkb/Gametutienthegioithuc/commit/ec448f1d394ec2f0fa595f65482dfc59432c9e80
