@@ -62,6 +62,12 @@ File theo dõi công việc do Boba ghi và cập nhật sau mỗi bản, để 
 - Giao diện chuyện kiểu text như game cũ: đoạn văn liền mạch, lựa chọn đánh số, ô nhập và SYSTEM LOGS. Khi gặp cảnh chiến đấu hoặc tu luyện, gọi màn hình combat hoặc luyện công cùng ảnh minh họa tương ứng; xong quay về chế độ đọc.
 - Việc tiếp theo: code module AI dẫn chuyện trên nhánh staging, không phải main; hồi quy đầy đủ với AI mô phỏng để test không tốn tiền key; trình nghiệm thu tổng một lượt.
 
+### Quyết định làm lại game từ đầu (31/10/2026)
+
+- Chủ kho chốt thiết kế lại game hoàn toàn từ đầu. Dừng hướng chèn module V2.0 vào file cũ; bỏ bản nháp HD_V20.
+- Mọi thứ cũ giữ làm tư liệu tham khảo; xem TAI-LIEU-THAM-KHAO.md. Các kế hoạch cũ ở trên chỉ còn giá trị lịch sử, không phải chỉ đạo hiện hành.
+- Bản live V1.15 trên main giữ chạy bình thường; nhánh v116-staging giữ nguyên làm lưu trữ.
+
 ## LINK
 - Repo: https://github.com/huuducbkb/Gametutienthegioithuc
 - Commit V1.10: https://github.com/huuducbkb/Gametutienthegioithuc/commit/ec448f1d394ec2f0fa595f65482dfc59432c9e80
